@@ -1,0 +1,5 @@
+#Variables de entorno y claves
+.env
+#Dependencias
+node_modules/
+bdapp
