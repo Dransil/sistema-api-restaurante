@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+
 const getProductos = async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM productos ORDER BY id ASC');
