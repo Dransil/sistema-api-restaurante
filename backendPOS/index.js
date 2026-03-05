@@ -7,7 +7,8 @@ const categoriasRoutes = require('./routes/categoriasRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const pedidosRoutes = require('./routes/pedidoRoutes');
-const detallepedidoRoutes = require ('./routes/detallepedidoRoutes');
+const detallepedidoRoutes = require('./routes/detallepedidoRoutes');
+const configlocalRoutes = require('./routes/configlocalRoutes');
 // Express y puerto
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.use('/roles', rolesRoutes);
 app.use('/usuarios', usuarioRoutes);
 app.use('/pedidos', pedidosRoutes);
 app.use('/detallepedido', detallepedidoRoutes);
+app.use('/configloc', configlocalRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servicios en línea: http://localhost:${PORT}`);
