@@ -2,6 +2,14 @@ const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const getUsuario = async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM usuarios ORDER BY id ASC');
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Error: ' + err.message});
+    }
+}
 const login = async (req, res) => {
     const {username, password} = req.body;
     try {
@@ -51,4 +59,4 @@ const register = async (req, res) => {
     }
 }
 
-module.exports = {login, register};
+module.exports = {login, register, getUsuario};
