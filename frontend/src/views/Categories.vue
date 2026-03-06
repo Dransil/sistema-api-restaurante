@@ -8,8 +8,11 @@
     </form>
 
     <ul>
+
       <li v-for="cat in categories" :key="cat.id">
         {{ cat.nombre }}
+        <button @click="removeCategory(index)">Eliminar</button>
+
       </li>
     </ul>
   </div>
@@ -42,6 +45,7 @@ const addCategory = async () => {
   } catch (err) {
     console.error('Error agregando categoría:', err);
     alert('No se pudo agregar la categoría');
+
   }
 };
 </script>

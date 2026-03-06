@@ -1,7 +1,7 @@
 // src/services/api.js
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL; // http://localhost:3000
+const API_URL = import.meta.env.VITE_API_URL; // debe ser http://localhost:3000
 
 // --- USUARIOS ---
 export const registerUser = async (userData) => {
@@ -9,7 +9,7 @@ export const registerUser = async (userData) => {
     const res = await axios.post(`${API_URL}/usuarios/register`, userData);
     return res.data;
   } catch (err) {
-    console.error('Error registrando usuario:', err.response?.data || err);
+    console.error("Error registrando usuario:", err.response?.data || err);
     throw err;
   }
 };
@@ -19,7 +19,7 @@ export const loginUser = async (userData) => {
     const res = await axios.post(`${API_URL}/usuarios/login`, userData);
     return res.data;
   } catch (err) {
-    console.error('Error login:', err.response?.data || err);
+    console.error("Error login:", err.response?.data || err);
     throw err;
   }
 };
@@ -30,7 +30,7 @@ export const getRoles = async () => {
     const res = await axios.get(`${API_URL}/roles`);
     return res.data;
   } catch (err) {
-    console.error('Error obteniendo roles:', err.response?.data || err);
+    console.error("Error obteniendo roles:", err.response?.data || err);
     throw err;
   }
 };
@@ -41,7 +41,7 @@ export const getProductos = async () => {
     const res = await axios.get(`${API_URL}/productos`);
     return res.data;
   } catch (err) {
-    console.error('Error obteniendo productos:', err.response?.data || err);
+    console.error("Error obteniendo productos:", err.response?.data || err);
     throw err;
   }
 };
@@ -51,7 +51,7 @@ export const addProducto = async (producto) => {
     const res = await axios.post(`${API_URL}/productos`, producto);
     return res.data;
   } catch (err) {
-    console.error('Error agregando producto:', err.response?.data || err);
+    console.error("Error agregando producto:", err.response?.data || err);
     throw err;
   }
 };
@@ -62,7 +62,7 @@ export const getCategorias = async () => {
     const res = await axios.get(`${API_URL}/categorias`);
     return res.data;
   } catch (err) {
-    console.error('Error obteniendo categorías:', err.response?.data || err);
+    console.error("Error obteniendo categorías:", err.response?.data || err);
     throw err;
   }
 };
@@ -72,7 +72,7 @@ export const addCategoria = async (nombre) => {
     const res = await axios.post(`${API_URL}/categorias`, { nombre });
     return res.data;
   } catch (err) {
-    console.error('Error agregando categoría:', err.response?.data || err);
+    console.error("Error agregando categoría:", err.response?.data || err);
     throw err;
   }
 };

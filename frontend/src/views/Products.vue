@@ -17,18 +17,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { getProductos, addProducto } from '../services/api';
+import { ref, onMounted } from "vue";
+import { getProductos, addProducto } from "../services/api";
 
-const name = ref('');
-const price = ref('');
+const name = ref("");
+const price = ref("");
 const products = ref([]);
 
 const loadProducts = async () => {
   try {
     products.value = await getProductos();
   } catch (err) {
-    console.error('Error cargando productos:', err);
+    console.error("Error cargando productos:", err);
   }
 };
 
@@ -39,12 +39,12 @@ const addProduct = async () => {
 
   try {
     await addProducto({ nombre: name.value, precio: price.value });
-    name.value = '';
-    price.value = '';
-    await loadProducts(); 
+    name.value = "";
+    price.value = "";
+    await loadProducts();
   } catch (err) {
-    console.error('Error agregando producto:', err);
-    alert('No se pudo agregar el producto');
+    console.error("Error agregando producto:", err);
+    alert("No se pudo agregar el producto");
   }
 };
 </script>
