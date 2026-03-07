@@ -10,17 +10,31 @@ const getProductos = async (req, res) => {
     }
 }
 
-// Insertar un nuev producto
+// Insertar un nuevo producto
 const addProductos = async (req, res) => {
-    const {nombre, precio, stock, categoria_id, imagen_url} = req.body;
+    const { nombre, precio, stock, categoria_id, imagen_url } = req.body;
     try {
         const query = ('INSERT INTO productos (nombre, precio, stock, categoria_id, imagen_url) VALUES ($1, $2, $3, $4, $5) RETURNING *')
         const values = [nombre, precio, stock, categoria_id, imagen_url];
         const result = await pool.query(query, values);
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Error al crear productos: ' + err.message});
+        res.status(500).json({ error: 'Error al crear productos: ' + err.message });
+    }
+}
+// Insertar un nuevo producto con imagen
+const addProductosimg = async (req, res) => {
+    const { nombre, precio, stock, categoria_id } = req.body;
+    const imagen_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+    try {
+        const query = 'INSERT INTO productos (nombre, precio, stock, categoria_id, imagen_url) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        const values = [nombre, precio, stock, categoria_id, imagen_url];
+        const result = await pool.query(query, values);
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Error al crear producto: ' + err.message });
     }
 }
 
-module.exports = {getProductos, addProductos};
+module.exports = { getProductos, addProductos, addProductosimg };
