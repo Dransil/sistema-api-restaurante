@@ -48,13 +48,28 @@ export const getProductos = async () => {
 
 export const addProducto = async (producto) => {
   try {
-    const res = await axios.post(`${API_URL}/productos`, producto);
+    const res = await axios.post(`${API_URL}/productos`, producto, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
     return res.data;
   } catch (err) {
     console.error("Error agregando producto:", err.response?.data || err);
     throw err;
   }
 };
+
+export const deleteProducto = async (id) => {
+  try {
+    const res = await axios.delete(`${API_URL}/productos/${id}`);
+    return res.data;
+  } catch (err) {
+    console.error('Error eliminando producto:', err.response?.data || err);
+    throw err;
+  }
+};
+
 
 // --- CATEGORÍAS ---
 export const getCategorias = async () => {
@@ -67,13 +82,21 @@ export const getCategorias = async () => {
   }
 };
 
-export const addCategoria = async (nombre) => {
+export const addCategoria = async (categoria) => {
   try {
-    const res = await axios.post(`${API_URL}/categorias`, { nombre });
+    const res = await axios.post(`${API_URL}/categorias`, categoria);
     return res.data;
   } catch (err) {
     console.error("Error agregando categoría:", err.response?.data || err);
     throw err;
   }
 };
-
+export const deleteCategoria = async (id) => {
+  try {
+    const res = await axios.delete(`${API_URL}/categorias/${id}`);
+    return res.data;
+  } catch (err) {
+    console.error('Error eliminando categoría:', err.response?.data || err);
+    throw err;
+  }
+};

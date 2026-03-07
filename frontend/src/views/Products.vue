@@ -1,28 +1,43 @@
 <template>
-  <div>
-    <h2>Productos</h2>
+  <div class="container">
 
-    <form @submit.prevent="addProduct">
+    <h1 class="title">Productos</h1>
+
+    <form class="form" @submit.prevent="addProduct">
       <input v-model="name" placeholder="Nombre del producto" />
       <input v-model="price" type="number" placeholder="Precio" />
-      <button type="submit">Agregar</button>
+      <input type="file" @change="handleFileChange" />
+      <button type="submit">Agregar Producto</button>
     </form>
 
-    <ul>
-      <li v-for="prod in products" :key="prod.id">
-        {{ prod.nombre }} - ${{ prod.precio }}
-      </li>
-    </ul>
+    <div class="grid">
+
+      <div class="card" v-for="prod in products" :key="prod.id">
+
+        <img
+          :src="`http://localhost:3000/uploads/${prod.imagen_url}`"
+          class="product-img"
+        />
+
+        <h3>{{ prod.nombre }}</h3>
+
+        <p class="price">${{ prod.precio }}</p>
+
+      </div>
+
+    </div>
+
   </div>
 </template>
 
 <script setup>
+import "../assets/styles/products.css";
+import { ref, onMounted } from 'vue';
+import { getProductos, addProducto } from '../services/api';
 
-import { ref, onMounted } from "vue";
-import { getProductos, addProducto } from "../services/api";
-
-const name = ref("");
-const price = ref("");
+const name = ref('');
+const price = ref('');
+const image = ref(null);
 
 const products = ref([]);
 
@@ -37,18 +52,50 @@ const loadProducts = async () => {
 
 onMounted(loadProducts);
 
+const handleFileChange = (e) => {
+
+  const file = e.target.files[0];
+
+  if(
+    file.type === "image/png" ||
+    file.type === "image/jpeg" ||
+    file.type === "image/jpg"
+  ){
+    image.value = file;
+  }else{
+    alert("Solo se permiten imágenes JPG o PNG");
+  }
+
+};
+
 const addProduct = async () => {
-  if (!name.value || !price.value) return;
+
+  if (!name.value || !price.value || !image.value) {
+    alert("Completa todos los campos");
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append("nombre", name.value);
+  formData.append("precio", price.value);
+ formData.append("imagen_url", image.value);
 
   try {
-    await addProducto({ nombre: name.value, precio: price.value });
+
+    await addProducto(formData);
+
     name.value = '';
     price.value = '';
-    await loadProducts(); 
+    image.value = null;
+
+    await loadProducts();
+
   } catch (err) {
     console.error('Error agregando producto:', err);
     alert('No se pudo agregar el producto');
   }
+
 };
 
 onMounted(loadProducts);
