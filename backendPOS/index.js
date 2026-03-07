@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const path = require('path');
 // Importar rutas
 const productoRoutes = require('./routes/productoRoutes');
 const categoriasRoutes = require('./routes/categoriasRoutes');
@@ -28,7 +29,8 @@ app.use('/usuarios', usuarioRoutes);
 app.use('/pedidos', pedidosRoutes);
 app.use('/detallepedido', detallepedidoRoutes);
 app.use('/configloc', configlocalRoutes);
-
+//Servir carpeta uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.listen(PORT, () => {
   console.log(`Servicios en línea: http://localhost:${PORT}`);
 });
