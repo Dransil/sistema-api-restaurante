@@ -9,53 +9,42 @@
     </form>
 
     <ul>
-      <li v-for="product in products" :key="product.id">
-        {{ product.nombre }} - ${{ product.precio }}
+      <li v-for="prod in products" :key="prod.id">
+        {{ prod.nombre }} - ${{ prod.precio }}
       </li>
     </ul>
   </div>
 </template>
 
-<script>
-import axios from "axios";
+<script setup>
+import { ref, onMounted } from 'vue';
+import { getProductos, addProducto } from '../services/api';
 
-export default {
-  data() {
-    return {
-      name: "",
-      price: "",
-      products: []
-    };
-  },
+const name = ref('');
+const price = ref('');
+const products = ref([]);
 
-  mounted() {
-    this.getProducts();
-  },
+const loadProducts = async () => {
+  try {
+    products.value = await getProductos();
+  } catch (err) {
+    console.error('Error cargando productos:', err);
+  }
+};
 
-  methods: {
-    async getProducts() {
-      try {
-        const res = await axios.get("http://localhost:3000/productos");
-        this.products = res.data; // guarda los productos reales
-      } catch (error) {
-        console.log(error);
-      }
-    },
+onMounted(loadProducts);
 
-    addProduct() {
-      if (this.name && this.price) {
-        this.products.push({
-          nombre: this.name,
-          precio: this.price
-        });
-        this.name = "";
-        this.price = "";
-      }
-    },
+const addProduct = async () => {
+  if (!name.value || !price.value) return;
 
-    removeProduct(index) {
-      this.products.splice(index, 1);
-    }
+  try {
+    await addProducto({ nombre: name.value, precio: price.value });
+    name.value = '';
+    price.value = '';
+    await loadProducts(); 
+  } catch (err) {
+    console.error('Error agregando producto:', err);
+    alert('No se pudo agregar el producto');
   }
 };
 </script>

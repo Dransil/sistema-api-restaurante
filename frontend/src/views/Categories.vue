@@ -8,32 +8,40 @@
     </form>
 
     <ul>
-      <li v-for="(cat, index) in categories" :key="index">
-        {{ cat }}
-        <button @click="removeCategory(index)">Eliminar</button>
+      <li v-for="cat in categories" :key="cat.id">
+        {{ cat.nombre }}
       </li>
     </ul>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      newCategory: "",
-      categories: []
-    };
-  },
-  methods: {
-    addCategory() {
-      if (this.newCategory) {
-        this.categories.push(this.newCategory);
-        this.newCategory = "";
-      }
-    },
-    removeCategory(index) {
-      this.categories.splice(index, 1);
-    }
+<script setup>
+import { ref, onMounted } from 'vue';
+import { getCategorias, addCategoria } from '../services/api';
+
+const newCategory = ref('');
+const categories = ref([]);
+
+const loadCategories = async () => {
+  try {
+    categories.value = await getCategorias();
+  } catch (err) {
+    console.error('Error cargando categorías:', err);
+  }
+};
+
+onMounted(loadCategories);
+
+const addCategory = async () => {
+  if (!newCategory.value) return;
+
+  try {
+    await addCategoria(newCategory.value);
+    newCategory.value = '';
+    await loadCategories(); 
+  } catch (err) {
+    console.error('Error agregando categoría:', err);
+    alert('No se pudo agregar la categoría');
   }
 };
 </script>

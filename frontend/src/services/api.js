@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL; // debe ser http://localhost:3000
+const API_URL = import.meta.env.VITE_API_URL; // http://localhost:3000
 
 // --- USUARIOS ---
 export const registerUser = async (userData) => {
@@ -42,6 +42,37 @@ export const getProductos = async () => {
     return res.data;
   } catch (err) {
     console.error('Error obteniendo productos:', err.response?.data || err);
+    throw err;
+  }
+};
+
+export const addProducto = async (producto) => {
+  try {
+    const res = await axios.post(`${API_URL}/productos`, producto);
+    return res.data;
+  } catch (err) {
+    console.error('Error agregando producto:', err.response?.data || err);
+    throw err;
+  }
+};
+
+// --- CATEGORÍAS ---
+export const getCategorias = async () => {
+  try {
+    const res = await axios.get(`${API_URL}/categorias`);
+    return res.data;
+  } catch (err) {
+    console.error('Error obteniendo categorías:', err.response?.data || err);
+    throw err;
+  }
+};
+
+export const addCategoria = async (nombre) => {
+  try {
+    const res = await axios.post(`${API_URL}/categorias`, { nombre });
+    return res.data;
+  } catch (err) {
+    console.error('Error agregando categoría:', err.response?.data || err);
     throw err;
   }
 };
