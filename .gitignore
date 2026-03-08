@@ -4,4 +4,4 @@
 node_modules/
 bdapp
 backendPOS/uploads/*
-!backend/uploads/.gitkeep
+!backendPOS/uploads/.gitkeep
