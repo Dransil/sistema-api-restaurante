@@ -7,4 +7,5 @@ router.get('/', productoController.getProductos);
 //router.post('/',productoController.addProductos); // Antiguo metodo sin imagen
 router.post('/', upload.single('imagen_url'), productoController.addProductosimg);
 
+router.put('/:id', upload.single('imagen_url'), productoController.updateProducto);
 module.exports = router;

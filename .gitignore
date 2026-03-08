@@ -3,3 +3,5 @@
 #Dependencias
 node_modules/
 bdapp
+backendPOS/uploads/*
+!backend/uploads/.gitkeep
