@@ -6,6 +6,7 @@
     <form class="form" @submit.prevent="addProduct">
       <input v-model="name" placeholder="Nombre del producto" />
       <input v-model="price" type="number" placeholder="Precio" />
+      <input v-model="stock" type="number" placeholder="Stock" />
       <input type="file" @change="handleFileChange" />
       <button type="submit">Agregar Producto</button>
     </form>
@@ -22,6 +23,7 @@
         <h3>{{ prod.nombre }}</h3>
 
         <p class="price">${{ prod.precio }}</p>
+        <p class="stock">Stock: {{ prod.stock }}</p>
 
       </div>
 
@@ -37,6 +39,7 @@ import { getProductos, addProducto } from '../services/api';
 
 const name = ref('');
 const price = ref('');
+const stock =ref('');
 const image = ref(null);
 
 const products = ref([]);
@@ -79,6 +82,7 @@ const addProduct = async () => {
 
   formData.append("nombre", name.value);
   formData.append("precio", price.value);
+  formData.append("stock", stock.value);
  formData.append("imagen_url", image.value);
 
   try {
@@ -87,6 +91,7 @@ const addProduct = async () => {
 
     name.value = '';
     price.value = '';
+    stock.value = '';
     image.value = null;
 
     await loadProducts();

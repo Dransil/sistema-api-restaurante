@@ -57,6 +57,11 @@
   border-radius:8px;
 }
 
+.stock{
+  color:#555;
+  font-size:14px;
+}
+
 .price{
   color:#42b883;
   font-weight:bold;
