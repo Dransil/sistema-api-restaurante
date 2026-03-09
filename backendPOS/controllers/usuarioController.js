@@ -90,4 +90,28 @@ const updateUsuario = async (req, res) => {
 }
 // Nota: agregar control de datos para que genere una pass segura
 
-module.exports = { login, register, getUsuario, updateUsuario };
+const cambiarEstadoUsuario = async (req, res) => {
+    const {id}= req.params;
+    const {activo} = req.body;
+
+    try {
+        const query = 'UPDATE usuarios SET activo = $1 WHERE id = $2 RETURNING id, username, activo';
+        const values = [activo, id];
+
+        const result = await pool.query(query, values);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        const estado = activo ? 'activado' : 'desactivado';
+        res.json({ 
+            mensaje: `Usuario ${estado} correctamente`, 
+            usuario: result.rows[0] 
+        });
+
+    } catch (err) {
+        res.status(500).json({ error: "Error al cambiar estado: " + err.message });
+    }
+}
+module.exports = { login, register, getUsuario, updateUsuario, cambiarEstadoUsuario };

@@ -6,5 +6,5 @@ router.get('/', usuarioController.getUsuario);
 router.post('/register', usuarioController.register);
 router.post('/login', usuarioController.login);
 router.put('/:id', usuarioController.updateUsuario);
-
+router.patch('/:id/estado', usuarioController.cambiarEstadoUsuario);
 module.exports = router;
