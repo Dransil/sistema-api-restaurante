@@ -19,6 +19,11 @@ const login = async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
         const user = userResult.rows[0];
+        if (!user.activo) { 
+            return res.status(403).json({ 
+                error: 'Acceso denegado. Esta cuenta ha sido desactivada por el administrador.' 
+            });
+        }
         // Verificacion de contraseña
         const passValid = await bcrypt.compare(password, user.password_hash);
         if (!passValid) {
