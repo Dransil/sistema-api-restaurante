@@ -4,6 +4,8 @@ const productoController = require('../controllers/productoController');
 const upload = require('../middlewares/upload')
 
 router.get('/', productoController.getProductos);
+router.get('/activos', productoController.getProductosActivos);
+router.get('/noactivos', productoController.getProductosNoActivos);
 //router.post('/',productoController.addProductos); // Antiguo metodo sin imagen
 router.post('/', upload.single('imagen_url'), productoController.addProductosimg);
 
