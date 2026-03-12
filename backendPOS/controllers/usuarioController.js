@@ -2,6 +2,7 @@ const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// Obtener todos los usuarios
 const getUsuario = async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM usuarios ORDER BY id ASC');
@@ -10,6 +11,8 @@ const getUsuario = async (req, res) => {
         res.status(500).json({ error: 'Error: ' + err.message });
     }
 }
+
+// Verificacion de login
 const login = async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -64,6 +67,7 @@ const register = async (req, res) => {
     }
 }
 
+// Crear usuario
 const createUsuario = async (params) => {
     const {
         username, password, rol_id,
@@ -94,6 +98,7 @@ const createUsuario = async (params) => {
     }
 }
 
+// Actualizar usuario
 const updateUsuario = async (req, res) => {
     const { id } = req.params;
     const { 

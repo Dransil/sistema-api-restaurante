@@ -40,4 +40,36 @@ const addCliente = async (req, res) => {
         res.status(500).json({ error: 'Error al registrar cliente: ' + err.message });
     }
 };
-module.exports = { getClientes, getClienteByCI, addCliente }
+
+// Actualizar cliente
+const updateCliente = async (req, res) => {
+    const { id } = req.params;
+    const { razon_social, ci } = req.body;
+
+    try {
+        const clienteExistente = await pool.query('SELECT * FROM clientes WHERE id = $1', [id]);
+        
+        if (clienteExistente.rows.length === 0) {
+            return res.status(404).json({ error: "Cliente no encontrado" });
+        }
+
+        const query = `
+            UPDATE clientes 
+            SET razon_social = $1, ci = $2 
+            WHERE id = $3 
+            RETURNING *`;
+        
+        const values = [razon_social, ci, id];
+        const result = await pool.query(query, values);
+
+        res.json({ mensaje: "Cliente actualizado correctamente", cliente: result.rows[0] });
+
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: "El CI ya está registrado con otro cliente" });
+        }
+        res.status(500).json({ error: "Error al actualizar cliente: " + err.message });
+    }
+};
+
+module.exports = { getClientes, getClienteByCI, addCliente, updateCliente }
