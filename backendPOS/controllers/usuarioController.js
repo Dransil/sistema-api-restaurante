@@ -2,6 +2,12 @@ const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const passSegura = (password) => {
+    // Mínimo 8 caracteres, una mayúscula, una minúscula y un número
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/;
+    return regex.test(password);
+}
+
 // Obtener todos los usuarios
 const getUsuario = async (req, res) => {
     try {
@@ -54,6 +60,12 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
     const { username, password, rol_id } = req.body;
+
+    if(!passSegura(password)){
+        return res.status(400).json({ 
+            error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.' 
+        });
+    }
     try {
         const saltos = await bcrypt.genSalt(10);
         const pass_hash = await bcrypt.hash(password, saltos);
@@ -106,6 +118,11 @@ const updateUsuario = async (req, res) => {
         name, first_name, second_name, 
         fecha_nac, celular, email 
     } = req.body;
+    if(!passSegura(password && password.trim() !== "")){
+        return res.status(400).json({ 
+            error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.' 
+        });
+    }
     try {
         // Verificar si usuario existe
         const usuarioExist = await pool.query('SELECT * FROM usuarios WHERE id = $1', [id]);
