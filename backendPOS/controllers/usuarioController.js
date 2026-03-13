@@ -17,6 +17,24 @@ const getUsuario = async (req, res) => {
         res.status(500).json({ error: 'Error: ' + err.message });
     }
 }
+// Obtener todos los usuarios
+const getUsuarioActivo = async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM usuarios WHERE activo = true ORDER BY id ASC');
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Error: ' + err.message });
+    }
+}
+// Obtener todos los usuarios
+const getUsuarioNoActivo = async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM usuarios WHERE activo = false ORDER BY id ASC');
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Error: ' + err.message });
+    }
+}
 
 // Verificacion de login
 const login = async (req, res) => {
@@ -180,4 +198,4 @@ const cambiarEstadoUsuario = async (req, res) => {
         res.status(500).json({ error: "Error al cambiar estado: " + err.message });
     }
 }
-module.exports = { login, register, getUsuario, createUsuario, updateUsuario, cambiarEstadoUsuario };
+module.exports = { login, register, getUsuario, createUsuario, updateUsuario, cambiarEstadoUsuario, getUsuarioActivo, getUsuarioNoActivo };

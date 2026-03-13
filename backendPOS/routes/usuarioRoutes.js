@@ -3,6 +3,8 @@ const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 
 router.get('/', usuarioController.getUsuario);
+router.get('/activos', usuarioController.getUsuarioActivo);
+router.get('/noactivos', usuarioController.getUsuarioNoActivo);
 router.post('/register', usuarioController.register);
 router.post('/create', usuarioController.createUsuario);
 router.post('/login', usuarioController.login);
