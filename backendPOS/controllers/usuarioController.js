@@ -140,6 +140,7 @@ const updateUsuario = async (req, res) => {
 }
 // Nota: agregar control de datos para que genere una pass segura
 
+// Cambiar el estado del usuarios
 const cambiarEstadoUsuario = async (req, res) => {
     const { id } = req.params;
     const { activo } = req.body;
@@ -147,9 +148,7 @@ const cambiarEstadoUsuario = async (req, res) => {
     try {
         const query = 'UPDATE usuarios SET activo = $1 WHERE id = $2 RETURNING id, username, activo';
         const values = [activo, id];
-
         const result = await pool.query(query, values);
-
         if (result.rows.length === 0) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }

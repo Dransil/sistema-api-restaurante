@@ -10,4 +10,6 @@ router.get('/noactivos', productoController.getProductosNoActivos);
 router.post('/', upload.single('imagen_url'), productoController.addProductosimg);
 
 router.put('/:id', upload.single('imagen_url'), productoController.updateProducto);
+router.patch('/:id/estado', productoController.cambiarEstadoProducto);
+
 module.exports = router;
