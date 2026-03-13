@@ -136,7 +136,7 @@ const updateUsuario = async (req, res) => {
         name, first_name, second_name, 
         fecha_nac, celular, email 
     } = req.body;
-    if(!passSegura(password && password.trim() !== "")){
+    if(!passSegura(password)){
         return res.status(400).json({ 
             error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.' 
         });
