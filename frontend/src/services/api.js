@@ -100,3 +100,52 @@ export const deleteCategoria = async (id) => {
     throw err;
   }
 };
+
+export const updateProducto = async (id, data) => {
+  const res = await axios.put(`${API_URL}/productos/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+  return res.data;
+};
+
+export const updateUsuario = async (id, data) => {
+  const res = await axios.put(`${API_URL}/usuarios/${id}`, data);
+  return res.data;
+};
+
+export const cambiarEstadoUsuario = async (id, activo) => {
+  const res = await axios.patch(`${API_URL}/usuarios/${id}/estado`, {
+    activo
+  });
+  return res.data;
+};
+
+
+// --- CLIENTES ---
+export const getClientes = async () => {
+  const res = await axios.get(`${API_URL}/clientes`);
+  return res.data;
+};
+
+export const addCliente = async (cliente) => {
+  const res = await axios.post(`${API_URL}/clientes`, cliente);
+  return res.data;
+};
+
+export const getClienteByCI = async (ci) => {
+  const res = await axios.get(`${API_URL}/clientes/${ci}`);
+  return res.data;
+};
+
+export const updateCliente = async (id, cliente) => {
+  const res = await axios.put(`${API_URL}/clientes/${id}`, cliente);
+  return res.data;
+};
+
+// --- PEDIDOS ---
+export const registrarPedido = async (pedido) => {
+  const res = await axios.post(`${API_URL}/pedidos`, pedido);
+  return res.data;
+};

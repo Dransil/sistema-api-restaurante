@@ -1,69 +1,156 @@
+/* ---------------- VARIABLES ---------------- */
+:root {
+  --productos-bg: #f5f0ff;
+  --productos-header: #7b5fc9;
+  --productos-card-bg: #ffffff;
+  --productos-card-border: #ddd;
+  --productos-button: #6a4cff;
+  --productos-button-hover: #7b5fc9;
+  --productos-text: #333;
+  --productos-price: #6a4cff;
+  --productos-stock-available: #42b883;
+  --productos-stock-out: #f44336;
+  --productos-form-bg: #f9f9f9;
+}
+
+/* ---------------- CONTENEDOR ---------------- */
 .container{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
-  font-family:Arial, Helvetica, sans-serif;
+  max-width: 1000px;
+  margin: auto;
+  padding: 30px 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--productos-bg);
+  min-height: 100vh;
 }
 
 .title{
-  text-align:center;
-  margin-bottom:20px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--productos-header);
+  font-size: 2rem;
 }
 
+/* ---------------- FORMULARIO ---------------- */
 .form{
-  display:flex;
-  gap:10px;
-  margin-bottom:30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 40px;
+  background: var(--productos-form-bg);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
 }
 
 .form input{
-  padding:8px;
-  border-radius:5px;
-  border:1px solid #ccc;
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--productos-card-border);
+  font-size: 1rem;
 }
 
 .form button{
-  background:#42b883;
-  border:none;
-  padding:10px 15px;
-  color:white;
-  cursor:pointer;
-  border-radius:5px;
+  background: var(--productos-button);
+  border: none;
+  padding: 12px 18px;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: 600;
 }
 
 .form button:hover{
-  background:#369f6b;
+  background: var(--productos-button-hover);
+  transform: translateY(-2px);
 }
 
+/* ---------------- GRID DE PRODUCTS ---------------- */
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
 }
 
+/* ---------------- CARD PROFESIONAL ---------------- */
 .card{
-  border:1px solid #ddd;
-  padding:15px;
-  border-radius:10px;
-  text-align:center;
-  box-shadow:0 4px 8px rgba(0,0,0,0.1);
-  background:white;
+  position: relative;
+  background: var(--productos-card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
 }
 
+.card:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+
+/* ---------------- IMAGEN ---------------- */
 .product-img{
-  width:100%;
-  height:150px;
-  object-fit:cover;
-  border-radius:8px;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--productos-card-border);
+  transition: transform 0.3s;
 }
 
-.stock{
-  color:#555;
-  font-size:14px;
+.card:hover .product-img{
+  transform: scale(1.05);
+}
+
+/* ---------------- ETIQUETA STOCK ---------------- */
+.stock-label{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.stock-label.available{
+  background: var(--productos-stock-available);
+}
+
+.stock-label.out{
+  background: var(--productos-stock-out);
+}
+
+/* ---------------- TEXTO ---------------- */
+.card h3{
+  margin: 12px 0 8px 0;
+  color: var(--productos-header);
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .price{
-  color:#42b883;
-  font-weight:bold;
-  font-size:18px;
+  color: var(--productos-price);
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* ---------------- BOTONES CARD ---------------- */
+.card button{
+  background: var(--productos-button);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin: 8px 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.card button:hover{
+  background: var(--productos-button-hover);
+  transform: translateY(-2px);
 }

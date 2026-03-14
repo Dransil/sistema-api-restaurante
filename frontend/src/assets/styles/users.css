@@ -1,0 +1,148 @@
+:root{
+
+  /* COLORES PRINCIPALES */
+
+  --primary-color: #6a4cff;
+  --secondary-color: #7b5fc9;
+
+  /* TABLA */
+
+  --table-header: #2c3e50;
+  --table-row-alt: #f2f2f2;
+  --table-border: #ddd;
+
+  /* BOTONES */
+
+  --btn-edit: #3498db;
+  --btn-toggle: #e67e22;
+  --btn-save: #27ae60;
+  --btn-cancel: #c0392b;
+
+  /* TEXTO */
+
+  --text-light: #ffffff;
+}
+
+
+/* CONTENEDOR */
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+/* TABLA */
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+  border-radius:8px;
+  overflow:hidden;
+}
+
+.user-table th {
+  background-color: var(--table-header);
+  color: var(--text-light);
+  padding: 10px;
+}
+
+.user-table td {
+  border: 1px solid var(--table-border);
+  padding: 10px;
+  text-align: center;
+}
+
+.user-table tr:nth-child(even) {
+  background-color: var(--table-row-alt);
+}
+
+
+/* BOTONES */
+
+.btn {
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  margin: 3px;
+  border-radius: 5px;
+}
+
+.btn-edit {
+  background-color: var(--btn-edit);
+  color: var(--text-light);
+}
+
+.btn-toggle {
+  background-color: var(--btn-toggle);
+  color: var(--text-light);
+}
+
+.btn-save {
+  background-color: var(--btn-save);
+  color: var(--text-light);
+}
+
+.btn-cancel {
+  background-color: var(--btn-cancel);
+  color: var(--text-light);
+}
+
+
+/* FORMULARIO */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+}
+
+.input {
+  padding: 8px;
+  border: 1px solid var(--table-border);
+  border-radius: 5px;
+}
+
+
+/* MODAL */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 400px;
+
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+}
+
+.modal h3 {
+  margin-bottom: 15px;
+}
+
+.modal-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}

@@ -7,37 +7,58 @@
       <input v-model="price" type="number" placeholder="Precio" />
       <input v-model="stock" type="number" placeholder="Stock" />
       <input type="file" @change="handleFileChange" />
-      <button type="submit">Agregar Producto</button>
+      <button type="submit">
+  {{ editingId ? "Actualizar Producto" : "Agregar Producto" }}
+</button>
+  <button v-if="editingId" type="button" @click="cancelEdit">
+    Cancelar
+  </button>
     </form>
 
-    <div class="grid">
-      <div class="card" v-for="prod in products" :key="prod.id">
-        <img
-          v-if="prod.imagen_url"
-          :src="`http://localhost:3000${prod.imagen_url}`"
-          class="product-img"
-        />
+  <div class="grid">
+  <div class="card" v-for="prod in products" :key="prod.id">
+    <img v-if="prod.imagen_url" :src="`http://localhost:3000${prod.imagen_url}`" class="product-img" />
 
-        <h3>{{ prod.nombre }}</h3>
-
-        <p class="price">${{ prod.precio }}</p>
-        <p class="stock">Stock: {{ prod.stock }}</p>
-      </div>
+    <!-- ETIQUETA DE STOCK -->
+    <div class="stock-label" :class="prod.stock > 0 ? 'available' : 'out'">
+      {{ prod.stock > 0 ? 'Disponible' : 'Agotado' }}
     </div>
+
+    <h3>{{ prod.nombre }}</h3>
+    <p class="price">${{ prod.precio }}</p>
+    <button @click="editProduct(prod)">Editar</button>
+  </div>
+</div>
   </div>
 </template>
 
 <script setup>
 import "../assets/styles/products.css";
 import { ref, onMounted } from "vue";
-import { getProductos, addProducto } from "../services/api";
+import { getProductos, addProducto, updateProducto } from "../services/api";
 
 const name = ref("");
 const price = ref("");
 const stock = ref("");
 const image = ref(null);
+const editingId = ref(null);
 
 const products = ref([]);
+
+const editProduct = (prod) => {
+  name.value = prod.nombre;
+  price.value = prod.precio;
+  stock.value = prod.stock;
+  editingId.value = prod.id;
+};
+
+const cancelEdit = () => {
+  name.value = "";
+  price.value = "";
+  stock.value = "";
+  image.value = null;
+  editingId.value = null;
+};
 
 const loadProducts = async () => {
   try {
@@ -64,20 +85,39 @@ const handleFileChange = (e) => {
 };
 
 const addProduct = async () => {
-  if (!name.value || !price.value || !image.value) {
-    alert("Completa todos los campos");
-    return;
-  }
-
-  const formData = new FormData();
-
-  formData.append("nombre", name.value);
-  formData.append("precio", price.value);
-  formData.append("stock", stock.value);
-  formData.append("imagen_url", image.value);
+  if (!name.value || !price.value || (!editingId.value && !image.value)) {
+  alert("Completa los campos");
+  return;
+}
 
   try {
-    await addProducto(formData);
+
+    if (editingId.value) {
+
+      const formData = new FormData();
+      formData.append("nombre", name.value);
+      formData.append("precio", price.value);
+      formData.append("stock", stock.value);
+
+      if (image.value) {
+        formData.append("imagen_url", image.value);
+      }
+
+      await updateProducto(editingId.value, formData);
+
+      editingId.value = null;
+
+    } else {
+
+      const formData = new FormData();
+      formData.append("nombre", name.value);
+      formData.append("precio", price.value);
+      formData.append("stock", stock.value);
+     formData.append("imagen_url", image.value);
+
+      await addProducto(formData);
+
+    }
 
     name.value = "";
     price.value = "";
@@ -85,9 +125,9 @@ const addProduct = async () => {
     image.value = null;
 
     await loadProducts();
+
   } catch (err) {
-    console.error("Error agregando producto:", err);
-    alert("No se pudo agregar el producto");
+    console.error("Error guardando producto:", err);
   }
 };
 </script>
