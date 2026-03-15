@@ -67,4 +67,23 @@ const getVentasPorRango = async (req, res) => {
     }
 };
 
-module.exports = { getResumenDiario, getTopProductos, getVentasPorRango };
+// Venta detallada para control
+const getVentasDetalladas = async (req, res) => {
+    const { inicio, fin } = req.query;
+    try {
+        const query = `
+            SELECT p.id, p.fecha_hora, p.total, u.username as cajero, c.razon_social as cliente
+            FROM pedidos p
+            LEFT JOIN usuarios u ON p.usuario_id = u.id
+            LEFT JOIN clientes c ON p.cliente_id = c.id
+            WHERE p.fecha_hora::date BETWEEN $1 AND $2
+            ORDER BY p.fecha_hora DESC
+        `;
+        const result = await pool.query(query, [inicio, fin]);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = { getResumenDiario, getTopProductos, getVentasPorRango, getVentasDetalladas };
