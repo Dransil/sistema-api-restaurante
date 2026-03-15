@@ -11,6 +11,7 @@ const pedidosRoutes = require('./routes/pedidoRoutes');
 const detallepedidoRoutes = require('./routes/detallepedidoRoutes');
 const clienteRoutes = require('./routes/clienteRoutes')
 const configlocalRoutes = require('./routes/configlocalRoutes');
+const reporteRoutes = require('./routes/reporteRoutes');
 // Express y puerto
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +32,7 @@ app.use('/pedidos', pedidosRoutes);
 app.use('/detallepedido', detallepedidoRoutes);
 app.use('/clientes', clienteRoutes);
 app.use('/configloc', configlocalRoutes);
+app.use('/reportes', reporteRoutes);
 //Servir carpeta uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.listen(PORT, () => {
