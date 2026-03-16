@@ -118,4 +118,56 @@ const getReporteFacturacion = async (req, res) => {
         res.status(500).json({ error: 'Error en reporte detallado: ' + err.message });
     }
 };
-module.exports = { getResumenDiario, getTopProductos, getVentasPorRango, getVentasDetalladas, getReporteFacturacion };
+// Obtener factura detallada (Para impresión)
+const getFacturaDetalle = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Obtener la cabecera del pedido y datos del cliente
+        const pedidoQuery = `
+            SELECT 
+                p.id AS nro_factura,
+                p.fecha_hora,
+                p.total,
+                p.estado,
+                u.username AS cajero,
+                COALESCE(c.razon_social, 'Venta Rápida') AS cliente_nombre,
+                COALESCE(c.ci, 'S/N') AS cliente_ci
+            FROM pedidos p
+            LEFT JOIN usuarios u ON p.usuario_id = u.id
+            LEFT JOIN clientes c ON p.cliente_id = c.id
+            WHERE p.id = $1
+        `;
+        
+        const pedidoRes = await pool.query(pedidoQuery, [id]);
+
+        if (pedidoRes.rows.length === 0) {
+            return res.status(404).json({ error: "Factura no encontrada" });
+        }
+
+        // Obtener los productos de esa factura
+        const detallesQuery = `
+            SELECT 
+                prod.nombre AS producto,
+                dp.cantidad,
+                dp.precio_unitario,
+                dp.subtotal
+            FROM detalle_pedido dp
+            JOIN productos prod ON dp.producto_id = prod.id
+            WHERE dp.pedido_id = $1
+        `;
+        
+        const detallesRes = await pool.query(detallesQuery, [id]);
+
+        const facturaCompleta = {
+            ...pedidoRes.rows[0],
+            items: detallesRes.rows
+        };
+
+        res.json(facturaCompleta);
+
+    } catch (err) {
+        res.status(500).json({ error: 'Error al generar factura: ' + err.message });
+    }
+};
+module.exports = { getResumenDiario, getTopProductos, getVentasPorRango, getVentasDetalladas, getReporteFacturacion, getFacturaDetalle };
