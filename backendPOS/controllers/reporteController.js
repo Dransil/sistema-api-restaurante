@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const { get } = require('../routes/productoRoutes');
 
 // Resumen de ventas diarias
 const getResumenDiario = async (req, res) => {
@@ -86,4 +87,35 @@ const getVentasDetalladas = async (req, res) => {
     }
 };
 
-module.exports = { getResumenDiario, getTopProductos, getVentasPorRango, getVentasDetalladas };
+// Obtener todas las facturas
+const getReporteFacturacion = async (req, res) => {
+    const { inicio, fin } = req.query;
+
+    try {
+        const query = `
+            SELECT 
+                p.id AS factura_nro,
+                p.fecha_hora,
+                COALESCE(c.razon_social, 'Venta Rápida') AS cliente,
+                COALESCE(c.ci, 'S/N') AS nit_ci,
+                prod.nombre AS producto,
+                dp.cantidad,
+                dp.precio_unitario,
+                dp.subtotal,
+                p.total AS total_factura
+            FROM pedidos p
+            LEFT JOIN clientes c ON p.cliente_id = c.id
+            JOIN detalle_pedido dp ON p.id = dp.pedido_id
+            JOIN productos prod ON dp.producto_id = prod.id
+            WHERE p.fecha_hora::date BETWEEN $1 AND $2
+            AND p.estado = 'PAGADO'
+            ORDER BY p.id DESC, prod.nombre ASC
+        `;
+        
+        const result = await pool.query(query, [inicio, fin]);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Error en reporte detallado: ' + err.message });
+    }
+};
+module.exports = { getResumenDiario, getTopProductos, getVentasPorRango, getVentasDetalladas, getReporteFacturacion };
