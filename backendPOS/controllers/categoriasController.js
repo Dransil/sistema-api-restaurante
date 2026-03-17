@@ -71,7 +71,7 @@ const getProductosByCategoria = async (req, res) => {
 // Actualizar categoría
 const updateCategoria = async (req, res) => {
     const { id } = req.params;
-    const { nombre, activo } = req.body;
+    const { nombre } = req.body;
 
     try {
         const checkQuery = 'SELECT * FROM categorias WHERE id = $1';
@@ -81,13 +81,8 @@ const updateCategoria = async (req, res) => {
             return res.status(404).json({ error: "Categoría no encontrada" });
         }
 
-        const query = `
-            UPDATE categorias 
-            SET nombre = $1, activo = $2 
-            WHERE id = $3 
-            RETURNING *`;
-
-        const values = [nombre, activo, id];
+        const query = 'UPDATE categorias SET nombre = $1 WHERE id = $2 RETURNING *';
+        const values = [nombre, id];
         const result = await pool.query(query, values);
 
         res.json({
