@@ -67,4 +67,39 @@ const getProductosByCategoria = async (req, res) => {
         res.status(500).json({ error: 'Error al filtrar por categoría: ' + err.message });
     }
 };
-module.exports = { getCategorias, getCategoriaById, addCategoria, getProductosByCategoria };
+
+// Actualizar categoría
+const updateCategoria = async (req, res) => {
+    const { id } = req.params;
+    const { nombre, activo } = req.body;
+
+    try {
+        const checkQuery = 'SELECT * FROM categorias WHERE id = $1';
+        const checkResult = await pool.query(checkQuery, [id]);
+
+        if (checkResult.rows.length === 0) {
+            return res.status(404).json({ error: "Categoría no encontrada" });
+        }
+
+        const query = `
+            UPDATE categorias 
+            SET nombre = $1, activo = $2 
+            WHERE id = $3 
+            RETURNING *`;
+
+        const values = [nombre, activo, id];
+        const result = await pool.query(query, values);
+
+        res.json({
+            mensaje: "Categoría actualizada correctamente",
+            categoria: result.rows[0]
+        });
+
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: "Ya existe una categoría con ese nombre" });
+        }
+        res.status(500).json({ error: "Error al actualizar categoría: " + err.message });
+    }
+};
+module.exports = { getCategorias, getCategoriaById, addCategoria, getProductosByCategoria, updateCategoria };
