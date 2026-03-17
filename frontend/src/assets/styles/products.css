@@ -14,16 +14,13 @@
 }
 
 /* ---------------- CONTENEDOR ---------------- */
-.container{
-  max-width: 1000px;
-  margin: auto;
-  padding: 30px 20px;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--productos-bg);
+.products-container {
+  padding: 30px;
+  background: #f5f0ff;
   min-height: 100vh;
 }
 
-.title{
+.title {
   text-align: center;
   margin-bottom: 30px;
   color: var(--productos-header);
@@ -31,18 +28,15 @@
 }
 
 /* ---------------- FORMULARIO ---------------- */
-.form{
+.form {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 40px;
-  background: var(--productos-form-bg);
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  max-width: 7000px;
 }
 
-.form input{
+.form input {
   flex: 1;
   padding: 12px;
   border-radius: 8px;
@@ -50,47 +44,52 @@
   font-size: 1rem;
 }
 
-.form button{
+.form button {
   background: var(--productos-button);
   border: none;
-  padding: 12px 18px;
+  padding: 12px 8px;
   color: white;
   cursor: pointer;
   border-radius: 8px;
-  transition: background 0.3s, transform 0.2s;
+  transition:
+    background 0.3s,
+    transform 0.2s;
   font-weight: 600;
 }
 
-.form button:hover{
+.form button:hover {
   background: var(--productos-button-hover);
   transform: translateY(-2px);
 }
 
 /* ---------------- GRID DE PRODUCTS ---------------- */
-.grid{
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 25px;
+  width: 100%;
 }
 
 /* ---------------- CARD PROFESIONAL ---------------- */
-.card{
+.card {
   position: relative;
   background: var(--productos-card-bg);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
   text-align: center;
 }
 
-.card:hover{
+.card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
 }
 
 /* ---------------- IMAGEN ---------------- */
-.product-img{
+.product-img {
   width: 100%;
   height: 180px;
   object-fit: cover;
@@ -98,12 +97,12 @@
   transition: transform 0.3s;
 }
 
-.card:hover .product-img{
+.card:hover .product-img {
   transform: scale(1.05);
 }
 
 /* ---------------- ETIQUETA STOCK ---------------- */
-.stock-label{
+.stock-label {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -114,23 +113,23 @@
   font-size: 0.85rem;
 }
 
-.stock-label.available{
+.stock-label.available {
   background: var(--productos-stock-available);
 }
 
-.stock-label.out{
+.stock-label.out {
   background: var(--productos-stock-out);
 }
 
 /* ---------------- TEXTO ---------------- */
-.card h3{
+.card h3 {
   margin: 12px 0 8px 0;
   color: var(--productos-header);
   font-size: 1.2rem;
   font-weight: 600;
 }
 
-.price{
+.price {
   color: var(--productos-price);
   font-weight: bold;
   font-size: 18px;
@@ -138,7 +137,7 @@
 }
 
 /* ---------------- BOTONES CARD ---------------- */
-.card button{
+.card button {
   background: var(--productos-button);
   color: white;
   border: none;
@@ -147,10 +146,53 @@
   margin: 8px 4px;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.3s, transform 0.2s;
+  transition:
+    background 0.3s,
+    transform 0.2s;
 }
 
-.card button:hover{
+.card button:hover {
   background: var(--productos-button-hover);
   transform: translateY(-2px);
+}
+
+/* ---------- PAGINATION ---------- */
+
+.pagination-container {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #555;
+}
+
+.pagination {
+  display: flex;
+  gap: 6px;
+}
+
+.page-btn {
+  border: none;
+  padding: 6px 12px;
+  background: #2c3e50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.page-btn:hover {
+  background: #34495e;
+}
+
+.page-btn.active {
+  background: #10b981;
+}
+
+.page-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }

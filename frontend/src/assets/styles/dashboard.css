@@ -1,3 +1,7 @@
+/* Quitar scroll horizontal en todo el dashboard */
+body, html, .dashboard, .main, .content {
+  overflow-x: hidden;
+}
 :root{
   --color-sidebar: #6a4cff;
   --color-header: #7b5fc9;
@@ -74,9 +78,11 @@
 
 /* Content */
 .content {
-  padding: 20px;
   flex: 1;
+  width: 100%;
+  padding: 30px;
   background-color: var(--color-content);
+  overflow-x: auto;
 }
 
 .home{

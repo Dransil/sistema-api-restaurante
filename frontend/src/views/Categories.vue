@@ -54,7 +54,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getCategorias, addCategoria, deleteCategoria } from '../services/api'
-import "../assets/styles/products.css"
+import "../assets/styles/categorias.css"
 
 const newCategory = ref('')
 const image = ref(null)

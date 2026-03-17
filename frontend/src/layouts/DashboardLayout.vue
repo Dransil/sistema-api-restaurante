@@ -23,6 +23,9 @@
 <router-link to="/dashboard/pedidos">
   <i class="fas fa-shopping-cart"></i> <span>Pedidos</span>
 </router-link>
+<router-link to="/dashboard/pedidos-list">
+  <i class="fas fa-receipt"></i> <span>Lista Pedidos</span>
+</router-link>
 
 <router-link to="/dashboard/clientes">
   <i class="fas fa-user"></i> <span>Clientes</span>

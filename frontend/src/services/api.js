@@ -122,6 +122,15 @@ export const cambiarEstadoUsuario = async (id, activo) => {
   return res.data;
 };
 
+export const getUsuariosActivos = async () => {
+  const res = await axios.get(`${API_URL}/usuarios/activos`);
+  return res.data;
+};
+
+export const getUsuariosInactivos = async () => {
+  const res = await axios.get(`${API_URL}/usuarios/noactivos`);
+  return res.data;
+};
 
 // --- CLIENTES ---
 export const getClientes = async () => {
@@ -145,7 +154,23 @@ export const updateCliente = async (id, cliente) => {
 };
 
 // --- PEDIDOS ---
+export const getPedidos = async () => {
+  const res = await axios.get(`${API_URL}/pedidos`);
+  return res.data;
+};
+
 export const registrarPedido = async (pedido) => {
   const res = await axios.post(`${API_URL}/pedidos`, pedido);
   return res.data;
 };
+
+// --- DETALLE-PEDIDOS ---
+export const getDetallePedidos = async () => {
+  const res = await axios.get(`${API_URL}/detallepedido`)
+  return res.data
+}
+
+export const getDetalleByPedidoId = async (id) => {
+  const res = await axios.get(`${API_URL}/detallepedido/${id}`)
+  return res.data
+}

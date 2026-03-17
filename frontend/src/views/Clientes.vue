@@ -1,12 +1,12 @@
 <script>
 import { getClientes } from "../services/api";
-import '../assets/styles/clientes.css'; 
+import "../assets/styles/clientes.css";
 export default {
   data() {
     return {
       clientes: [],
       loading: false,
-      error: null
+      error: null,
     };
   },
 
@@ -26,21 +26,17 @@ export default {
       } finally {
         this.loading = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <template>
   <div class="clientes-container">
-
     <h2>Clientes</h2>
 
     <div class="clientes-card">
-
-      <button class="clientes-button">
-        Nuevo Cliente
-      </button>
+      <button class="clientes-button">Nuevo Cliente</button>
 
       <p v-if="loading">Cargando clientes...</p>
       <p v-else-if="error">{{ error }}</p>
@@ -60,8 +56,6 @@ export default {
       </table>
 
       <p v-else>No hay clientes registrados</p>
-
     </div>
-
   </div>
 </template>
