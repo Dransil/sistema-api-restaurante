@@ -1,0 +1,202 @@
+:root{
+  /* ================= COLORES PRINCIPALES ================= */
+  --primary-color: #6a4cff;
+  --secondary-color: #7b5fc9;
+
+  /* ================= TABLA ================= */
+  --table-header: #2c3e50;
+  --table-row-alt: #f7f7f7;
+  --table-border: #ddd;
+
+  /* ================= BOTONES ================= */
+  --btn-edit: #3498db;
+  --btn-toggle: #e67e22;
+  --btn-save: #27ae60;
+  --btn-cancel: #c0392b;
+
+  /* ================= ESTADOS ================= */
+  --status-active-bg: #d4edda;
+  --status-active-text: #155724;
+  --status-inactive-bg: #f8d7da;
+  --status-inactive-text: #721c24;
+
+  /* ================= TEXTO ================= */
+  --text-light: #ffffff;
+
+  /* ================= BACKGROUND GENERAL ================= */
+  --users-bg: #f3ecff;
+  --card-bg: #ffffff;
+}
+
+/* ================= CONTENEDOR PRINCIPAL ================= */
+.usuarios-container {
+  padding: 30px;
+  background: var(--users-bg); 
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ================= CARD ================= */
+.user-card{
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* ================= TITULO ================= */
+.title{
+  text-align: left;
+  margin-bottom: 25px;
+  color: var(--table-header);
+}
+
+/* ================= TABLA ================= */
+.user-table{
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:0px 6px 18px rgba(0,0,0,0.15);
+  margin-bottom: 20px;
+}
+
+.user-table th{
+  background: var(--table-header);
+  color: var(--text-light);
+  padding:12px;
+  font-weight:600;
+}
+
+.user-table td{
+  border:1px solid var(--table-border);
+  padding:12px;
+  text-align:center;
+}
+
+.user-table tr:nth-child(even){
+  background: var(--table-row-alt);
+}
+
+.user-table tr:hover{
+  background:#ececec;
+  transition:0.2s;
+}
+
+/* ================= ESTADO ================= */
+.estado-activo{
+  background: var(--status-active-bg);
+  color: var(--status-active-text);
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:500;
+}
+
+.estado-inactivo{
+  background: var(--status-inactive-bg);
+  color: var(--status-inactive-text);
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:500;
+}
+
+/* ================= BOTONES ================= */
+.btn{
+  padding:7px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:13px;
+  transition:0.2s;
+  margin-right: 5px;
+}
+
+.btn:hover{
+  opacity:0.85;
+}
+
+.btn-edit{
+  background: var(--btn-edit);
+  color: var(--text-light);
+}
+
+.btn-toggle{
+  background: var(--btn-toggle);
+  color: var(--text-light);
+}
+
+.btn-save{
+  background: var(--btn-save);
+  color: var(--text-light);
+}
+
+.btn-cancel{
+  background: var(--btn-cancel);
+  color: var(--text-light);
+}
+
+/* ================= FORMULARIO ================= */
+.form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  max-width:500px;
+  margin-top:20px;
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.input{
+  padding:10px;
+  border:1px solid var(--table-border);
+  border-radius:6px;
+  outline:none;
+}
+
+.input:focus{
+  border-color: var(--primary-color);
+}
+
+/* ================= PAGINATION ================= */
+.pagination-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:20px;
+}
+
+.pagination-info{
+  font-size:13px;
+  color:#666;
+}
+
+.pagination{
+  display:flex;
+  gap:5px;
+}
+
+.page-btn{
+  border:none;
+  padding:6px 12px;
+  background:#2c3e50;
+  color:white;
+  cursor:pointer;
+  border-radius:4px;
+}
+
+.page-btn:hover{
+  background:#34495e;
+}
+
+.page-btn.active{
+  background:#10b981;
+}
+
+.page-btn:disabled{
+  background:#ccc;
+  cursor:not-allowed;
+}

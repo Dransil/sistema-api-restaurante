@@ -33,7 +33,6 @@ const register = async () => {
     await registerUser({
       username: username.value,
       password: password.value,
-    
     });
     alert('Usuario registrado correctamente');
     router.push('/login');

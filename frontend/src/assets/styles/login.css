@@ -1,47 +1,76 @@
+:root {
+  --color-background: #f3ecff;
+  --color-card-header: #7b5fc9;
+  --color-card-body: #d6c6ff;
+  --color-button: #ffffff;
+  --color-button-hover: #ece6ff;
+}
+
 .login-container {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f4f6f9;
+  background-color: var(--color-background);
 }
 
+/* tarjeta */
 .login-card {
   background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  width: 320px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 350px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.15);
   text-align: center;
 }
 
+/* titulo */
 .login-card h2 {
-  margin-bottom: 1.5rem;
+  background: var(--color-card-header);
+  color: white;
+  margin: 0;
+  padding: 15px;
+  font-size: 18px;
 }
 
+/* formulario */
+.login-card form {
+  background: var(--color-card-body);
+  padding: 25px;
+}
+
+/* inputs */
 .login-card input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 4px;
 }
 
+/* botón */
 .login-card button {
   width: 100%;
   padding: 10px;
-  background-color: #42b883;
-  color: white;
+  background: var(--color-button);
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
 .login-card button:hover {
-  background-color: #369f6e;
+  background: var(--color-button-hover);
 }
 
+/* texto */
 .login-card p {
-  margin-top: 1rem;
+  background: var(--color-card-header);
+  margin: 0;
+  padding: 10px;
   font-size: 14px;
+}
+
+.login-card a {
+  color: white;
+  text-decoration: none;
 }

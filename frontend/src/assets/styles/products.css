@@ -1,0 +1,198 @@
+/* ---------------- VARIABLES ---------------- */
+:root {
+  --productos-bg: #f5f0ff;
+  --productos-header: #7b5fc9;
+  --productos-card-bg: #ffffff;
+  --productos-card-border: #ddd;
+  --productos-button: #6a4cff;
+  --productos-button-hover: #7b5fc9;
+  --productos-text: #333;
+  --productos-price: #6a4cff;
+  --productos-stock-available: #42b883;
+  --productos-stock-out: #f44336;
+  --productos-form-bg: #f9f9f9;
+}
+
+/* ---------------- CONTENEDOR ---------------- */
+.products-container {
+  padding: 30px;
+  background: #f5f0ff;
+  min-height: 100vh;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--productos-header);
+  font-size: 2rem;
+}
+
+/* ---------------- FORMULARIO ---------------- */
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 40px;
+  max-width: 7000px;
+}
+
+.form input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--productos-card-border);
+  font-size: 1rem;
+}
+
+.form button {
+  background: var(--productos-button);
+  border: none;
+  padding: 12px 8px;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  transition:
+    background 0.3s,
+    transform 0.2s;
+  font-weight: 600;
+}
+
+.form button:hover {
+  background: var(--productos-button-hover);
+  transform: translateY(-2px);
+}
+
+/* ---------------- GRID DE PRODUCTS ---------------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 25px;
+  width: 100%;
+}
+
+/* ---------------- CARD PROFESIONAL ---------------- */
+.card {
+  position: relative;
+  background: var(--productos-card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  text-align: center;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------------- IMAGEN ---------------- */
+.product-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--productos-card-border);
+  transition: transform 0.3s;
+}
+
+.card:hover .product-img {
+  transform: scale(1.05);
+}
+
+/* ---------------- ETIQUETA STOCK ---------------- */
+.stock-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.stock-label.available {
+  background: var(--productos-stock-available);
+}
+
+.stock-label.out {
+  background: var(--productos-stock-out);
+}
+
+/* ---------------- TEXTO ---------------- */
+.card h3 {
+  margin: 12px 0 8px 0;
+  color: var(--productos-header);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.price {
+  color: var(--productos-price);
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* ---------------- BOTONES CARD ---------------- */
+.card button {
+  background: var(--productos-button);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin: 8px 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition:
+    background 0.3s,
+    transform 0.2s;
+}
+
+.card button:hover {
+  background: var(--productos-button-hover);
+  transform: translateY(-2px);
+}
+
+/* ---------- PAGINATION ---------- */
+
+.pagination-container {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #555;
+}
+
+.pagination {
+  display: flex;
+  gap: 6px;
+}
+
+.page-btn {
+  border: none;
+  padding: 6px 12px;
+  background: #2c3e50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.page-btn:hover {
+  background: #34495e;
+}
+
+.page-btn.active {
+  background: #10b981;
+}
+
+.page-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
