@@ -58,6 +58,7 @@ const login = async (req, res) => {
         }
         // Generacion de token JWT
         const token = jwt.sign(
+            // Asignación importante para el descifrado del Token
             { id: user.id, rol: user.rol_id },
             process.env.JWT_SECRET,
             { expiresIn: '8h' }
