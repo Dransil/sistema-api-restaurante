@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2 class="title">Detalle del Pedido</h2>
+   <h2 class="title">Detalle del Pedido #{{ pedidoId }}</h2>
 
     <div v-for="item in detalles" :key="item.id" class="detalle-card">
       <img
@@ -23,19 +23,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { ref, watch } from "vue";
+
 import { getDetalleByPedidoId } from "../services/api";
 import "../assets/styles/detallepedido.css";
 
-const route = useRoute();
+const props = defineProps({
+  pedidoId: Number
+})
 const detalles = ref([]);
 
 const loadDetalle = async () => {
-  const id = route.params.id;
+  const id = props.pedidoId;
 
   detalles.value = await getDetalleByPedidoId(id);
 };
 
-onMounted(loadDetalle);
+watch(() => props.pedidoId, async (newId) => {
+  if (newId) {
+    detalles.value = await getDetalleByPedidoId(newId);
+  }
+}, { immediate: true });
 </script>

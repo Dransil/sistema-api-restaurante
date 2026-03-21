@@ -5,7 +5,7 @@ import Register from "../views/Register.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 import DashboardHome from "../views/DashboardHome.vue";
 import Users from "../views/Users.vue";
-import Reports from "../views/Reports.vue";
+import Reportes from "../views/Reportes.vue";
 import Categories from "../views/Categories.vue";
 import Products from "../views/Products.vue";
 import Clientes from "../views/Clientes.vue";
@@ -13,7 +13,7 @@ import EditUser from "../views/EditUser.vue";
 import CreateUser from "../views/CreateUser.vue";
 import Pedidos from "../views/Pedidos.vue";
 import PedidosList from "../views/PedidosList.vue"
-import DetallePedido from "../views/DetallePedido.vue"
+import DetallePedido from "../views/DetallePedido.vue";
 const routes = [
   { path: "/", redirect: "/login" },
   { path: "/login", component: Login },
@@ -27,13 +27,15 @@ const routes = [
       { path: "users", component: Users },
       { path: "users/:id/edit", component: EditUser },
       { path: "users/create", component: CreateUser },
-      { path: "reports", component: Reports },
+      { path: "reportes", component: Reportes },
       { path: "categories", component: Categories },
       { path: "products", component: Products },
       { path: "clientes", component: Clientes },
       { path: "pedidos",component: Pedidos},
       {path: "pedidos-list",component: PedidosList},
-      {path: "pedidos/:id",component: DetallePedido}
+      {path: "pedidos/:id",component: DetallePedido},
+      
+      
     ],
   },
 ];

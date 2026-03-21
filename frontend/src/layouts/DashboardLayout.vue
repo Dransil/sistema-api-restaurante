@@ -31,6 +31,11 @@
   <i class="fas fa-user"></i> <span>Clientes</span>
 </router-link>
 
+<router-link to="/dashboard/reportes">
+  <i class="fas fa-chart-bar"></i> <span>Reportes</span>
+</router-link>
+
+
     </aside>
 
     <div class="main">

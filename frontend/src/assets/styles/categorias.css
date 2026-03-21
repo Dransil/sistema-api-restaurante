@@ -1,92 +1,59 @@
-/* src/assets/styles/categories.css */
 
 :root {
-  --primary-color: #6a4cff;
-  --secondary-color: #7b5fc9;
-  --card-bg: #ffffff;
-  --card-border: #ddd;
-  --btn-add: #27ae60;
-  --btn-delete: #e74c3c;
-  --text-light: #ffffff;
+  --categories-bg: #f5f0ff;
+  --categories-header: #7b5fc9;
+  --categories-card-bg: #ffffff;
+  --categories-card-border: #ddd;
+  --categories-button: #6a4cff;
+  --categories-button-hover: #7b5fc9;
+  --categories-text: #333;
 }
 
-/* Contenedor principal */
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 20px;
+/* ---------------- CONTENEDOR ---------------- */
+.categories-container {
+  padding: 30px;
+  background: var(--categories-bg);
+  min-height: 100vh;
 }
 
 /* Título */
 .title {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 28px;
-  color: var(--primary-color);
+  margin-bottom: 30px;
+  color: var(--categories-header);
+  font-size: 2rem;
 }
 
 /* Formulario de nueva categoría */
 .form {
   display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 30px;
   flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 40px;
 }
 
 .form input {
-  padding: 10px;
+  flex: 1;
+  padding: 12px;
   border-radius: 8px;
-  border: 1px solid var(--card-border);
-  width: 250px;
+  border: 1px solid var(--categories-card-border);
+  font-size: 1rem;
 }
 
 .form button {
-  padding: 10px 20px;
-  border-radius: 8px;
+  background: var(--categories-button);
   border: none;
+  padding: 12px 20px;
+  color: white;
   cursor: pointer;
-  background: var(--btn-add);
-  color: var(--text-light);
-  font-weight: bold;
-  transition: 0.2s;
+  border-radius: 8px;
+  transition: 0.3s;
+  font-weight: 600;
 }
 
 .form button:hover {
-  opacity: 0.9;
-}
-
-/* Grid de categorías */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-}
-
-/* Tarjeta categoría */
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  transition: 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-}
-
-/* Imagen de categoría (opcional) */
-.product-img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  background: var(--categories-button-hover);
+  transform: translateY(-2px);
 }
 
 /* Nombre de la categoría */
@@ -98,17 +65,16 @@
 
 /* Botón eliminar */
 .delete-btn {
-  padding: 6px 12px;
+  background: #f44336;
+  color: white;
   border: none;
-  cursor: pointer;
+  padding: 8px 14px;
   border-radius: 6px;
-  background: var(--btn-delete);
-  color: var(--text-light);
-  transition: 0.2s;
+  cursor: pointer;
 }
 
 .delete-btn:hover {
-  opacity: 0.9;
+  background: #d32f2f;
 }
 
 /* Lista simple (opcional, debajo de las tarjetas) */
@@ -137,4 +103,186 @@ ul li button {
 
 ul li button:hover {
   opacity: 0.9;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  table-layout: fixed;
+}
+
+.tabla th {
+  background: #b7a3f0;
+  color: white;
+  padding: 12px;
+  text-align: center;
+}
+
+.tabla td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+/* Alineación de columnas */
+.tabla th:nth-child(1),
+.tabla td:nth-child(1) {
+  width: 80px;
+  text-align: center;
+}
+
+.tabla th:nth-child(2),
+.tabla td:nth-child(2) {
+  text-align: left;
+}
+
+.tabla th:nth-child(3),
+.tabla td:nth-child(3) {
+  width: 180px;
+  text-align: center;
+}
+
+.tabla tr:hover {
+  background: #f7f4ff;
+}
+
+
+
+.form-card {
+  background: var(--categories-card-bg);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--categories-card-border);
+  font-size: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save {
+  background: var(--categories-button);
+  border: none;
+  padding: 12px 20px;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+  font-weight: 600;
+}
+
+.btn-save:hover {
+  background: var(--categories-button-hover);
+  transform: translateY(-2px);
+}
+
+.btn-cancel {
+  background: #6c757d;
+  border: none;
+  padding: 12px 20px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+/* Botones dentro de la tabla */
+.tabla td button {
+  margin: 2px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+/* Agrupar botones */
+.tabla td:last-child {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+/*PAGINACION*/
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #555;
+}
+
+.pagination {
+  display: flex;
+  gap: 6px;
+}
+
+.page-btn {
+  border: none;
+  padding: 6px 12px;
+  background: #2c3e50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.page-btn:hover {
+  background: #34495e;
+}
+
+.page-btn.active {
+  background: #10b981;
+}
+
+.page-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 300px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-box p {
+  margin-bottom: 15px;
+  font-size: 16px;
 }

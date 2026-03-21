@@ -59,19 +59,34 @@
       </div>
     </div>
   </div>
+  <div v-if="showModal" class="modal-overlay">
+  <div class="modal-content">
+
+    <DetallePedido :pedidoId="pedidoSeleccionado" />
+
+    <button class="btn-view" @click="showModal = false">
+      Cerrar
+    </button>
+
+  </div>
+</div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
+
 import { getPedidos } from "../services/api";
 import "../assets/styles/pedidoslist.css";
+import { getDetalleByPedidoId } from "../services/api";
+import DetallePedido from "./DetallePedido.vue";
 
 const pedidos = ref([]);
-const router = useRouter();
+
 
 const currentPage = ref(1);
 const pedidosPerPage = 10;
+const showModal = ref(false);
+const pedidoSeleccionado = ref(null);
 
 const loadPedidos = async () => {
   pedidos.value = await getPedidos();
@@ -108,6 +123,7 @@ const goToPage = (page) => {
 };
 
 const verDetalle = (id) => {
-  router.push(`/dashboard/pedidos/${id}`);
+  pedidoSeleccionado.value = id;
+  showModal.value = true;
 };
 </script>
