@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const reporteController = require('../controllers/reporteController');
+const { verificarRol } = require('../middlewares/auth');
 
 router.get('/diario', reporteController.getResumenDiario);
 router.get('/top', reporteController.getTopProductos);

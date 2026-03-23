@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productoController = require('../controllers/productoController');
 const upload = require('../middlewares/upload')
+const { verificarRol } = require('../middlewares/auth');
 
 router.get('/', productoController.getProductos);
 router.get('/activos', productoController.getProductosActivos);

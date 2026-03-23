@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const detallepedidoController = require('../controllers/detallepedidoController');
+const { verificarRol } = require('../middlewares/auth');
 
 router.get('/', detallepedidoController.getDetallepedido);
 router.get('/:id_pedido', detallepedidoController.getDetalleByPedidoId);
