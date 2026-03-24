@@ -22,7 +22,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { registerUser } from '../services/api';
-import '../assets/styles/register.css'; // <- tu CSS
+import '../assets/styles/register.css'; 
 
 const username = ref('');
 const password = ref('');

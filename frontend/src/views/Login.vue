@@ -33,10 +33,12 @@ const login = async () => {
       username: username.value, 
       password: password.value 
     });
+    console.log(data);
 
     localStorage.setItem('token', data.token);
     localStorage.setItem('user_id', data.user.id);
     localStorage.setItem('username', data.user.username);
+     localStorage.setItem('rol_id', data.user.rol_id)
 
     alert('Login exitoso');
     router.push('/dashboard');

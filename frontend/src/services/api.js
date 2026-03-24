@@ -1,7 +1,18 @@
-// src/services/api.js
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL; // http://localhost:3000
+const API_URL = import.meta.env.VITE_API_URL;
+
+const api = axios.create({
+  baseURL: API_URL,
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // --- USUARIOS ---
 export const registerUser = async (userData) => {
@@ -50,7 +61,7 @@ export const getUsuariosInactivos = async () => {
 // --- ROLES ---
 export const getRoles = async () => {
   try {
-    const res = await axios.get(`${API_URL}/roles`);
+     const res = await api.get(`/roles`);
     return res.data;
   } catch (err) {
     console.error("Error obteniendo roles:", err.response?.data || err);
@@ -61,7 +72,7 @@ export const getRoles = async () => {
 // --- PRODUCTOS ---
 export const getProductos = async () => {
   try {
-    const res = await axios.get(`${API_URL}/productos`);
+    const res = await api.get(`/productos`);
     return res.data;
   } catch (err) {
     console.error("Error obteniendo productos:", err.response?.data || err);
@@ -72,7 +83,7 @@ export const getProductos = async () => {
 //  PRODUCTOS ACTIVOS
 export const getProductosActivos = async () => {
   try {
-    const res = await axios.get(`${API_URL}/productos/activos`);
+    const res = await api.get(`/productos/activos`)
     return res.data;
   } catch (err) {
     console.error("Error obteniendo productos activos:", err.response?.data || err);
@@ -83,7 +94,7 @@ export const getProductosActivos = async () => {
 //  PRODUCTOS NO ACTIVOS
 export const getProductosNoActivos = async () => {
   try {
-    const res = await axios.get(`${API_URL}/productos/noactivos`);
+    const res = await api.get(`/productos/noactivos`)
     return res.data;
   } catch (err) {
     console.error("Error obteniendo productos no activos:", err.response?.data || err);
@@ -94,9 +105,7 @@ export const getProductosNoActivos = async () => {
 //  CAMBIAR ESTADO
 export const cambiarEstadoProducto = async (id, activo) => {
   try {
-    const res = await axios.patch(`${API_URL}/productos/${id}/estado`, {
-      activo
-    });
+    const res = await api.patch(`/productos/${id}/estado`, { activo });
     return res.data;
   } catch (err) {
     console.error("Error cambiando estado:", err.response?.data || err);
@@ -106,11 +115,9 @@ export const cambiarEstadoProducto = async (id, activo) => {
 
 export const addProducto = async (producto) => {
   try {
-    const res = await axios.post(`${API_URL}/productos`, producto, {
-      headers: {
-        "Content-Type": "multipart/form-data"
-      }
-    });
+    const res = await api.post(`/productos`, producto, {
+  headers: { "Content-Type": "multipart/form-data" }
+});
     return res.data;
   } catch (err) {
     console.error("Error agregando producto:", err.response?.data || err);
@@ -120,7 +127,7 @@ export const addProducto = async (producto) => {
 
 export const deleteProducto = async (id) => {
   try {
-    const res = await axios.delete(`${API_URL}/productos/${id}`);
+    const res = await api.delete(`/productos/${id}`);
     return res.data;
   } catch (err) {
     console.error('Error eliminando producto:', err.response?.data || err);
@@ -129,18 +136,16 @@ export const deleteProducto = async (id) => {
 };
 
 export const updateProducto = async (id, data) => {
-  const res = await axios.put(`${API_URL}/productos/${id}`, data, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  });
+  const res = await api.put(`/productos/${id}`, data, {
+  headers: { "Content-Type": "multipart/form-data" }
+});
   return res.data;
 };
 
 // --- CATEGORÍAS ---
 export const getCategorias = async () => {
   try {
-    const res = await axios.get(`${API_URL}/categorias`);
+    const res = await api.get(`/categorias`);
     return res.data;
   } catch (err) {
     console.error("Error obteniendo categorías:", err.response?.data || err);
@@ -150,7 +155,7 @@ export const getCategorias = async () => {
 
 export const addCategoria = async (categoria) => {
   try {
-    const res = await axios.post(`${API_URL}/categorias`, categoria);
+   const res = await api.post(`/categorias`, categoria);
     return res.data;
   } catch (err) {
     console.error("Error agregando categoría:", err.response?.data || err);
@@ -160,7 +165,7 @@ export const addCategoria = async (categoria) => {
 
 export const updateCategoria = async (id, categoria) => {
   try {
-    const res = await axios.put(`${API_URL}/categorias/${id}`, categoria);
+   const res = await api.put(`/categorias/${id}`, categoria);
     return res.data;
   } catch (err) {
     console.error("Error actualizando categoría:", err.response?.data || err);
@@ -171,7 +176,7 @@ export const updateCategoria = async (id, categoria) => {
 // Obtener productos por categoría
 export const getProductosByCategoria = async (id) => {
   try {
-    const res = await axios.get(`${API_URL}/categorias/productos/${id}`)
+   const res = await api.get(`/categorias/productos/${id}`)
     return res.data
   } catch (err) {
     console.error("Error filtrando productos:", err.response?.data || err)
@@ -250,4 +255,15 @@ export const getReporteFacturacion = async (inicio, fin) => {
 export const getFacturaDetalle = async (id) => {
   const res = await axios.get(`${API_URL}/reportes/factura/${id}`);
   return res.data;
+};
+
+// --- CONFIGURACION LOCAL ---
+export const getConfigLocal = async () => {
+  try {
+    const res = await api.get(`/configlocal`); 
+    return res.data;
+  } catch (err) {
+    console.error("Error obteniendo configuración local:", err.response?.data || err);
+    throw err;
+  }
 };

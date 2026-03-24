@@ -2,12 +2,10 @@
   <div class="reportes-container">
     <h1>📊 Reportes</h1>
 
-    <!-- BOTÓN RESUMEN -->
     <button class="reportes-button" @click="cargarResumen">
       Cargar resumen diario
     </button>
 
-    <!-- RESUMEN -->
     <div v-if="resumen" class="reportes-cards">
       <div class="reportes-card">
         <h3>Ventas</h3>
@@ -20,7 +18,6 @@
       </div>
     </div>
 
-    <!-- TOP PRODUCTOS -->
     <div class="reportes-section">
       <h2>🥇 Top productos</h2>
       <button class="reportes-button" @click="cargarTop">Cargar top</button>
@@ -37,7 +34,6 @@
       </div>
     </div>
 
-    <!-- FILTRO FECHAS -->
     <div class="reportes-section">
       <h2>📅 Ventas por rango</h2>
 
@@ -46,7 +42,6 @@
       <button class="reportes-button" @click="cargarRango">Buscar</button>
     </div>
 
-    <!-- TABLA DE VENTAS POR RANGO -->
     <table v-if="ventas.length" class="reportes-table">
       <thead>
         <tr>
@@ -72,7 +67,6 @@
       No hay ventas en ese rango
     </p>
 
-    <!-- ===== NUEVA SECCIÓN: FACTURACIÓN ===== -->
     <div class="reportes-section">
       <h2>💰 Reporte de Facturación</h2>
 
@@ -120,7 +114,6 @@
       </p>
     </div>
 
-    <!-- ===== MODAL DETALLE FACTURA ===== -->
     <div v-if="facturaDetalle" class="modal">
       <div class="modal-content">
         <h3>Factura #{{ facturaDetalle.nro_factura }}</h3>
@@ -247,14 +240,14 @@ export default {
     },
 
     async cargarRangoDiario() {
-     const hoy = new Date().toLocaleDateString('en-CA');
+      const hoy = new Date().toLocaleDateString("en-CA");
       this.inicio = hoy;
       this.fin = hoy;
       this.ventas = await getVentasPorRango(this.inicio, this.fin);
     },
 
     async cargarFacturasDiario() {
-const hoy = new Date().toLocaleDateString('en-CA');
+      const hoy = new Date().toLocaleDateString("en-CA");
       this.inicioFact = hoy;
       this.finFact = hoy;
       this.facturas = await getReporteFacturacion(

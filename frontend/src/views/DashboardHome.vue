@@ -3,7 +3,7 @@
 
     <h2 class="home-title">Inicio del Panel</h2>
 
-    <!-- CARDS -->
+  
     <div class="cards">
 
       <div class="card">
@@ -26,7 +26,6 @@
 
     </div>
 
-    <!-- IMAGEN -->
     <div class="banner-container">
 
       <img 

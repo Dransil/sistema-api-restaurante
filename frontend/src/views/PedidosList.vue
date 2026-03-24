@@ -26,7 +26,6 @@
         </tbody>
       </table>
 
-      <!-- PAGINACIÓN -->
       <div class="pagination-container">
         <div class="pagination-info">
           Mostrando {{ startItem }}-{{ endItem }} de {{ pedidos.length }}
@@ -60,16 +59,12 @@
     </div>
   </div>
   <div v-if="showModal" class="modal-overlay">
-  <div class="modal-content">
+    <div class="modal-content">
+      <DetallePedido :pedidoId="pedidoSeleccionado" />
 
-    <DetallePedido :pedidoId="pedidoSeleccionado" />
-
-    <button class="btn-view" @click="showModal = false">
-      Cerrar
-    </button>
-
+      <button class="btn-view" @click="showModal = false">Cerrar</button>
+    </div>
   </div>
-</div>
 </template>
 
 <script setup>
@@ -81,7 +76,6 @@ import { getDetalleByPedidoId } from "../services/api";
 import DetallePedido from "./DetallePedido.vue";
 
 const pedidos = ref([]);
-
 
 const currentPage = ref(1);
 const pedidosPerPage = 10;
