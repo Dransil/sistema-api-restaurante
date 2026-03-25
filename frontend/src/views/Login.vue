@@ -29,10 +29,20 @@ const router = useRouter();
 
 const login = async () => {
   try {
-    const data = await loginUser({ username: username.value, password: password.value });
+    const data = await loginUser({ 
+      username: username.value, 
+      password: password.value 
+    });
+    console.log(data);
+
     localStorage.setItem('token', data.token);
+    localStorage.setItem('user_id', data.user.id);
+    localStorage.setItem('username', data.user.username);
+     localStorage.setItem('rol_id', data.user.rol_id)
+
     alert('Login exitoso');
     router.push('/dashboard');
+
   } catch (err) {
     console.error('Error al iniciar sesión:', err);
     alert(err.response?.data?.error || 'Usuario o contraseña incorrectos');

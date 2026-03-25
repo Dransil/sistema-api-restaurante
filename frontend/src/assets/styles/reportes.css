@@ -1,0 +1,207 @@
+:root {
+  --reportes-bg: #f3ecff;
+  --reportes-header: #7b5fc9;
+  --reportes-card: #ffffff;
+  --reportes-button: #7b5fc9;
+  --reportes-button-hover: #6a4fc0;
+  --reportes-text: #333;
+}
+
+/* contenedor principal */
+.reportes-container {
+  padding: 30px;
+  background: var(--reportes-bg);
+  min-height: 100vh;
+  
+}
+
+/* título */
+.reportes-container h1 {
+  color: var(--reportes-header);
+  margin-bottom: 20px;
+}
+
+/* botón */
+.reportes-button {
+  background: var(--reportes-button);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.reportes-button:hover {
+  background: var(--reportes-button-hover);
+  transform: translateY(-2px);
+}
+
+/* contenedor de cards */
+.reportes-cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* card */
+.reportes-card {
+  background: var(--reportes-card);
+  border-radius: 12px;
+  padding: 20px;
+  width: 220px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+/* título card */
+.reportes-card h3 {
+  color: var(--reportes-text);
+  margin-bottom: 10px;
+}
+
+/* número */
+.reportes-number {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--reportes-header);
+}
+
+/* mensaje vacío */
+.reportes-empty {
+  margin-top: 20px;
+  color: #888;
+  text-align: center;
+}
+.reportes-card {
+  transition: all 0.3s ease;
+}
+
+.reportes-card:hover {
+  transform: translateY(-5px);
+}
+/* secciones */
+.reportes-section {
+  margin-top: 40px;
+}
+
+/* tabla */
+.reportes-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.reportes-table th {
+  background: var(--reportes-header);
+  color: white;
+  padding: 10px;
+}
+
+.reportes-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.reportes-table tr:hover {
+  background: #f7f4ff;
+}
+.reportes-section input {
+  padding: 8px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.reportes-section ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.reportes-section li {
+  margin-bottom: 6px;
+  color: var(--reportes-text);
+}
+.reportes-number {
+  text-align: center;
+}
+
+
+.reportes-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.reportes-section .reportes-card {
+  width: 100%;
+}
+
+.reportes-table th,
+.reportes-table td {
+  text-align: center;
+}
+
+.reportes-table tr {
+  transition: background 0.2s;
+}
+
+.reportes-section input:focus {
+  outline: none;
+  border: 1px solid var(--reportes-header);
+  box-shadow: 0 0 5px rgba(123,95,201,0.3);
+}
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 700px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* MODAL GENÉRICO */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.modal-content p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.modal-content button {
+  padding: 8px 15px;
+}

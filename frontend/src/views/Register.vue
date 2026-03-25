@@ -22,7 +22,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { registerUser } from '../services/api';
-import '../assets/styles/register.css'; // <- tu CSS
+import '../assets/styles/register.css'; 
 
 const username = ref('');
 const password = ref('');
@@ -33,7 +33,6 @@ const register = async () => {
     await registerUser({
       username: username.value,
       password: password.value,
-    
     });
     alert('Usuario registrado correctamente');
     router.push('/login');
