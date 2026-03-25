@@ -3,9 +3,9 @@ const router = express.Router();
 const categoriasController = require('../controllers/categoriasController');
 const { verificarRol } = require('../middlewares/auth');
 // Rutas con middleware de autenticación
-router.get('/', verificarRol([1]),categoriasController.getCategorias);
-router.get('/:id_categoria', verificarRol([1]),categoriasController.getCategoriaById);
-router.get('/productos/:id_categoria', verificarRol([1]),categoriasController.getProductosByCategoria);
+router.get('/', verificarRol([1,2]),categoriasController.getCategorias);
+router.get('/:id_categoria', verificarRol([1,2]),categoriasController.getCategoriaById);
+router.get('/productos/:id_categoria', verificarRol([1,2]),categoriasController.getProductosByCategoria);
 router.post('/', verificarRol([1]),categoriasController.addCategoria);
 router.put('/:id', verificarRol([1]),categoriasController.updateCategoria);
 
