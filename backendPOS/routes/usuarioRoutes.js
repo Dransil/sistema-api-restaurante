@@ -11,4 +11,5 @@ router.post('/create', usuarioController.createUsuario);
 router.post('/login', usuarioController.login);
 router.put('/:id', usuarioController.updateUsuario);
 router.patch('/:id/estado', usuarioController.cambiarEstadoUsuario);
+
 module.exports = router;
