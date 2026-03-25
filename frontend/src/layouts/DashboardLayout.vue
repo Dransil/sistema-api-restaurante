@@ -2,6 +2,7 @@
   <div class="dashboard">
     <aside :class="['sidebar', { closed: isClosed }]">
       <h2>Mi Panel</h2>
+      <button class="menu-btn" @click="toggleSidebar">☰</button>
 
       <router-link to="/dashboard">
         <i class="fas fa-home"></i> <span>Inicio</span>
@@ -12,9 +13,9 @@
       </router-link>
 
 
-<router-link v-if="rol == 1" to="/dashboard/roles">
-  <i class="fas fa-user-shield"></i> <span>Roles</span>
-</router-link>
+      <router-link v-if="rol == 1" to="/dashboard/roles">
+        <i class="fas fa-user-shield"></i> <span>Roles</span>
+      </router-link>
 
       <router-link to="/dashboard/categories">
         <i class="fas fa-list"></i> <span>Categorías</span>
@@ -39,21 +40,16 @@
         <i class="fas fa-chart-bar"></i> <span>Reportes</span>
       </router-link>
 
-<router-link v-if="rol == 1" to="/dashboard/configlocal">
-  <i class="fas fa-cog"></i> <span>Configuración Local</span>
-</router-link>
+      <router-link v-if="rol == 1" to="/dashboard/configlocal">
+        <i class="fas fa-cog"></i> <span>Configuración Local</span>
+      </router-link>
 
+      <button @click="logout">Cerrar sesión</button>
 
     </aside>
 
     <div class="main">
-      <header class="header">
-        <!-- botón drawer -->
-        <button class="menu-btn" @click="toggleSidebar">☰</button>
 
-        <span>Bienvenida</span>
-        <button @click="logout">Cerrar sesión</button>
-      </header>
 
       <section class="content">
         <router-view />
