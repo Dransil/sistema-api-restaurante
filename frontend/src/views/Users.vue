@@ -103,6 +103,14 @@
       </button>
     </form>
   </div>
+
+  <div v-if="showModal" class="modal-overlay" @click="closeModal">
+  <div class="modal-content" @click.stop>
+    <p>{{ modalMessage }}</p>
+    <button @click="closeModal">Cerrar</button>
+  </div>
+</div>
+
 </template>
 
 <script setup>
@@ -116,6 +124,20 @@ import {
   getUsuariosInactivos,
 } from "../services/api";
 import { useRouter } from "vue-router";
+import { getUsuarios } from "../services/api";
+
+const normalizeUsers = (data) => {
+  if (Array.isArray(data)) return data;
+
+  if (Array.isArray(data?.data)) return data.data;
+
+  if (Array.isArray(data?.usuarios)) return data.usuarios;
+
+  if (Array.isArray(data?.rows)) return data.rows;
+
+  return [];
+};
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 const router = useRouter();
@@ -127,47 +149,68 @@ const username = ref("");
 const password = ref("");
 const rol = ref("");
 const activo = ref(true);
-
+const showModal = ref(false);
+const modalMessage = ref("");
 const editingId = ref(null);
 const goToCreate = () => {
   router.push("/dashboard/users/create");
 };
 const loadUsers = async () => {
-  const res = await fetch(`${API_URL}/usuarios`);
-  users.value = await res.json();
-  currentPage.value = 1;
+  try {
+    const data = await getUsuarios();
+    users.value = normalizeUsers(data);
+    currentPage.value = 1;
+  } catch (error) {
+    openModal("Error cargando usuarios ");
+  }
 };
 onMounted(() => {
   loadUsers();
   loadRoles();
 });
+const openModal = (message) => {
+  modalMessage.value = message;
+  showModal.value = true;
+};
 
+const closeModal = () => {
+  showModal.value = false;
+  modalMessage.value = "";
+};
 const startItem = computed(() => {
   return (currentPage.value - 1) * usersPerPage + 1;
 });
 
 const endItem = computed(() => {
+  if (!Array.isArray(users.value)) return 0;
+
   const end = currentPage.value * usersPerPage;
   return end > users.value.length ? users.value.length : end;
 });
-
 const paginatedUsers = computed(() => {
+  if (!Array.isArray(users.value)) return [];
+
   const start = (currentPage.value - 1) * usersPerPage;
   const end = start + usersPerPage;
   return users.value.slice(start, end);
 });
-
 const totalPages = computed(() => {
+  if (!Array.isArray(users.value)) return 0;
+
   return Math.ceil(users.value.length / usersPerPage);
 });
 
 const loadActivos = async () => {
-  users.value = await getUsuariosActivos();
+  const data = await getUsuariosActivos();
+
+  users.value = normalizeUsers(data);
   currentPage.value = 1;
 };
 
 const loadInactivos = async () => {
-  users.value = await getUsuariosInactivos();
+  const data = await getUsuariosInactivos();
+
+  users.value = normalizeUsers(data);
   currentPage.value = 1;
 };
 
@@ -192,30 +235,47 @@ const cancelEdit = () => {
 };
 
 const updateUser = async () => {
-  await updateUsuario(editingId.value, {
-    username: username.value,
-    password: password.value,
-    rol_id: rol.value,
-    activo: activo.value,
-  });
+  try {
+    await updateUsuario(editingId.value, {
+      username: username.value,
+      password: password.value,
+      rol_id: rol.value,
+      activo: activo.value,
+    });
 
-  cancelEdit();
-  await loadUsers();
+    openModal("Usuario actualizado correctamente ");
+
+    cancelEdit();
+    await loadUsers();
+  } catch (error) {
+    openModal("Error al actualizar usuario ");
+  }
 };
 
 const toggleUser = async (user) => {
   const confirmacion = confirm(
     user.activo
       ? "¿Deseas desactivar este usuario?"
-      : "¿Deseas activar nuevamente este usuario?",
+      : "¿Deseas activar este usuario?"
   );
 
   if (!confirmacion) return;
 
-  await cambiarEstadoUsuario(user.id, !user.activo);
+  try {
+    await cambiarEstadoUsuario(user.id, !user.activo);
 
-  await loadUsers();
+    openModal(
+      user.activo
+        ? "Usuario desactivado"
+        : "Usuario activado"
+    );
+
+    await loadUsers();
+  } catch (error) {
+    openModal("Error al cambiar estado");
+  }
 };
+  
 const loadRoles = async () => {
   roles.value = await getRoles();
 };

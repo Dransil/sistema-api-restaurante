@@ -2,7 +2,7 @@
   <div class="categories-container">
     <h2 class="title">Categorías</h2>
 
-    <div class="form-card">
+    <div class="form-card" v-if="esAdmin">
       <div class="form-group">
         <label>Nombre Categoría:</label>
         <input v-model="newCategory" placeholder="Nueva Categoria" />
@@ -36,13 +36,24 @@
           </td>
 
           <td>
-            <button v-if="editandoId !== cat.id" @click="empezarEditar(cat)">
+            <button
+              v-if="editandoId !== cat.id && esAdmin"
+              @click="empezarEditar(cat)"
+            >
               Editar
             </button>
 
-            <button v-else @click="guardarEdicion(cat)">Guardar</button>
+            <button
+              v-if="editandoId === cat.id && esAdmin"
+              @click="guardarEdicion(cat)"
+            >
+              Guardar
+            </button>
 
-            <button v-if="editandoId === cat.id" @click="cancelarEdicion">
+            <button
+              v-if="editandoId === cat.id && esAdmin"
+              @click="cancelarEdicion"
+            >
               Cancelar
             </button>
           </td>
@@ -92,6 +103,8 @@ import { ref, onMounted, computed } from "vue";
 import { getCategorias, addCategoria, updateCategoria } from "../services/api";
 import "../assets/styles/categorias.css";
 
+const rol = Number(localStorage.getItem("rol_id"));
+const esAdmin = rol === 1;
 const newCategory = ref("");
 const image = ref(null);
 const categories = ref([]);
@@ -146,6 +159,7 @@ const handleFileChange = (e) => {
 };
 
 const addCategory = async () => {
+if (!esAdmin) return;
   if (!newCategory.value) {
     abrirModal("Ingresa el nombre de la categoría");
     return;
@@ -167,6 +181,7 @@ const addCategory = async () => {
 };
 
 const empezarEditar = (cat) => {
+if (!esAdmin) return;
   editandoId.value = cat.id;
   nombreEditado.value = cat.nombre;
 };
@@ -177,6 +192,8 @@ const cancelarEdicion = () => {
 };
 
 const guardarEdicion = async (cat) => {
+
+if (!esAdmin) return;
   if (!nombreEditado.value.trim()) {
     abrirModal("El nombre no puede estar vacío");
     return;

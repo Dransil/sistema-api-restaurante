@@ -2,7 +2,7 @@
   <div class="products-container">
     <h1 class="title">Productos</h1>
 
-    <form class="form" @submit.prevent="addProduct">
+   <form class="form" @submit.prevent="addProduct" v-if="esAdmin">
       <input v-model="name" placeholder="Nombre del producto" />
       <input v-model="price" type="number" placeholder="Precio" />
       <input v-model="stock" type="number" placeholder="Stock" />
@@ -61,8 +61,8 @@
    <p class="category">
   {{ categories.find(cat => cat.id === prod.categoria_id)?.nombre || "Sin categoría" }}
 </p>
-    <button @click="editProduct(prod)">Editar</button>
-    <button @click="toggleEstado(prod)">
+   <button v-if="esAdmin" @click="editProduct(prod)">Editar</button>
+    <button v-if="esAdmin" @click="toggleEstado(prod)">
   {{ prod.activo ? "Desactivar" : "Activar" }}
 </button>
   </div>
@@ -119,7 +119,8 @@
 import "../assets/styles/products.css";
 import { ref, onMounted, computed } from "vue";
 import {getProductos,addProducto,updateProducto,getCategorias,getProductosActivos,getProductosNoActivos,cambiarEstadoProducto} from "../services/api";
-
+const rol = Number(localStorage.getItem("rol_id"));
+const esAdmin = rol === 1;
 const name = ref("");
 const price = ref("");
 const stock = ref("");

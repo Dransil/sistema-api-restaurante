@@ -7,9 +7,9 @@
         <i class="fas fa-home"></i> <span>Inicio</span>
       </router-link>
 
-      <router-link v-if="rol == 1" to="/dashboard/users">
-        <i class="fas fa-users"></i> <span>Usuarios</span>
-      </router-link>
+     <router-link v-if="rol == 1" to="/dashboard/users">
+  <i class="fas fa-users"></i> <span>Usuarios</span>
+</router-link>
 
 
 <router-link v-if="rol == 1" to="/dashboard/roles">
@@ -35,14 +35,13 @@
         <i class="fas fa-user"></i> <span>Clientes</span>
       </router-link>
 
-      <router-link to="/dashboard/reportes">
-        <i class="fas fa-chart-bar"></i> <span>Reportes</span>
-      </router-link>
-
+    <router-link v-if="rol == 1" to="/dashboard/reportes">
+  <i class="fas fa-chart-bar"></i> <span>Reportes</span>
+</router-link>
+      
 <router-link v-if="rol == 1" to="/dashboard/configlocal">
   <i class="fas fa-cog"></i> <span>Configuración Local</span>
 </router-link>
-
 
     </aside>
 
@@ -69,7 +68,7 @@ export default {
   data() {
     return {
       isClosed: false,
-      rol: localStorage.getItem("rol_id"),
+      rol: Number(localStorage.getItem("rol_id")),
     };
   },
   methods: {

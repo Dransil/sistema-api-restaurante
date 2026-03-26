@@ -27,18 +27,18 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: "", component: DashboardHome },
-      { path: "users", component: Users },
-      { path: "users/:id/edit", component: EditUser },
-      { path: "users/create", component: CreateUser },
-      { path: "reportes", component: Reportes },
+      { path: "users", component: Users, meta: { role: 1 } },
+      { path: "users/:id/edit", component: EditUser, meta: { role: 1 } },
+      { path: "users/create", component: CreateUser, meta: { role: 1 } },
+      { path: "reportes", component: Reportes, meta: { role: 1 } },
       { path: "categories", component: Categories },
       { path: "products", component: Products },
       { path: "clientes", component: Clientes },
       { path: "pedidos", component: Pedidos },
       { path: "pedidos-list", component: PedidosList },
       { path: "pedidos/:id", component: DetallePedido },
-      { path: "roles", component: Roles },
-      { path: "configlocal", component: ConfigLocal },
+      { path: "roles", component: Roles, meta: { role: 1 } },
+      { path: "configlocal", component: ConfigLocal, meta: { role: 1 } },
     ],
   },
 ];
@@ -50,11 +50,16 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
+  const rol = Number(localStorage.getItem("rol_id"));
 
   if (to.meta.requiresAuth && !token) {
-    next("/login");
-  } else {
-    next();
+    return next("/login");
   }
+
+  if (to.meta.role && to.meta.role !== rol) {
+    return next("/dashboard");
+  }
+
+  next();
 });
 export default router;
