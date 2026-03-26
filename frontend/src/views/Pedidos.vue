@@ -1,9 +1,7 @@
 <template>
   <div class="pedidos-container">
     <div class="pedidos-main">
-      <!-- LADO IZQUIERDO: DATOS DEL CLIENTE Y PRODUCTOS -->
       <div class="pedidos-left">
-        <!-- DATOS DEL CLIENTE Y BUSCADOR -->
         <div class="pedidos-card">
           <h3>Datos del Cliente</h3>
           <div class="cliente-box">
@@ -21,9 +19,9 @@
             >
               {{ cat.nombre }}
             </button>
-
-          <button @click="mostrarTodos">Todos</button>
+            <button @click="mostrarTodos">Todos</button>
           </div>
+
           <input
             v-model="buscar"
             placeholder="Buscar producto..."
@@ -31,12 +29,13 @@
           />
         </div>
 
-        <!-- PRODUCTOS -->
         <div class="productos">
           <div
             v-for="producto in productosFiltrados"
             :key="producto.id"
             class="product-card"
+            @click="agregarProducto(producto)"
+            style="cursor: pointer"
           >
             <img
               v-if="producto.imagen_url"
@@ -44,14 +43,38 @@
               class="product-img"
             />
             <span>{{ producto.nombre }} - {{ producto.precio }}</span>
-            <button class="btn btn-add" @click="agregarProducto(producto)">
-              Agregar
+          </div>
+        </div>
+
+        <div class="pagination-container">
+          <div class="pagination-info">
+            Mostrando {{ startItem }}-{{ endItem }} de
+            {{
+              productos.filter((p) =>
+                p.nombre.toLowerCase().includes(buscar.toLowerCase()),
+              ).length
+            }}
+          </div>
+
+          <div class="pagination">
+            <button @click="prevPage" :disabled="currentPage === 1">‹</button>
+
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              :class="{ active: page === currentPage }"
+              @click="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+
+            <button @click="nextPage" :disabled="currentPage === totalPages">
+              ›
             </button>
           </div>
         </div>
       </div>
 
-      <!-- LADO DERECHO: CARRITO -->
       <div class="pedidos-right carrito">
         <h3>Carrito</h3>
         <table class="detalle-table">
@@ -93,19 +116,19 @@
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- MODAL -->
-  <div v-if="showModal" class="modal-overlay">
-    <div class="modal-box">
-      <h3>{{ modalTitle }}</h3>
-      <p>{{ modalMessage }}</p>
-      <button class="btn btn-finish" @click="cerrarModal">OK</button>
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-box">
+        <h3>{{ modalTitle }}</h3>
+        <p>{{ modalMessage }}</p>
+        <button class="btn btn-finish" @click="cerrarModal">OK</button>
+      </div>
     </div>
   </div>
 </template>
+
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import {
   getProductos,
   registrarPedido,
@@ -132,14 +155,19 @@ const modalTitle = ref("");
 const modalMessage = ref("");
 const usuario_id = Number(localStorage.getItem("user_id"));
 
+const currentPage = ref(1);
+const productosPorPagina = 10;
+
+watch(buscar, () => {
+  currentPage.value = 1;
+});
+
 const aumentarCantidad = (item) => {
   const producto = productos.value.find((p) => p.id === item.producto_id);
-
   if (item.cantidad >= producto.stock) {
     abrirModal("Stock", "No hay más unidades disponibles");
     return;
   }
-
   item.cantidad++;
   total.value += item.precio_unitario;
 };
@@ -147,20 +175,21 @@ const aumentarCantidad = (item) => {
 const disminuirCantidad = (item) => {
   item.cantidad--;
   total.value -= item.precio_unitario;
-
   if (item.cantidad <= 0) {
     carrito.value = carrito.value.filter(
       (p) => p.producto_id !== item.producto_id,
     );
   }
 };
+
 const mostrarTodos = async () => {
-  categoriaSeleccionada.value = null
-  await loadProductos()
-}
+  categoriaSeleccionada.value = null;
+  currentPage.value = 1;
+  await loadProductos();
+};
+
 const loadProductos = async () => {
   productos.value = await getProductos();
-  console.log(productos.value);
 };
 
 const loadCategorias = async () => {
@@ -174,33 +203,62 @@ onMounted(() => {
 
 const filtrarPorCategoria = async (id) => {
   categoriaSeleccionada.value = id;
-
+  currentPage.value = 1;
   try {
     const data = await getProductosByCategoria(id);
-
-  
-    productos.value = data.slice(0, 10);
+    productos.value = data;
   } catch (error) {
     productos.value = [];
-
     abrirModal("Info", "No hay productos en esta categoría");
   }
 };
 
 const productosFiltrados = computed(() => {
-  return productos.value.filter((p) =>
+  const filtrados = productos.value.filter((p) =>
     p.nombre.toLowerCase().includes(buscar.value.toLowerCase()),
   );
+
+  const start = (currentPage.value - 1) * productosPorPagina;
+  const end = start + productosPorPagina;
+
+  return filtrados.slice(start, end);
 });
+
+const totalPages = computed(() => {
+  const filtradosLength = productos.value.filter((p) =>
+    p.nombre.toLowerCase().includes(buscar.value.toLowerCase()),
+  ).length;
+  return Math.max(1, Math.ceil(filtradosLength / productosPorPagina));
+});
+
+const startItem = computed(
+  () => (currentPage.value - 1) * productosPorPagina + 1,
+);
+const endItem = computed(() => {
+  const end = currentPage.value * productosPorPagina;
+  const filtradosLength = productos.value.filter((p) =>
+    p.nombre.toLowerCase().includes(buscar.value.toLowerCase()),
+  ).length;
+  return end > filtradosLength ? filtradosLength : end;
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++;
+};
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--;
+};
+const goToPage = (page) => {
+  currentPage.value = page;
+};
+
 const buscarCliente = async () => {
   if (!ci.value) return;
-
   try {
     const cliente = await getClienteByCI(ci.value);
-
     razon_social.value = cliente.razon_social;
     cliente_id.value = cliente.id;
-  } catch (error) {
+  } catch {
     razon_social.value = "";
     cliente_id.value = null;
   }
@@ -211,10 +269,7 @@ const abrirModal = (titulo, mensaje) => {
   modalMessage.value = mensaje;
   showModal.value = true;
 };
-
-const cerrarModal = () => {
-  showModal.value = false;
-};
+const cerrarModal = () => (showModal.value = false);
 
 const agregarProducto = (producto) => {
   if (producto.stock <= 0) {
@@ -225,13 +280,11 @@ const agregarProducto = (producto) => {
   const existente = carrito.value.find(
     (item) => item.producto_id === producto.id,
   );
-
   if (existente) {
     if (existente.cantidad >= producto.stock) {
       abrirModal("Stock", "No hay más unidades disponibles");
       return;
     }
-
     existente.cantidad++;
   } else {
     carrito.value.push({
@@ -241,13 +294,11 @@ const agregarProducto = (producto) => {
       precio_unitario: Number(producto.precio),
     });
   }
-
   total.value += Number(producto.precio);
 };
 
 const eliminarProducto = (item) => {
   total.value -= item.precio_unitario * item.cantidad;
-
   carrito.value = carrito.value.filter(
     (p) => p.producto_id !== item.producto_id,
   );
@@ -258,42 +309,30 @@ const calcularCambio = () => {
 };
 
 const finalizarVenta = async () => {
-  if (carrito.value.length === 0) {
-    abrirModal("Error", "El carrito está vacío");
-    return;
-  }
+  if (carrito.value.length === 0)
+    return abrirModal("Error", "El carrito está vacío");
+  if (cobrado.value <= 0)
+    return abrirModal("Error", "Ingrese el monto cobrado");
+  if (cobrado.value < total.value)
+    return abrirModal("Error", "El monto es insuficiente");
 
-  if (cobrado.value <= 0) {
-    abrirModal("Error", "Ingrese el monto cobrado");
-    return;
-  }
-
-  if (cobrado.value < total.value) {
-    abrirModal("Error", "El monto es insuficiente");
-    return;
-  }
   try {
-    // Si el cliente no existe lo crea
     if (!cliente_id.value && razon_social.value) {
       const nuevoCliente = await addCliente({
         ci: ci.value,
         razon_social: razon_social.value,
       });
-
       cliente_id.value = nuevoCliente.id;
     }
 
     const pedido = {
-      usuario_id: usuario_id,
+      usuario_id,
       cliente_id: cliente_id.value,
       total: Number(total.value),
       detalles: carrito.value,
     };
 
-    console.log("Pedido enviado:", pedido);
-
     await registrarPedido(pedido);
-
     abrirModal("Éxito", "Venta registrada correctamente");
 
     carrito.value = [];
@@ -304,8 +343,6 @@ const finalizarVenta = async () => {
     cobrado.value = 0;
     cambio.value = 0;
   } catch (error) {
-    console.error("ERROR BACKEND:", error.response?.data);
-
     const mensaje = error.response?.data?.error || "Error registrando venta";
     abrirModal("Error", mensaje);
   }

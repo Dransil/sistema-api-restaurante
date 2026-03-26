@@ -105,12 +105,20 @@
   </div>
 
   <div v-if="showModal" class="modal-overlay" @click="closeModal">
-  <div class="modal-content" @click.stop>
-    <p>{{ modalMessage }}</p>
-    <button @click="closeModal">Cerrar</button>
+    <div class="modal-content" @click.stop>
+      <p>{{ modalMessage }}</p>
+      <button @click="closeModal">Cerrar</button>
+    </div>
   </div>
-</div>
-
+  <div v-if="showConfirmModal" class="modal-overlay" @click="cancelToggle">
+    <div class="modal-content" @click.stop>
+      <p>{{ confirmMessage }}</p>
+      <div class="modal-buttons">
+        <button class="btn btn-confirm" @click="confirmToggle">Aceptar</button>
+        <button class="btn btn-cancel" @click="cancelToggle">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -138,7 +146,6 @@ const normalizeUsers = (data) => {
   return [];
 };
 
-
 const API_URL = import.meta.env.VITE_API_URL;
 const router = useRouter();
 const users = ref([]);
@@ -151,6 +158,11 @@ const rol = ref("");
 const activo = ref(true);
 const showModal = ref(false);
 const modalMessage = ref("");
+
+const userToToggle = ref(null);
+const confirmMessage = ref("");
+const showConfirmModal = ref(false);
+
 const editingId = ref(null);
 const goToCreate = () => {
   router.push("/dashboard/users/create");
@@ -252,30 +264,34 @@ const updateUser = async () => {
   }
 };
 
-const toggleUser = async (user) => {
-  const confirmacion = confirm(
-    user.activo
-      ? "¿Deseas desactivar este usuario?"
-      : "¿Deseas activar este usuario?"
-  );
+const toggleUser = (user) => {
+  userToToggle.value = user;
+  confirmMessage.value = user.activo
+    ? "¿Deseas desactivar este usuario?"
+    : "¿Deseas activar este usuario?";
+  showConfirmModal.value = true;
+};
 
-  if (!confirmacion) return;
-
+const confirmToggle = async () => {
   try {
+    const user = userToToggle.value;
     await cambiarEstadoUsuario(user.id, !user.activo);
 
-    openModal(
-      user.activo
-        ? "Usuario desactivado"
-        : "Usuario activado"
-    );
-
+    openModal(user.activo ? "Usuario desactivado" : "Usuario activado");
     await loadUsers();
   } catch (error) {
     openModal("Error al cambiar estado");
+  } finally {
+    showConfirmModal.value = false;
+    userToToggle.value = null;
   }
 };
-  
+
+const cancelToggle = () => {
+  showConfirmModal.value = false;
+  userToToggle.value = null;
+};
+
 const loadRoles = async () => {
   roles.value = await getRoles();
 };

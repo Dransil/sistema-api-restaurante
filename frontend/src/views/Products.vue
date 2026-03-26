@@ -2,123 +2,148 @@
   <div class="products-container">
     <h1 class="title">Productos</h1>
 
-   <form class="form" @submit.prevent="addProduct" v-if="esAdmin">
+    <form class="form" @submit.prevent="addProduct" v-if="esAdmin">
       <input v-model="name" placeholder="Nombre del producto" />
       <input v-model="price" type="number" placeholder="Precio" />
       <input v-model="stock" type="number" placeholder="Stock" />
       <input type="file" @change="handleFileChange" />
       <select v-model="selectedCategory">
-  <option value="" disabled>Selecciona una categoría</option>
-  <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-    {{ cat.nombre }}
-  </option>
-</select>
+        <option value="" disabled>Selecciona una categoría</option>
+        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+          {{ cat.nombre }}
+        </option>
+      </select>
       <button type="submit">
-
-      
-  {{ editingId ? "Actualizar Producto" : "Agregar Producto" }}
-</button>
-  <button v-if="editingId" type="button" @click="cancelEdit">
-    Cancelar
-  </button>
+        {{ editingId ? "Actualizar Producto" : "Agregar Producto" }}
+      </button>
+      <button v-if="editingId" type="button" @click="cancelEdit">
+        Cancelar
+      </button>
     </form>
-<div class="filters">
-  <button 
-    :class="{ active: filter === 'todos' }"
-    @click="setFilter('todos')"
-  >
-    Todos
-  </button>
+    <div class="filters">
+      <button
+        :class="{ active: filter === 'todos' }"
+        @click="setFilter('todos')"
+      >
+        Todos
+      </button>
 
-  <button 
-    :class="{ active: filter === 'activos' }"
-    @click="setFilter('activos')"
-  >
-    Activos
-  </button>
+      <button
+        :class="{ active: filter === 'activos' }"
+        @click="setFilter('activos')"
+      >
+        Activos
+      </button>
 
-  <button 
-    :class="{ active: filter === 'noactivos' }"
-    @click="setFilter('noactivos')"
-  >
-    No Activos
-  </button>
-</div>
-  <div class="grid">
-   <div class="card" v-for="prod in paginatedProducts" :key="prod.id">
-    <img v-if="prod.imagen_url" :src="`http://localhost:3000${prod.imagen_url}`" class="product-img" />
+      <button
+        :class="{ active: filter === 'noactivos' }"
+        @click="setFilter('noactivos')"
+      >
+        No Activos
+      </button>
+    </div>
+    <div class="grid">
+      <div class="card" v-for="prod in paginatedProducts" :key="prod.id">
+        <img
+          v-if="prod.imagen_url"
+          :src="`http://localhost:3000${prod.imagen_url}`"
+          class="product-img"
+        />
 
-    <!-- ETIQUETA DE STOCK -->
-    <div class="stock-label" :class="prod.stock > 0 ? 'available' : 'out'">
-      {{ prod.stock > 0 ? 'Disponible' : 'Agotado' }}
+        <div
+          class="stock-label"
+          :class="{
+            available: prod.stock > 5,
+            low: prod.stock > 0 && prod.stock <= 5,
+            out: prod.stock === 0,
+          }"
+        >
+          <i
+            v-if="prod.stock > 0 && prod.stock <= 5"
+            class="fas fa-exclamation-triangle"
+          ></i>
+          {{
+            prod.stock === 0
+              ? "Agotado"
+              : prod.stock <= 5
+                ? "Stock Bajo"
+                : "Disponible"
+          }}
+        </div>
+
+        <h3>{{ prod.nombre }}</h3>
+        <p>
+          Estado:
+          <strong>{{ prod.activo ? "Activo" : "Inactivo" }}</strong>
+        </p>
+        <p class="category">
+          {{
+            categories.find((cat) => cat.id === prod.categoria_id)?.nombre ||
+            "Sin categoría"
+          }}
+        </p>
+        <button v-if="esAdmin" @click="editProduct(prod)">Editar</button>
+        <button v-if="esAdmin" @click="toggleEstado(prod)">
+          {{ prod.activo ? "Desactivar" : "Activar" }}
+        </button>
+      </div>
     </div>
 
-    <h3>{{ prod.nombre }}</h3>
-    <p>
-  Estado:
-  <strong>{{ prod.activo ? "Activo" : "Inactivo" }}</strong>
-</p>
-   <p class="category">
-  {{ categories.find(cat => cat.id === prod.categoria_id)?.nombre || "Sin categoría" }}
-</p>
-   <button v-if="esAdmin" @click="editProduct(prod)">Editar</button>
-    <button v-if="esAdmin" @click="toggleEstado(prod)">
-  {{ prod.activo ? "Desactivar" : "Activar" }}
-</button>
-  </div>
- </div>
+    <div class="pagination-container">
+      <div class="pagination-info">
+        Showing {{ startItem }}-{{ endItem }} of {{ products.length }}
+      </div>
 
- <div class="pagination-container">
+      <div class="pagination">
+        <button
+          class="page-btn"
+          @click="prevPage"
+          :disabled="currentPage === 1"
+        >
+          ‹
+        </button>
 
-  <div class="pagination-info">
-    Showing {{ startItem }}-{{ endItem }} of {{ products.length }}
-  </div>
+        <button
+          v-for="page in totalPages"
+          :key="page"
+          class="page-btn"
+          :class="{ active: page === currentPage }"
+          @click="goToPage(page)"
+        >
+          {{ page }}
+        </button>
 
-  <div class="pagination">
+        <button
+          class="page-btn"
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+        >
+          ›
+        </button>
+      </div>
+    </div>
 
-    <button
-      class="page-btn"
-      @click="prevPage"
-      :disabled="currentPage === 1"
-    >
-      ‹
-    </button>
-
-    <button
-      v-for="page in totalPages"
-      :key="page"
-      class="page-btn"
-      :class="{ active: page === currentPage }"
-      @click="goToPage(page)"
-    >
-      {{ page }}
-    </button>
-
-    <button
-      class="page-btn"
-      @click="nextPage"
-      :disabled="currentPage === totalPages"
-    >
-      ›
-    </button>
-
-  </div>
-
-</div>
-
-<div v-if="showModal" class="modal-overlay" @click="closeModal">
-  <div class="modal-content" @click.stop>
-    <p>{{ modalMessage }}</p>
-    <button @click="closeModal">Cerrar</button>
-  </div>
-</div>
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <p>{{ modalMessage }}</p>
+        <button @click="closeModal">Cerrar</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import "../assets/styles/products.css";
 import { ref, onMounted, computed } from "vue";
-import {getProductos,addProducto,updateProducto,getCategorias,getProductosActivos,getProductosNoActivos,cambiarEstadoProducto} from "../services/api";
+import {
+  getProductos,
+  addProducto,
+  updateProducto,
+  getCategorias,
+  getProductosActivos,
+  getProductosNoActivos,
+  cambiarEstadoProducto,
+} from "../services/api";
 const rol = Number(localStorage.getItem("rol_id"));
 const esAdmin = rol === 1;
 const name = ref("");
@@ -126,13 +151,13 @@ const price = ref("");
 const stock = ref("");
 const image = ref(null);
 const editingId = ref(null);
-const categories = ref ([]);
+const categories = ref([]);
 const selectedCategory = ref("");
 const products = ref([]);
 const currentPage = ref(1);
 const productsPerPage = 10;
-const showModal = ref(false)        
-const modalMessage = ref("") 
+const showModal = ref(false);
+const modalMessage = ref("");
 const editProduct = (prod) => {
   name.value = prod.nombre;
   price.value = prod.precio;
@@ -140,7 +165,6 @@ const editProduct = (prod) => {
   editingId.value = prod.id;
   selectedCategory.value = prod.categoria_id;
 };
-
 
 const filter = ref("todos");
 
@@ -160,22 +184,22 @@ const setFilter = async (type) => {
 
 const verActivos = async () => {
   products.value = await getProductosActivos();
-  currentPage.value = 1; 
+  currentPage.value = 1;
 };
 
 const verNoActivos = async () => {
   products.value = await getProductosNoActivos();
-  currentPage.value = 1; 
+  currentPage.value = 1;
 };
 const openModal = (message) => {
-  modalMessage.value = message
-  showModal.value = true
-}
+  modalMessage.value = message;
+  showModal.value = true;
+};
 
 const closeModal = () => {
-  showModal.value = false
-  modalMessage.value = ""
-}
+  showModal.value = false;
+  modalMessage.value = "";
+};
 const cancelEdit = () => {
   name.value = "";
   price.value = "";
@@ -187,7 +211,7 @@ const cancelEdit = () => {
 const loadProducts = async () => {
   try {
     products.value = await getProductos();
-    currentPage.value = 1; 
+    currentPage.value = 1;
   } catch (err) {
     console.error("Error cargando productos:", err);
   }
@@ -195,15 +219,15 @@ const loadProducts = async () => {
 
 const loadCategories = async () => {
   try {
-    categories.value = await getCategorias()
+    categories.value = await getCategorias();
   } catch (err) {
-    console.error("Error cargando categorías:", err)
+    console.error("Error cargando categorías:", err);
   }
-}
+};
 onMounted(() => {
-  loadProducts()
-  loadCategories()
-})
+  loadProducts();
+  loadCategories();
+});
 const startItem = computed(() => {
   return (currentPage.value - 1) * productsPerPage + 1;
 });
@@ -237,15 +261,15 @@ const handleFileChange = (e) => {
 };
 
 const addProduct = async () => {
-if (!name.value || !price.value || (!editingId.value && !image.value)) {
-  openModal("Completa los campos");
-  return;
-}
+  if (!name.value || !price.value || (!editingId.value && !image.value)) {
+    openModal("Completa los campos");
+    return;
+  }
 
-if (!selectedCategory.value) {
-  openModal("Selecciona una categoría");
-  return;
-}
+  if (!selectedCategory.value) {
+    openModal("Selecciona una categoría");
+    return;
+  }
 
   try {
     if (editingId.value) {
@@ -258,7 +282,6 @@ if (!selectedCategory.value) {
 
       await updateProducto(editingId.value, formData);
       editingId.value = null;
-
     } else {
       const formData = new FormData();
       formData.append("nombre", name.value);
@@ -277,7 +300,6 @@ if (!selectedCategory.value) {
     selectedCategory.value = "";
 
     await loadProducts();
-
   } catch (err) {
     console.error("Error guardando producto:", err);
   }
@@ -302,15 +324,11 @@ const toggleEstado = async (prod) => {
   try {
     await cambiarEstadoProducto(prod.id, !prod.activo);
 
-    openModal(
-      prod.activo ? "Producto desactivado" : "Producto activado"
-    );
+    openModal(prod.activo ? "Producto desactivado" : "Producto activado");
 
     await loadProducts();
   } catch (error) {
     openModal("Error al cambiar estado");
   }
 };
-
-
 </script>

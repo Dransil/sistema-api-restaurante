@@ -7,14 +7,13 @@
         <i class="fas fa-home"></i> <span>Inicio</span>
       </router-link>
 
-     <router-link v-if="rol == 1" to="/dashboard/users">
-  <i class="fas fa-users"></i> <span>Usuarios</span>
-</router-link>
+      <router-link v-if="rol == 1" to="/dashboard/users">
+        <i class="fas fa-users"></i> <span>Usuarios</span>
+      </router-link>
 
-
-<router-link v-if="rol == 1" to="/dashboard/roles">
-  <i class="fas fa-user-shield"></i> <span>Roles</span>
-</router-link>
+      <router-link v-if="rol == 1" to="/dashboard/roles">
+        <i class="fas fa-user-shield"></i> <span>Roles</span>
+      </router-link>
 
       <router-link to="/dashboard/categories">
         <i class="fas fa-list"></i> <span>Categorías</span>
@@ -27,7 +26,8 @@
       <router-link to="/dashboard/pedidos">
         <i class="fas fa-shopping-cart"></i> <span>Pedidos</span>
       </router-link>
-      <router-link to="/dashboard/pedidos-list">
+
+      <router-link v-if="rol == 1" to="/dashboard/pedidos-list">
         <i class="fas fa-receipt"></i> <span>Lista Pedidos</span>
       </router-link>
 
@@ -35,14 +35,13 @@
         <i class="fas fa-user"></i> <span>Clientes</span>
       </router-link>
 
-    <router-link v-if="rol == 1" to="/dashboard/reportes">
-  <i class="fas fa-chart-bar"></i> <span>Reportes</span>
-</router-link>
-      
-<router-link v-if="rol == 1" to="/dashboard/configlocal">
-  <i class="fas fa-cog"></i> <span>Configuración Local</span>
-</router-link>
+      <router-link v-if="rol == 1" to="/dashboard/reportes">
+        <i class="fas fa-chart-bar"></i> <span>Reportes</span>
+      </router-link>
 
+      <router-link v-if="rol == 1" to="/dashboard/configlocal">
+        <i class="fas fa-cog"></i> <span>Configuración Local</span>
+      </router-link>
     </aside>
 
     <div class="main">

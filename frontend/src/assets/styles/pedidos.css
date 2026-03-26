@@ -338,3 +338,16 @@ h3{
   background: #7b5fc9;
   color: white;
 }
+
+
+.pagination button {
+  padding: 5px 10px;
+  margin: 2px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+}
