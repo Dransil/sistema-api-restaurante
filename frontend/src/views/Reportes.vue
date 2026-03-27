@@ -14,7 +14,9 @@
 
       <div class="reportes-card">
         <h3>Total dinero</h3>
-        <p class="reportes-number">Bs {{ Number(resumen.total_dinero) }}</p>
+        <p class="reportes-number">
+          {{ formatCurrency(resumen.total_dinero) }}
+        </p>
       </div>
     </div>
 
@@ -36,7 +38,6 @@
 
     <div class="reportes-section">
       <h2>📅 Ventas por rango</h2>
-
       <input type="date" v-model="inicio" />
       <input type="date" v-model="fin" />
       <button class="reportes-button" @click="cargarRango">Buscar</button>
@@ -56,7 +57,7 @@
         <tr v-for="v in ventas" :key="v.id">
           <td>{{ v.id }}</td>
           <td>{{ new Date(v.fecha_hora).toLocaleString() }}</td>
-          <td>Bs {{ Number(v.total).toFixed(2) }}</td>
+          <td>{{ formatCurrency(v.total) }}</td>
           <td>{{ v.cajero }}</td>
           <td>{{ v.cliente }}</td>
         </tr>
@@ -69,7 +70,6 @@
 
     <div class="reportes-section">
       <h2>💰 Reporte de Facturación</h2>
-
       <input type="date" v-model="inicioFact" />
       <input type="date" v-model="finFact" />
       <button class="reportes-button" @click="cargarFacturacion">
@@ -83,9 +83,6 @@
             <th>Fecha</th>
             <th>Cliente</th>
             <th>NIT/CI</th>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
             <th>Total Factura</th>
             <th>Detalle</th>
           </tr>
@@ -96,10 +93,7 @@
             <td>{{ new Date(f.fecha_hora).toLocaleString() }}</td>
             <td>{{ f.cliente }}</td>
             <td>{{ f.nit_ci }}</td>
-            <td>{{ f.producto }}</td>
-            <td>{{ f.cantidad }}</td>
-            <td>Bs {{ Number(f.subtotal).toFixed(2) }}</td>
-            <td>Bs {{ Number(f.total_factura).toFixed(2) }}</td>
+            <td>{{ formatCurrency(f.total_factura) }}</td>
             <td>
               <button @click="verFacturaDetalle(f.factura_nro)">
                 Ver detalle
@@ -138,22 +132,21 @@
             <tr v-for="item in facturaDetalle.items" :key="item.producto">
               <td>{{ item.producto }}</td>
               <td>{{ item.cantidad }}</td>
-              <td>Bs {{ Number(item.precio_unitario).toFixed(2) }}</td>
-              <td>Bs {{ Number(item.subtotal).toFixed(2) }}</td>
+              <td>{{ formatCurrency(item.precio_unitario) }}</td>
+              <td>{{ formatCurrency(item.subtotal) }}</td>
             </tr>
           </tbody>
         </table>
 
         <p>
-          <strong
-            >Total: Bs {{ Number(facturaDetalle.total).toFixed(2) }}</strong
-          >
+          <strong>Total: {{ formatCurrency(facturaDetalle.total) }}</strong>
         </p>
         <button class="reportes-button" @click="facturaDetalle = null">
           Cerrar
         </button>
       </div>
     </div>
+
     <div v-if="mostrarModal" class="modal">
       <div class="modal-content">
         <p>{{ mensajeModal }}</p>
@@ -172,7 +165,9 @@ import {
   getVentasPorRango,
   getReporteFacturacion,
   getFacturaDetalle,
+  getConfigLocal,
 } from "../services/api";
+import { getCurrencySymbol } from "../utils/currency";
 import "../assets/styles/reportes.css";
 
 export default {
@@ -193,10 +188,13 @@ export default {
 
       mensajeModal: "",
       mostrarModal: false,
+
+      config: null,
     };
   },
 
   mounted() {
+    this.cargarConfig();
     this.cargarResumen();
     this.cargarTop();
     this.cargarRangoDiario();
@@ -208,6 +206,18 @@ export default {
       this.mensajeModal = msg;
       this.mostrarModal = true;
     },
+
+    formatCurrency(value) {
+      if (!this.config || !this.config.moneda) return value.toFixed(2);
+      const symbol = getCurrencySymbol(this.config.moneda);
+      return `${symbol} ${Number(value).toFixed(2)}`;
+    },
+
+    async cargarConfig() {
+      const data = await getConfigLocal();
+      if (data.length > 0) this.config = data[0];
+    },
+
     async cargarResumen() {
       this.resumen = await getResumenDiario();
     },

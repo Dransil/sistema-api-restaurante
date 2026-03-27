@@ -1,7 +1,15 @@
 <template>
   <div class="dashboard">
     <aside :class="['sidebar', { closed: isClosed }]">
-      <h2>Mi Panel</h2>
+      <div class="sidebar-logo-container">
+    <img
+      v-if="logoUrl"
+      :src="logoUrl"
+      alt="Logo Empresa"
+      class="sidebar-logo"
+    />
+    <h2 v-else>Mi Panel</h2>
+  </div>
 
       <router-link to="/dashboard">
         <i class="fas fa-home"></i> <span>Inicio</span>
@@ -68,6 +76,7 @@ export default {
     return {
       isClosed: false,
       rol: Number(localStorage.getItem("rol_id")),
+       logoUrl: localStorage.getItem("logo_url") || "",
     };
   },
   methods: {

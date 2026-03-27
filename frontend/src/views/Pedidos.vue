@@ -5,7 +5,7 @@
         <div class="pedidos-card">
           <h3>Datos del Cliente</h3>
           <div class="cliente-box">
-            <input v-model="ci" placeholder="CI" @blur="buscarCliente" />
+            <input v-model="ci" placeholder="CI" />
             <input v-model="razon_social" placeholder="Razón Social" />
           </div>
 
@@ -139,6 +139,117 @@ import {
 } from "../services/api";
 import "../assets/styles/pedidos.css";
 
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+
+const generarFacturaPDF = async ({ cliente, ci, total, carrito }) => {
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([600, 750]);
+  const { width, height } = page.getSize();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+  let y = height - 50;
+
+  const title = "Factura de Venta";
+  page.drawRectangle({
+    x: 0,
+    y: y - 25,
+    width,
+    height: 40,
+    color: rgb(0.9, 0.9, 0.9),
+  });
+  page.drawText(title, { x: width / 2 - 60, y: y - 10, size: 18, font });
+
+  y -= 60;
+
+  page.drawText(`Cliente: ${cliente || "N/A"}`, { x: 50, y, size: 12, font });
+  y -= 20;
+  page.drawText(`CI: ${ci || "N/A"}`, { x: 50, y, size: 12, font });
+  y -= 30;
+
+  const startX = 50;
+  const columnWidths = [200, 70, 100, 100];
+  const rowHeight = 25;
+
+  const drawCell = (
+    text,
+    x,
+    y,
+    width,
+    height,
+    isHeader = false,
+    bgColor = null,
+  ) => {
+    if (bgColor)
+      page.drawRectangle({ x, y: y - height, width, height, color: bgColor });
+    page.drawRectangle({
+      x,
+      y: y - height,
+      width,
+      height,
+      borderColor: rgb(0, 0, 0),
+      borderWidth: 1,
+    });
+    const textX = x + 5;
+    const textY = y - height / 2 - 5; // vertical centering aproximada
+    page.drawText(text, { x: textX, y: textY, size: 12, font });
+  };
+
+  const headers = ["Producto", "Cantidad", "Precio Unitario", "Subtotal"];
+  let currentX = startX;
+  headers.forEach((h, i) => {
+    drawCell(
+      h,
+      currentX,
+      y,
+      columnWidths[i],
+      rowHeight,
+      true,
+      rgb(0.8, 0.8, 0.8),
+    );
+    currentX += columnWidths[i];
+  });
+  y -= rowHeight;
+
+  carrito.forEach((item, index) => {
+    let x = startX;
+    const values = [
+      item.nombre,
+      item.cantidad.toString(),
+      item.precio_unitario.toFixed(2),
+      (item.cantidad * item.precio_unitario).toFixed(2),
+    ];
+    const bgColor = index % 2 === 0 ? rgb(0.95, 0.95, 0.95) : null;
+    values.forEach((val, i) => {
+      drawCell(val, x, y, columnWidths[i], rowHeight, false, bgColor);
+      x += columnWidths[i];
+    });
+    y -= rowHeight;
+  });
+
+  page.drawRectangle({
+    x: startX,
+    y: y - rowHeight,
+    width: columnWidths.reduce((a, b) => a + b, 0),
+    height: rowHeight,
+    color: rgb(0.9, 0.9, 0.9),
+  });
+  page.drawText(`Total: ${total.toFixed(2)}`, {
+    x: 400,
+    y: y - 15,
+    size: 14,
+    font,
+  });
+  y -= rowHeight + 20;
+
+  page.drawText("Gracias por su compra!", { x: 200, y, size: 12, font });
+  y -= 15;
+
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
+  window.open(url, "_blank");
+};
 const productos = ref([]);
 const carrito = ref([]);
 const total = ref(0);
@@ -160,6 +271,22 @@ const productosPorPagina = 10;
 
 watch(buscar, () => {
   currentPage.value = 1;
+});
+
+watch(ci, async (newCi) => {
+  if (!newCi) {
+    razon_social.value = "";
+    cliente_id.value = null;
+    return;
+  }
+  try {
+    const cliente = await getClienteByCI(newCi);
+    razon_social.value = cliente.razon_social;
+    cliente_id.value = cliente.id;
+  } catch {
+    razon_social.value = "";
+    cliente_id.value = null;
+  }
 });
 
 const aumentarCantidad = (item) => {
@@ -333,8 +460,20 @@ const finalizarVenta = async () => {
     };
 
     await registrarPedido(pedido);
+
+    // 🔹 Guardamos datos actuales antes de limpiar
+    const facturaData = {
+      cliente: razon_social.value,
+      ci: ci.value,
+      total: total.value,
+      carrito: [...carrito.value],
+    };
+
+    generarFacturaPDF(facturaData); // Pasamos los datos
+
     abrirModal("Éxito", "Venta registrada correctamente");
 
+    // Limpiar carrito y totales
     carrito.value = [];
     total.value = 0;
     ci.value = "";

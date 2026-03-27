@@ -5,9 +5,16 @@
 
       <form @submit.prevent="login">
         <input v-model="username" type="text" placeholder="Usuario" required />
-        <input v-model="password" type="password" placeholder="Contraseña" required />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Contraseña"
+          required
+        />
         <button type="submit">Ingresar</button>
       </form>
+
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
       <p>
         ¿No tienes cuenta?
@@ -18,34 +25,40 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { loginUser } from '../services/api';
-import '../assets/styles/login.css'; 
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { loginUser } from "../services/api";
+import "../assets/styles/login.css";
 
-const username = ref('');
-const password = ref('');
+const username = ref("");
+const password = ref("");
 const router = useRouter();
 
+const errorMessage = ref("");
+
 const login = async () => {
+  errorMessage.value = "";
+
+  if (!username.value || !password.value) {
+    errorMessage.value = "Por favor completa todos los campos";
+    return;
+  }
+
   try {
-    const data = await loginUser({ 
-      username: username.value, 
-      password: password.value 
+    const data = await loginUser({
+      username: username.value,
+      password: password.value,
     });
-    console.log(data);
 
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user_id', data.user.id);
-    localStorage.setItem('username', data.user.username);
-     localStorage.setItem('rol_id', data.user.rol_id)
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user_id", data.user.id);
+    localStorage.setItem("username", data.user.username);
+    localStorage.setItem("rol_id", data.user.rol_id);
 
-    alert('Login exitoso');
-    router.push('/dashboard');
-
+    router.push("/dashboard");
   } catch (err) {
-    console.error('Error al iniciar sesión:', err);
-    alert(err.response?.data?.error || 'Usuario o contraseña incorrectos');
+    errorMessage.value =
+      err.response?.data?.error || "Usuario o contraseña incorrectos";
   }
 };
 </script>

@@ -265,13 +265,23 @@ export const getFacturaDetalle = async (id) => {
   return res.data;
 };
 
-// --- CONFIGURACION LOCAL ---
+//--- CONFIGURACION LOCAL ---
 export const getConfigLocal = async () => {
   try {
-    const res = await api.get(`/configlocal`); 
+    const res = await api.get(`/configloc`); 
     return res.data;
   } catch (err) {
     console.error("Error obteniendo configuración local:", err.response?.data || err);
+    throw err;
+  }
+};
+
+export const saveConfigLocal = async (data) => {
+  try {
+    const res = await api.post(`/configloc`, data);
+    return res.data;
+  } catch (err) {
+    console.error("Error guardando configuración:", err.response?.data || err);
     throw err;
   }
 };
