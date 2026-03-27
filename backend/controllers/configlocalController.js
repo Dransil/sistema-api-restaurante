@@ -23,7 +23,7 @@ const saveConfig = async (req, res) => {
                 UPDATE configuracion_local 
                 SET nombre_restaurante = $1, nit = $2, direccion = $3, 
                     telefono = $4, ciudad = $5, moneda = $6, logo_url = $7
-                WHERE id = ${check.rows.id}
+                WHERE id = $8
                 RETURNING *`;
         } else {
             query = `
