@@ -25,6 +25,7 @@ const saveConfig = async (req, res) => {
                     telefono = $4, ciudad = $5, moneda = $6, logo_url = $7
                 WHERE id = $8
                 RETURNING *`;
+                values.push(check.rows[0].id)
         } else {
             query = `
                 INSERT INTO configuracion_local 
