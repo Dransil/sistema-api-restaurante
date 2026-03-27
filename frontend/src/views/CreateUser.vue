@@ -55,7 +55,7 @@
 import "../assets/styles/users.css";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { registerUser, getRoles } from "../services/api";
+import { createUsuario, getRoles } from "../services/api";
 
 const router = useRouter();
 
@@ -81,15 +81,32 @@ onMounted(() => {
 });
 
 const createUser = async () => {
+  if (!username.value || !password.value || !rol.value) {
+    alert("Username, password y rol son obligatorios");
+    return;
+  }
+
   const data = {
     username: username.value,
     password: password.value,
-    rol_id: rol.value,
+    rol_id: Number(rol.value), // 👈 IMPORTANTE
+    name: name.value || null,
+    first_name: first_name.value || null,
+    second_name: second_name.value || null,
+    fecha_nac: fecha_nac.value || null,
+    celular: celular.value || null,
+    email: email.value || null,
   };
 
-  await registerUser(data);
+  console.log("DATA QUE ENVÍAS:", data); // 👈 DEBUG
 
-  router.push("/dashboard/users");
+  try {
+    await createUsuario(data);
+    router.push("/dashboard/users");
+  } catch (error) {
+    console.error("ERROR BACKEND:", error.response?.data || error);
+    alert("Error al crear usuario");
+  }
 };
 
 const goBack = () => {

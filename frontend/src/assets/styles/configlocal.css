@@ -21,3 +21,10 @@ li {
 li:last-child {
   border-bottom: none;
 }
+
+select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}

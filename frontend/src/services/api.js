@@ -25,6 +25,16 @@ export const registerUser = async (userData) => {
   }
 };
 
+export const getUsuarios = async () => {
+  const res = await api.get(`/usuarios`);
+  return res.data;
+};
+
+export const createUsuario = async (data) => {
+  const res = await api.post(`/usuarios/create`, data);
+  return res.data;
+};
+
 export const loginUser = async (userData) => {
   try {
     const res = await axios.post(`${API_URL}/usuarios/login`, userData);
@@ -37,24 +47,22 @@ export const loginUser = async (userData) => {
 
 //--- ACTUALIZAR USUARIO ---
 export const updateUsuario = async (id, data) => {
-  const res = await axios.put(`${API_URL}/usuarios/${id}`, data);
+  const res = await api.put(`/usuarios/${id}`, data);
   return res.data;
 };
 
 export const cambiarEstadoUsuario = async (id, activo) => {
-  const res = await axios.patch(`${API_URL}/usuarios/${id}/estado`, {
-    activo
-  });
+  const res = await api.patch(`/usuarios/${id}/estado`, { activo });
   return res.data;
 };
 
 export const getUsuariosActivos = async () => {
-  const res = await axios.get(`${API_URL}/usuarios/activos`);
+   const res = await api.get(`/usuarios/activos`);
   return res.data;
 };
 
 export const getUsuariosInactivos = async () => {
-  const res = await axios.get(`${API_URL}/usuarios/noactivos`);
+  const res = await api.get(`/usuarios/noactivos`);
   return res.data;
 };
 
@@ -186,84 +194,94 @@ export const getProductosByCategoria = async (id) => {
 
 // --- CLIENTES ---
 export const getClientes = async () => {
-  const res = await axios.get(`${API_URL}/clientes`);
+   const res = await api.get(`/clientes`);
   return res.data;
 };
 
 export const addCliente = async (cliente) => {
-  const res = await axios.post(`${API_URL}/clientes`, cliente);
+  const res = await api.post(`/clientes`, cliente);
   return res.data;
 };
 
 export const getClienteByCI = async (ci) => {
-  const res = await axios.get(`${API_URL}/clientes/${ci}`);
+   const res = await api.get(`/clientes/${ci}`);
   return res.data;
 };
 
 export const updateCliente = async (id, cliente) => {
-  const res = await axios.put(`${API_URL}/clientes/${id}`, cliente);
+ const res = await api.put(`/clientes/${id}`, cliente);
   return res.data;
 };
 
 // --- PEDIDOS ---
 export const getPedidos = async () => {
-  const res = await axios.get(`${API_URL}/pedidos`);
+  const res = await api.get(`/pedidos`)
   return res.data;
 };
 
 export const registrarPedido = async (pedido) => {
-  const res = await axios.post(`${API_URL}/pedidos`, pedido);
+  const res = await api.post(`/pedidos`, pedido);
   return res.data;
 };
 
 // --- DETALLE-PEDIDOS ---
 export const getDetallePedidos = async () => {
-  const res = await axios.get(`${API_URL}/detallepedido`)
+  const res = await api.get(`/detallepedido`)
   return res.data
 }
 
 export const getDetalleByPedidoId = async (id) => {
-  const res = await axios.get(`${API_URL}/detallepedido/${id}`)
+  const res = await api.get(`/detallepedido/${id}`)
   return res.data
 }
 // --- REPORTES ---
 
 export const getResumenDiario = async () => {
-  const res = await axios.get(`${API_URL}/reportes/diario`);
+  const res = await api.get(`/reportes/diario`);
   return res.data;
 };
 
 export const getTopProductos = async () => {
-  const res = await axios.get(`${API_URL}/reportes/top`);
+  const res = await api.get(`/reportes/top`);
   return res.data;
 };
 
 export const getVentasPorRango = async (inicio, fin) => {
-  const res = await axios.get(`${API_URL}/reportes/rango`, {
+  const res = await api.get(`/reportes/rango`, {
     params: { inicio, fin }
   });
   return res.data;
 };
 
 export const getReporteFacturacion = async (inicio, fin) => {
-  const res = await axios.get(`${API_URL}/reportes/factura`, {
+  const res = await api.get(`/reportes/factura`, {
     params: { inicio, fin }
   });
   return res.data;
 };
 
 export const getFacturaDetalle = async (id) => {
-  const res = await axios.get(`${API_URL}/reportes/factura/${id}`);
+  const res = await api.get(`/reportes/factura/${id}`);
   return res.data;
 };
 
-// --- CONFIGURACION LOCAL ---
+//--- CONFIGURACION LOCAL ---
 export const getConfigLocal = async () => {
   try {
-    const res = await api.get(`/configlocal`); 
+    const res = await api.get(`/configloc`); 
     return res.data;
   } catch (err) {
     console.error("Error obteniendo configuración local:", err.response?.data || err);
+    throw err;
+  }
+};
+
+export const saveConfigLocal = async (data) => {
+  try {
+    const res = await api.post(`/configloc`, data);
+    return res.data;
+  } catch (err) {
+    console.error("Error guardando configuración:", err.response?.data || err);
     throw err;
   }
 };

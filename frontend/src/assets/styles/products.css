@@ -268,3 +268,35 @@
   color: white;
   box-shadow: 0 4px 10px rgba(106, 76, 255, 0.3);
 }
+
+/* ---------------- ETIQUETA STOCK ---------------- */
+.stock-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  display: inline-block;
+}
+
+.stock-label.available {
+  background-color: #4caf50; /* verde */
+  color: white;
+}
+
+.stock-label.low {
+  background-color: #ffeb3b; /* amarillo */
+  color: black; /* contraste para leer bien */
+}
+
+.stock-label.out {
+  background-color: #f44336; /* rojo */
+  color: white;
+}
+
+.stock-label i {
+  margin-right: 4px;
+  color: #ff9800; /* icono alerta naranja */
+}

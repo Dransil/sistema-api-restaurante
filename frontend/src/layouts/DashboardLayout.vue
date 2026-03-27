@@ -28,7 +28,8 @@
       <router-link to="/dashboard/pedidos">
         <i class="fas fa-shopping-cart"></i> <span>Pedidos</span>
       </router-link>
-      <router-link to="/dashboard/pedidos-list">
+
+      <router-link v-if="rol == 1" to="/dashboard/pedidos-list">
         <i class="fas fa-receipt"></i> <span>Lista Pedidos</span>
       </router-link>
 
@@ -36,7 +37,7 @@
         <i class="fas fa-user"></i> <span>Clientes</span>
       </router-link>
 
-      <router-link to="/dashboard/reportes">
+      <router-link v-if="rol == 1" to="/dashboard/reportes">
         <i class="fas fa-chart-bar"></i> <span>Reportes</span>
       </router-link>
 
@@ -65,7 +66,8 @@ export default {
   data() {
     return {
       isClosed: false,
-      rol: localStorage.getItem("rol_id"),
+      rol: Number(localStorage.getItem("rol_id")),
+       logoUrl: localStorage.getItem("logo_url") || "",
     };
   },
   methods: {

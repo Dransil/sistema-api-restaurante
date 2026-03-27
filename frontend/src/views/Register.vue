@@ -5,10 +5,17 @@
 
       <form @submit.prevent="register">
         <input v-model="username" type="text" placeholder="Usuario" required />
-        <input v-model="password" type="password" placeholder="Contraseña" required />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Contraseña"
+          required
+        />
 
         <button type="submit">Registrarse</button>
       </form>
+
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
       <p>
         ¿Ya tienes cuenta?
@@ -19,26 +26,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { registerUser } from '../services/api';
-import '../assets/styles/register.css'; 
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { registerUser } from "../services/api";
+import "../assets/styles/register.css";
 
-const username = ref('');
-const password = ref('');
+const username = ref("");
+const password = ref("");
 const router = useRouter();
 
+const errorMessage = ref("");
+
 const register = async () => {
+  errorMessage.value = "";
+
+  if (!username.value || !password.value) {
+    errorMessage.value = "Por favor completa todos los campos";
+    return;
+  }
+
   try {
     await registerUser({
       username: username.value,
       password: password.value,
     });
-    alert('Usuario registrado correctamente');
-    router.push('/login');
+
+    router.push("/login");
   } catch (err) {
-    console.error('Error registrando usuario:', err);
-    alert(err.response?.data?.error || 'Error registrando usuario');
+    errorMessage.value =
+      err.response?.data?.error || "Error registrando usuario";
   }
 };
 </script>
