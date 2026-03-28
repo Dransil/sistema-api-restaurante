@@ -1,8 +1,8 @@
 <template>
   <div class="d-flex overflow-hidden" style="height: 100vh;">
-    
+
     <aside :class="['sidebar d-flex flex-column p-3 text-white shadow', { closed: isClosed }]">
-      
+
       <div class="d-flex align-items-center mb-4">
         <button class="btn text-white p-0 border-0 shadow-none me-3" @click="toggleSidebar">
           <i class="fas fa-bars fs-4"></i>
@@ -36,7 +36,8 @@
           <i class="fas fa-shopping-cart"></i> <span>Pedidos</span>
         </router-link>
 
-        <router-link v-if="rol === 1" to="/dashboard/pedidos-list" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+        <router-link v-if="rol === 1" to="/dashboard/pedidos-list"
+          class="nav-link text-white d-flex align-items-center gap-3 rounded">
           <i class="fas fa-receipt"></i> <span>Lista Pedidos</span>
         </router-link>
 
@@ -44,19 +45,23 @@
           <i class="fas fa-user"></i> <span>Clientes</span>
         </router-link>
 
-        <router-link v-if="rol === 1" to="/dashboard/reportes" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+        <router-link v-if="rol === 1" to="/dashboard/reportes"
+          class="nav-link text-white d-flex align-items-center gap-3 rounded">
           <i class="fas fa-chart-bar"></i> <span>Reportes</span>
         </router-link>
 
-        <router-link v-if="rol === 1" to="/dashboard/configlocal" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+        <router-link v-if="rol === 1" to="/dashboard/configlocal"
+          class="nav-link text-white d-flex align-items-center gap-3 rounded">
           <i class="fas fa-cog"></i> <span>Configuración</span>
         </router-link>
       </nav>
 
-      <button class="btn btn-link text-white text-start d-flex align-items-center gap-3 mt-auto p-2 rounded text-decoration-none shadow-none" @click="logout">
+      <button @click="logout" class="btn btn-outline-danger d-flex align-items-center border-0 w-100 mt-auto p-3"
+        :class="isClosed ? 'justify-content-center' : 'justify-content-start gap-3'">
         <i class="fas fa-sign-out-alt"></i>
-        <span v-if="!isClosed">Cerrar sesión</span>
+        <span v-if="!isClosed" class="fw-medium">Cerrar sesión</span>
       </button>
+
     </aside>
 
     <main class="main-content">
@@ -73,7 +78,7 @@ export default {
     return {
       isClosed: false,
       rol: Number(localStorage.getItem("rol_id")),
-       logoUrl: localStorage.getItem("logo_url") || "",
+      logoUrl: localStorage.getItem("logo_url") || "",
     };
   },
   methods: {

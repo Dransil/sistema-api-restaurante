@@ -1,10 +1,8 @@
-/* src/assets/styles/dashboard.css */
-
 .sidebar {
   width: 250px;
   min-height: 100vh;
   transition: width 0.3s ease;
-  background: linear-gradient(180deg, #6a4cff 0%, #7b5fc9 100%);
+  background: linear-gradient(180deg, #6a4cff 0%, #b29bf0 100%);
   z-index: 1000;
 }
 
@@ -38,3 +36,4 @@
   overflow-y: auto;
   background-color: #f8f9fa;
 }
+
