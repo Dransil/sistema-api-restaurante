@@ -26,7 +26,7 @@ const routes = [
     component: DashboardLayout,
     meta: { requiresAuth: true },
     children: [
-      { path: "", component: DashboardHome },
+      { path: "inicio", component: DashboardHome },
       { path: "users", component: Users, meta: { role: 1 } },
       { path: "users/:id/edit", component: EditUser, meta: { role: 1 } },
       { path: "users/create", component: CreateUser, meta: { role: 1 } },

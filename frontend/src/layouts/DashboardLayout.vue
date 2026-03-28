@@ -11,7 +11,7 @@
       </div>
 
       <nav class="nav flex-column gap-1 flex-grow-1">
-        <router-link to="/dashboard" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+        <router-link to="/dashboard/inicio" class="nav-link text-white d-flex align-items-center gap-3 rounded">
           <i class="fas fa-home"></i> <span>Inicio</span>
         </router-link>
 
