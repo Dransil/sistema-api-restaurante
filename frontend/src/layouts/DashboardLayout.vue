@@ -1,66 +1,72 @@
 <template>
-  <div class="dashboard">
-    <aside :class="['sidebar', { closed: isClosed }]">
-      <h2>Mi Panel</h2>
-      <button class="menu-btn" @click="toggleSidebar">☰</button>
+  <div class="d-flex overflow-hidden" style="height: 100vh;">
+    
+    <aside :class="['sidebar d-flex flex-column p-3 text-white shadow', { closed: isClosed }]">
+      
+      <div class="d-flex align-items-center mb-4">
+        <button class="btn text-white p-0 border-0 shadow-none me-3" @click="toggleSidebar">
+          <i class="fas fa-bars fs-4"></i>
+        </button>
+        <h2 v-if="!isClosed" class="h5 mb-0 fw-bold">Mi Panel</h2>
+      </div>
 
-      <router-link to="/dashboard">
-        <i class="fas fa-home"></i> <span>Inicio</span>
-      </router-link>
+      <nav class="nav flex-column gap-1 flex-grow-1">
+        <router-link to="/dashboard" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-home"></i> <span>Inicio</span>
+        </router-link>
 
-      <router-link v-if="rol == 1" to="/dashboard/users">
-        <i class="fas fa-users"></i> <span>Usuarios</span>
-      </router-link>
+        <template v-if="rol === 1">
+          <router-link to="/dashboard/users" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+            <i class="fas fa-users"></i> <span>Usuarios</span>
+          </router-link>
+          <router-link to="/dashboard/roles" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+            <i class="fas fa-user-shield"></i> <span>Roles</span>
+          </router-link>
+        </template>
 
+        <router-link to="/dashboard/categories" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-list"></i> <span>Categorías</span>
+        </router-link>
 
-      <router-link v-if="rol == 1" to="/dashboard/roles">
-        <i class="fas fa-user-shield"></i> <span>Roles</span>
-      </router-link>
+        <router-link to="/dashboard/products" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-box"></i> <span>Productos</span>
+        </router-link>
 
-      <router-link to="/dashboard/categories">
-        <i class="fas fa-list"></i> <span>Categorías</span>
-      </router-link>
+        <router-link to="/dashboard/pedidos" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-shopping-cart"></i> <span>Pedidos</span>
+        </router-link>
 
-      <router-link to="/dashboard/products">
-        <i class="fas fa-box"></i> <span>Productos</span>
-      </router-link>
+        <router-link v-if="rol === 1" to="/dashboard/pedidos-list" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-receipt"></i> <span>Lista Pedidos</span>
+        </router-link>
 
-      <router-link to="/dashboard/pedidos">
-        <i class="fas fa-shopping-cart"></i> <span>Pedidos</span>
-      </router-link>
+        <router-link to="/dashboard/clientes" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-user"></i> <span>Clientes</span>
+        </router-link>
 
-      <router-link v-if="rol == 1" to="/dashboard/pedidos-list">
-        <i class="fas fa-receipt"></i> <span>Lista Pedidos</span>
-      </router-link>
+        <router-link v-if="rol === 1" to="/dashboard/reportes" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-chart-bar"></i> <span>Reportes</span>
+        </router-link>
 
-      <router-link to="/dashboard/clientes">
-        <i class="fas fa-user"></i> <span>Clientes</span>
-      </router-link>
+        <router-link v-if="rol === 1" to="/dashboard/configlocal" class="nav-link text-white d-flex align-items-center gap-3 rounded">
+          <i class="fas fa-cog"></i> <span>Configuración</span>
+        </router-link>
+      </nav>
 
-      <router-link v-if="rol == 1" to="/dashboard/reportes">
-        <i class="fas fa-chart-bar"></i> <span>Reportes</span>
-      </router-link>
-
-      <router-link v-if="rol == 1" to="/dashboard/configlocal">
-        <i class="fas fa-cog"></i> <span>Configuración Local</span>
-      </router-link>
-
-      <button @click="logout">Cerrar sesión</button>
-
+      <button class="btn btn-link text-white text-start d-flex align-items-center gap-3 mt-auto p-2 rounded text-decoration-none shadow-none" @click="logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span v-if="!isClosed">Cerrar sesión</span>
+      </button>
     </aside>
 
-    <div class="main">
-
-
-      <section class="content">
+    <main class="main-content">
+      <div class="container-fluid p-4">
         <router-view />
-      </section>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
-
 <script>
-import "../assets/styles/dashboard.css";
 
 export default {
   data() {
