@@ -1,11 +1,28 @@
 <template>
   <div class="usuarios-container">
     <h2 class="title">Gestión de Usuarios</h2>
-    <button class="btn btn-save" @click="goToCreate">Nuevo Usuario</button>
-    <div class="filters">
-      <button class="btn" @click="loadUsers">Todos</button>
-      <button class="btn" @click="loadActivos">Activos</button>
-      <button class="btn" @click="loadInactivos">Inactivos</button>
+    <button class="btn btn-success px-4 shadow-sm d-flex align-items-center gap-2" @click="goToCreate">
+
+      <i class="bi bi-plus-lg"></i>
+      <span class="fw-bold">Nuevo Usuario</span>
+
+    </button>
+    <br>
+    <div class="filters mb-3 d-flex gap-2">
+      <button class="btn shadow-sm" :class="currentFilter === 'todos' ? 'btn-primary' : 'btn-outline-primary'"
+        @click="loadUsers">
+        Todos
+      </button>
+
+      <button class="btn shadow-sm" :class="currentFilter === 'activos' ? 'btn-primary' : 'btn-outline-primary'"
+        @click="loadActivos">
+        Activos
+      </button>
+
+      <button class="btn shadow-sm" :class="currentFilter === 'inactivos' ? 'btn-primary' : 'btn-outline-primary'"
+        @click="loadInactivos">
+        Inactivos
+      </button>
     </div>
     <div class="user-card">
       <table class="user-table">
@@ -31,13 +48,16 @@
               </span>
             </td>
             <td>
-              <button class="btn btn-edit" @click="goToEdit(user.id)">
-                Editar
-              </button>
+              <div class="d-flex gap-2 justify-content-center">
+                <button class="btn btn-outline-primary btn-sm" @click="goToEdit(user.id)">
+                  <i class="bi bi-pencil-square"></i> Editar
+                </button>
 
-              <button class="btn btn-toggle" @click="toggleUser(user)">
-                {{ user.activo ? "Desactivar" : "Activar" }}
-              </button>
+                <button class="btn btn-sm" :class="user.activo ? 'btn-outline-danger' : 'btn-outline-success'"
+                  @click="toggleUser(user)">
+                  {{ user.activo ? "Desactivar" : "Activar" }}
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -49,29 +69,16 @@
         </div>
 
         <div class="pagination">
-          <button
-            class="page-btn"
-            @click="prevPage"
-            :disabled="currentPage === 1"
-          >
+          <button class="page-btn" @click="prevPage" :disabled="currentPage === 1">
             ‹
           </button>
 
-          <button
-            v-for="page in totalPages"
-            :key="page"
-            class="page-btn"
-            :class="{ active: page === currentPage }"
-            @click="goToPage(page)"
-          >
+          <button v-for="page in totalPages" :key="page" class="page-btn" :class="{ active: page === currentPage }"
+            @click="goToPage(page)">
             {{ page }}
           </button>
 
-          <button
-            class="page-btn"
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-          >
+          <button class="page-btn" @click="nextPage" :disabled="currentPage === totalPages">
             ›
           </button>
         </div>
@@ -83,11 +90,7 @@
     <form v-if="editingId" class="form" @submit.prevent="updateUser">
       <input class="input" v-model="username" placeholder="Username" />
 
-      <input
-        class="input"
-        v-model="password"
-        placeholder="Nueva contraseña (opcional)"
-      />
+      <input class="input" v-model="password" placeholder="Nueva contraseña (opcional)" />
 
       <input class="input" v-model="rol" type="number" placeholder="Rol ID" />
 
@@ -107,14 +110,15 @@
   <div v-if="showModal" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
       <p>{{ modalMessage }}</p>
-      <button @click="closeModal">Cerrar</button>
+      <button @click="closeModal">Entendido</button>
     </div>
   </div>
+
   <div v-if="showConfirmModal" class="modal-overlay" @click="cancelToggle">
     <div class="modal-content" @click.stop>
       <p>{{ confirmMessage }}</p>
       <div class="modal-buttons">
-        <button class="btn btn-confirm" @click="confirmToggle">Aceptar</button>
+        <button class="btn btn-confirm" @click="confirmToggle">Sí, confirmar</button>
         <button class="btn btn-cancel" @click="cancelToggle">Cancelar</button>
       </div>
     </div>
@@ -168,12 +172,13 @@ const goToCreate = () => {
   router.push("/dashboard/users/create");
 };
 const loadUsers = async () => {
+  currentFilter.value = 'todos'; // Cambia el estado
   try {
     const data = await getUsuarios();
     users.value = normalizeUsers(data);
     currentPage.value = 1;
   } catch (error) {
-    openModal("Error cargando usuarios ");
+    openModal("Error cargando usuarios");
   }
 };
 onMounted(() => {
@@ -192,7 +197,7 @@ const closeModal = () => {
 const startItem = computed(() => {
   return (currentPage.value - 1) * usersPerPage + 1;
 });
-
+const currentFilter = ref('todos'); // Estado inicial
 const endItem = computed(() => {
   if (!Array.isArray(users.value)) return 0;
 
@@ -213,19 +218,18 @@ const totalPages = computed(() => {
 });
 
 const loadActivos = async () => {
+  currentFilter.value = 'activos'; // Cambia el estado
   const data = await getUsuariosActivos();
-
   users.value = normalizeUsers(data);
   currentPage.value = 1;
 };
 
 const loadInactivos = async () => {
+  currentFilter.value = 'inactivos'; // Cambia el estado
   const data = await getUsuariosInactivos();
-
   users.value = normalizeUsers(data);
   currentPage.value = 1;
 };
-
 const getRoleName = (rol_id) => {
   const role = roles.value.find((r) => r.id === rol_id);
   return role ? role.nombre : "Sin rol";
