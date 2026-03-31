@@ -55,7 +55,7 @@ const login = async () => {
     localStorage.setItem("username", data.user.username);
     localStorage.setItem("rol_id", data.user.rol_id);
 
-    router.push("/dashboard");
+    router.push("/dashboard/inicio");
   } catch (err) {
     errorMessage.value =
       err.response?.data?.error || "Usuario o contraseña incorrectos";
