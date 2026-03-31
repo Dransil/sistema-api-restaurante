@@ -36,21 +36,21 @@
           </td>
 
           <td>
-            <button
+            <button class="btn btn-outline-primary btn-sm"
               v-if="editandoId !== cat.id && esAdmin"
               @click="empezarEditar(cat)"
             >
               Editar
             </button>
 
-            <button
+            <button class="btn btn-outline-primary btn-sm"
               v-if="editandoId === cat.id && esAdmin"
               @click="guardarEdicion(cat)"
             >
               Guardar
             </button>
 
-            <button
+            <button class="btn btn-outline-danger btn-sm"
               v-if="editandoId === cat.id && esAdmin"
               @click="cancelarEdicion"
             >
