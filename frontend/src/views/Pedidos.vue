@@ -164,6 +164,7 @@ import {
   getProductosByCategoria,
   getConfigLocal,
 } from "../services/api";
+import "../assets/styles/pedidos.css";
 
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 

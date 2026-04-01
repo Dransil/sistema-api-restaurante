@@ -204,7 +204,6 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  /* Usamos un color oscuro con alfa para el fondo */
   background-color: rgba(0, 0, 0, 0.5); 
   backdrop-filter: blur(8px); /* El desenfoque ayuda a separar capas */
   display: flex;
