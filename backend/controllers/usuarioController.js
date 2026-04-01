@@ -102,7 +102,7 @@ const register = async (req, res) => {
 }
 
 // Crear usuario
-const createUsuario = async (params) => {
+const createUsuario = async (req, res) => {
     const {
         username, password, rol_id,
         name, first_name, second_name,
