@@ -1,207 +1,231 @@
-:root {
-  --reportes-bg: #f3ecff;
-  --reportes-header: #7b5fc9;
-  --reportes-card: #ffffff;
-  --reportes-button: #7b5fc9;
-  --reportes-button-hover: #6a4fc0;
-  --reportes-text: #333;
-}
-
-/* contenedor principal */
 .reportes-container {
-  padding: 30px;
-  background: var(--reportes-bg);
+  padding: 1.5rem;
+  background: #f4f6f9;
   min-height: 100vh;
-  
-}
-
-/* título */
-.reportes-container h1 {
-  color: var(--reportes-header);
-  margin-bottom: 20px;
-}
-
-/* botón */
-.reportes-button {
-  background: var(--reportes-button);
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.reportes-button:hover {
-  background: var(--reportes-button-hover);
-  transform: translateY(-2px);
-}
-
-/* contenedor de cards */
-.reportes-cards {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Encabezado ── */
+.reportes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.title    { font-size: 1.8rem; font-weight: 700; color: #1a202c; margin: 0; }
+.subtitle { font-size: 0.9rem; color: #6c757d; margin: 0; }
+.section-title { font-weight: 700; color: #1a202c; margin-bottom: 1rem; }
+
+/* ── Resumen ── */
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.resumen-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: transform 0.2s;
+}
+.resumen-card:hover { transform: translateY(-3px); }
+
+.resumen-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.card-ventas .resumen-icon { background: #e0e7ff; color: #4e73df; }
+.card-dinero .resumen-icon { background: #d1fae5; color: #059669; }
+.card-top    .resumen-icon { background: #fef3c7; color: #d97706; }
+
+.resumen-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; color: #6c757d; margin: 0; }
+.resumen-valor { font-size: 1.4rem; font-weight: 800; color: #1a202c; margin: 0; }
+
+/* ── Filtro ── */
+.filtro-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.filtro-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
   flex-wrap: wrap;
 }
+.filtro-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 150px; }
+.filtro-field .form-label { font-size: 0.85rem; font-weight: 600; color: #495057; margin: 0; }
+.btn-buscar { padding: 0.55rem 1.4rem; white-space: nowrap; }
 
-/* card */
-.reportes-card {
-  background: var(--reportes-card);
-  border-radius: 12px;
-  padding: 20px;
-  width: 220px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-/* título card */
-.reportes-card h3 {
-  color: var(--reportes-text);
-  margin-bottom: 10px;
+/* ── Charts ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
-/* número */
-.reportes-number {
-  font-size: 26px;
-  font-weight: bold;
-  color: var(--reportes-header);
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.4rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
-/* mensaje vacío */
-.reportes-empty {
-  margin-top: 20px;
-  color: #888;
+.chart-wrapper {
+  position: relative;
+  max-height: 280px;
+  display: flex;
+  justify-content: center;
+}
+.chart-empty {
   text-align: center;
-}
-.reportes-card {
-  transition: all 0.3s ease;
-}
-
-.reportes-card:hover {
-  transform: translateY(-5px);
-}
-/* secciones */
-.reportes-section {
-  margin-top: 40px;
+  color: #adb5bd;
+  font-size: 0.9rem;
+  margin-top: 2rem;
 }
 
-/* tabla */
-.reportes-table {
+/* ── Tabla ── */
+.table-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.4rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.table-wrapper { overflow-x: auto; }
+
+.reporte-table {
   width: 100%;
-  margin-top: 20px;
   border-collapse: collapse;
+  font-size: 0.88rem;
 }
-
-.reportes-table th {
-  background: var(--reportes-header);
+.reporte-table th {
+  background: #2c3e50;
   color: white;
-  padding: 10px;
+  padding: 10px 12px;
+  font-weight: 600;
+  text-align: left;
 }
+.reporte-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e9ecef;
+  color: #1a202c;
+}
+.reporte-table tr:hover { background: #f8f9fa; }
 
-.reportes-table td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.reportes-table tr:hover {
-  background: #f7f4ff;
-}
-.reportes-section input {
-  padding: 8px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-.reportes-section ul {
-  margin-top: 10px;
-  padding-left: 20px;
-}
-
-.reportes-section li {
-  margin-bottom: 6px;
-  color: var(--reportes-text);
-}
-.reportes-number {
-  text-align: center;
-}
-
-
-.reportes-table {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.reportes-section .reportes-card {
-  width: 100%;
-}
-
-.reportes-table th,
-.reportes-table td {
-  text-align: center;
-}
-
-.reportes-table tr {
-  transition: background 0.2s;
-}
-
-.reportes-section input:focus {
-  outline: none;
-  border: 1px solid var(--reportes-header);
-  box-shadow: 0 0 5px rgba(123,95,201,0.3);
-}
-
-
-.modal {
+/* ── Modal overlay ── */
+.modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  animation: fadeIn 0.2s ease;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 700px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
   width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* MODAL GENÉRICO */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+/* Modal factura */
+.factura-modal { max-width: 560px; }
+
+.modal-header-custom {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  z-index: 999;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid #e9ecef;
 }
+.modal-body-custom { padding: 1.4rem 1.5rem; }
+.modal-footer-custom {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+.modal-close-btn {
+  background: none; border: none; font-size: 1rem;
+  color: #6c757d; cursor: pointer; padding: 0.2rem 0.5rem;
+  border-radius: 6px; transition: background 0.2s;
+}
+.modal-close-btn:hover { background: #f1f3f5; }
 
-.modal-content {
-  background: white;
-  padding: 25px;
+.factura-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #f8f9fa;
   border-radius: 10px;
+  padding: 1rem;
+}
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+.meta-label { font-weight: 600; color: #6c757d; }
+
+.factura-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a202c;
+  color: white;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  margin-top: 0.5rem;
+  font-weight: 700;
+}
+.total-amount { font-size: 1.2rem; }
+
+/* Modal mensaje */
+.message-modal {
+  max-width: 340px;
+  padding: 2rem;
   text-align: center;
-  min-width: 300px;
-  max-width: 400px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
+.modal-icon { font-size: 2.5rem; }
+.message-modal p { margin: 0; color: #1a202c; font-weight: 500; }
 
-.modal-content p {
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-
-.modal-content button {
-  padding: 8px 15px;
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .charts-grid { grid-template-columns: 1fr; }
+  .filtro-row  { flex-direction: column; }
 }
