@@ -336,56 +336,56 @@ const username = ref("");
 const password = ref("");
 const rol = ref("");
 const activo = ref(true);
-const editName       = ref("");
-const editFirstName  = ref("");
+const editName = ref("");
+const editFirstName = ref("");
 const editSecondName = ref("");
-const editFechaNac   = ref("");
-const editCelular    = ref("");
-const editEmail      = ref("");
+const editFechaNac = ref("");
+const editCelular = ref("");
+const editEmail = ref("");
 
 const openEditModal = (user) => {
-  editingId.value     = user.id;
-  username.value      = user.username;
-  password.value      = "";
-  rol.value           = user.rol_id;
-  activo.value        = user.activo;
-  editName.value      = user.name        || "";
-  editFirstName.value = user.first_name  || "";
-  editSecondName.value= user.second_name || "";
-  editFechaNac.value  = user.fecha_nac   ? user.fecha_nac.split("T")[0] : "";
-  editCelular.value   = user.celular     || "";
-  editEmail.value     = user.email       || "";
+  editingId.value = user.id;
+  username.value = user.username;
+  password.value = "";
+  rol.value = user.rol_id;
+  activo.value = user.activo;
+  editName.value = user.name || "";
+  editFirstName.value = user.first_name || "";
+  editSecondName.value = user.second_name || "";
+  editFechaNac.value = user.fecha_nac ? user.fecha_nac.split("T")[0] : ""; 
+  editCelular.value = user.celular || "";
+  editEmail.value = user.email || "";
   showEditModal.value = true;
 };
 
 const closeEditModal = () => {
-  showEditModal.value  = false;
-  editingId.value      = null;
-  username.value       = "";
-  password.value       = "";
-  rol.value            = "";
-  activo.value         = true;
-  editName.value       = "";
-  editFirstName.value  = "";
+  showEditModal.value = false;
+  editingId.value = null;
+  username.value = "";
+  password.value = "";
+  rol.value = "";
+  activo.value = true;
+  editName.value = "";
+  editFirstName.value = "";
   editSecondName.value = "";
-  editFechaNac.value   = "";
-  editCelular.value    = "";
-  editEmail.value      = "";
+  editFechaNac.value = "";
+  editCelular.value = "";
+  editEmail.value = "";
 };
 
 const updateUser = async () => {
   try {
     await updateUsuario(editingId.value, {
-      username:    username.value,
-      password:    password.value,
-      rol_id:      rol.value,
-      activo:      activo.value,
-      name:        editName.value,
-      first_name:  editFirstName.value,
+      username: username.value,
+      password: password.value,
+      rol_id: rol.value,
+      activo: activo.value,
+      name: editName.value,
+      first_name: editFirstName.value,
       second_name: editSecondName.value,
-      fecha_nac:   editFechaNac.value,
-      celular:     editCelular.value,
-      email:       editEmail.value,
+      fecha_nac: editFechaNac.value,
+      celular: editCelular.value,
+      email: editEmail.value,
     });
     closeEditModal();
     openModal("Usuario actualizado correctamente");
