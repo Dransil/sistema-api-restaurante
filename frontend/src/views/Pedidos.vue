@@ -192,9 +192,8 @@ const loadConfig = async () => {
 
 // ─── Helper fecha local ───────────────────────────────
 // Evita el desfase de zona horaria mostrando siempre hora local
-const formatFechaLocal = (fecha) => {
-  if (!fecha) return "—";
-  const d = new Date(fecha);
+const formatFechaLocal = () => {
+  const d = new Date();
   const pad = (n) => String(n).padStart(2, "0");
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
@@ -448,7 +447,7 @@ const finalizarVenta = async () => {
     });
 
     // Captura la fecha local en el momento exacto de la venta
-    const fechaVenta = formatFechaLocal(new Date());
+    const fechaVenta = formatFechaLocal();
 
     imprimirFactura({
       cliente: razon_social.value,
