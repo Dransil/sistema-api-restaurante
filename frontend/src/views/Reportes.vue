@@ -368,10 +368,9 @@ const imprimirFactura = async (id) => {
 // ─── Helpers ──────────────────────────────────────────
 const formatFecha = (fecha) => {
   if (!fecha) return "—";
-  return new Date(fecha).toLocaleString("es-BO", {
-    day: "2-digit", month: "2-digit", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  });
+  const d = new Date(fecha);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
 // ─── Gráfico dona ─────────────────────────────────────
