@@ -17,7 +17,9 @@ const registrarVenta = async (req, res) => {
         await client.query('BEGIN');
         // Insertar la cabecera (Tabla pedidos)
         const pedidoRes = await client.query(
-            'INSERT INTO pedidos (usuario_id, cliente_id, total) VALUES ($1, $2, $3) RETURNING id',
+            `INSERT INTO pedidos (usuario_id, cliente_id, total, fecha_hora) 
+            VALUES ($1, $2, $3, NOW() AT TIME ZONE 'America/La_Paz') 
+            RETURNING id`,
             [usuario_id, cliente_id || null, total]
         );
         const pedidoId = pedidoRes.rows[0].id;
@@ -53,9 +55,9 @@ const registrarVenta = async (req, res) => {
         }
 
         await client.query('COMMIT');
-        res.status(201).json({ 
-            mensaje: "Venta completada", 
-            pedido_id: pedidoId 
+        res.status(201).json({
+            mensaje: "Venta completada",
+            pedido_id: pedidoId
         });
 
     } catch (error) {
@@ -66,4 +68,4 @@ const registrarVenta = async (req, res) => {
     }
 };
 
-module.exports = {getPedido, registrarVenta};
+module.exports = { getPedido, registrarVenta };
