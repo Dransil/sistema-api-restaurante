@@ -96,8 +96,7 @@
                   </div>
                 </td>
                 <td class="align-middle text-end">{{ moneda }} {{ Number(item.precio_unitario).toFixed(2) }}</td>
-                <td class="align-middle text-end fw-bold">{{ moneda }} {{ (item.cantidad *
-                  item.precio_unitario).toFixed(2) }}</td>
+                <td class="align-middle text-end fw-bold">{{ moneda }} {{ (item.cantidad * item.precio_unitario).toFixed(2) }}</td>
                 <td class="align-middle text-center">
                   <button class="btn btn-outline-danger btn-xs" @click="eliminarProducto(item)">
                     <i class="fas fa-trash-alt"></i>
@@ -154,7 +153,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, reactive } from "vue";
 import {
   getProductos,
   registrarPedido,
@@ -168,41 +167,57 @@ import "../assets/styles/pedidos.css";
 
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
-// ─── Moneda desde config ─────────────────────────────
+// ─── Config ───────────────────────────────────────────
 const moneda = ref("");
+const configNegocio = reactive({
+  nombre_restaurante: "",
+  nit: "",
+  direccion: "",
+  telefono: "",
+  ciudad: "",
+});
 
 const loadConfig = async () => {
   try {
     const configData = await getConfigLocal();
-    if (Array.isArray(configData) && configData.length > 0) {
-      moneda.value = configData[0].moneda || "";
-    } else if (configData && typeof configData === "object") {
-      moneda.value = configData.moneda || "";
+    const data = Array.isArray(configData) ? configData[0] : configData;
+    if (data) {
+      Object.assign(configNegocio, data);
+      moneda.value = data.moneda || "";
     }
   } catch (err) {
     console.error("Error cargando config:", err);
   }
 };
 
+// ─── Helper fecha local ───────────────────────────────
+// Evita el desfase de zona horaria mostrando siempre hora local
+const formatFechaLocal = (fecha) => {
+  if (!fecha) return "—";
+  const d = new Date(fecha);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 // ─── Estado ──────────────────────────────────────────
-const productos = ref([]);
-const carrito = ref([]);
-const total = ref(0);
-const buscar = ref("");
-const cobrado = ref(0);
-const cambio = ref(0);
+const productos  = ref([]);
+const carrito    = ref([]);
+const total      = ref(0);
+const buscar     = ref("");
+const cobrado    = ref(0);
+const cambio     = ref(0);
 const categorias = ref([]);
 const categoriaSeleccionada = ref(null);
-const ci = ref("");
-const razon_social = ref("");
-const cliente_id = ref(null);
-const showModal = ref(false);
-const modalTitle = ref("");
-const modalMessage = ref("");
+const ci            = ref("");
+const razon_social  = ref("");
+const cliente_id    = ref(null);
+const showModal     = ref(false);
+const modalTitle    = ref("");
+const modalMessage  = ref("");
 const usuario_id = Number(localStorage.getItem("user_id"));
 
 // ─── Paginación ──────────────────────────────────────
-const currentPage = ref(1);
+const currentPage       = ref(1);
 const productosPorPagina = 10;
 
 watch(buscar, () => { currentPage.value = 1; });
@@ -213,15 +228,15 @@ watch(ci, async (newCi) => {
   try {
     const cliente = await getClienteByCI(newCi);
     razon_social.value = cliente.razon_social;
-    cliente_id.value = cliente.id;
+    cliente_id.value   = cliente.id;
   } catch {
     razon_social.value = "";
-    cliente_id.value = null;
+    cliente_id.value   = null;
   }
 });
 
 // ─── Carga datos ─────────────────────────────────────
-const loadProductos = async () => { productos.value = await getProductos(); };
+const loadProductos  = async () => { productos.value  = await getProductos(); };
 const loadCategorias = async () => { categorias.value = await getCategorias(); };
 
 onMounted(() => {
@@ -267,11 +282,11 @@ const totalPages = computed(() =>
 );
 
 const startItem = computed(() => (currentPage.value - 1) * productosPorPagina + 1);
-const endItem = computed(() => Math.min(currentPage.value * productosPorPagina, totalFiltrados.value));
+const endItem   = computed(() => Math.min(currentPage.value * productosPorPagina, totalFiltrados.value));
 
-const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++; };
-const prevPage = () => { if (currentPage.value > 1) currentPage.value--; };
-const goToPage = (page) => { currentPage.value = page; };
+const nextPage  = () => { if (currentPage.value < totalPages.value) currentPage.value++; };
+const prevPage  = () => { if (currentPage.value > 1) currentPage.value--; };
+const goToPage  = (page) => { currentPage.value = page; };
 
 // ─── Carrito ─────────────────────────────────────────
 const agregarProducto = (producto) => {
@@ -284,9 +299,9 @@ const agregarProducto = (producto) => {
     existente.cantidad++;
   } else {
     carrito.value.push({
-      producto_id: producto.id,
-      nombre: producto.nombre,
-      cantidad: 1,
+      producto_id:     producto.id,
+      nombre:          producto.nombre,
+      cantidad:        1,
       precio_unitario: Number(producto.precio),
     });
   }
@@ -318,71 +333,105 @@ const eliminarProducto = (item) => {
 const calcularCambio = () => { cambio.value = cobrado.value - total.value; };
 
 // ─── Modal ───────────────────────────────────────────
-const abrirModal = (titulo, mensaje) => { modalTitle.value = titulo; modalMessage.value = mensaje; showModal.value = true; };
+const abrirModal  = (titulo, mensaje) => { modalTitle.value = titulo; modalMessage.value = mensaje; showModal.value = true; };
 const cerrarModal = () => { showModal.value = false; };
 
-// ─── PDF ─────────────────────────────────────────────
-const generarFacturaPDF = async ({ cliente, ci, total, carrito }) => {
-  const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([600, 750]);
-  const { width, height } = page.getSize();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+// ─── Imprimir factura (ventana HTML) ─────────────────
+const imprimirFactura = ({ cliente, ci, total, carrito, fechaVenta }) => {
+  const ventana = window.open("", "_blank");
+  ventana.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Factura de Venta</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 13px; padding: 30px; color: #111; }
+        .header { background: #1a202c; color: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 18px; }
+        .header p  { font-size: 11px; opacity: 0.7; margin-top: 4px; }
+        .header .nro { font-size: 13px; font-weight: bold; text-align: right; }
+        .meta { background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .meta-item { font-size: 12px; }
+        .meta-item span { font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        thead tr { background: #1a202c; color: white; }
+        thead th { padding: 9px 12px; text-align: left; font-size: 12px; }
+        thead th:last-child, thead th:nth-child(2), thead th:nth-child(3) { text-align: right; }
+        tbody td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 12px; }
+        tbody td:last-child, tbody td:nth-child(2), tbody td:nth-child(3) { text-align: right; }
+        tbody tr:nth-child(even) { background: #f9f9f9; }
+        .total-row { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+        .total-box { background: #1a202c; color: white; border-radius: 8px; padding: 10px 20px; text-align: right; }
+        .total-box p { font-size: 11px; opacity: 0.7; }
+        .total-box h2 { font-size: 20px; }
+        .footer { text-align: center; color: #888; font-size: 11px; border-top: 1px solid #eee; padding-top: 12px; }
+        @media print { body { padding: 10px; } }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div>
+          <h1>${configNegocio.nombre_restaurante || "Restaurante"}</h1>
+          <p>NIT: ${configNegocio.nit || "—"} &nbsp;|&nbsp; Tel: ${configNegocio.telefono || "—"}</p>
+          <p>${configNegocio.direccion || ""} — ${configNegocio.ciudad || ""}</p>
+        </div>
+        <div class="nro">
+          FACTURA DE VENTA<br>
+          <span style="font-weight:normal; font-size:11px; opacity:0.8">${fechaVenta}</span>
+        </div>
+      </div>
 
-  let y = height - 50;
+      <div class="meta">
+        <div class="meta-item">Cliente: <span>${cliente || "Venta Rápida"}</span></div>
+        <div class="meta-item">CI / NIT: <span>${ci || "S/N"}</span></div>
+      </div>
 
-  page.drawRectangle({ x: 0, y: y - 25, width, height: 40, color: rgb(0.9, 0.9, 0.9) });
-  page.drawText("Factura de Venta", { x: width / 2 - 60, y: y - 10, size: 18, font });
-  y -= 60;
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Precio Unit.</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${carrito.map((item, i) => `
+            <tr>
+              <td>${item.nombre}</td>
+              <td>${item.cantidad}</td>
+              <td>${moneda.value} ${Number(item.precio_unitario).toFixed(2)}</td>
+              <td>${moneda.value} ${(item.cantidad * item.precio_unitario).toFixed(2)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
 
-  page.drawText(`Cliente: ${cliente || "N/A"}`, { x: 50, y, size: 12, font });
-  y -= 20;
-  page.drawText(`CI: ${ci || "N/A"}`, { x: 50, y, size: 12, font });
-  y -= 30;
+      <div class="total-row">
+        <div class="total-box">
+          <p>TOTAL A PAGAR</p>
+          <h2>${moneda.value} ${Number(total).toFixed(2)}</h2>
+        </div>
+      </div>
 
-  const columnWidths = [200, 70, 100, 100];
-  const rowHeight = 25;
+      <div class="footer">
+        <p>¡Gracias por su compra!</p>
+        <p>${configNegocio.nombre_restaurante || ""} — ${configNegocio.ciudad || ""}</p>
+      </div>
 
-  const drawCell = (text, x, y, w, h, isHeader = false, bgColor = null) => {
-    if (bgColor) page.drawRectangle({ x, y: y - h, width: w, height: h, color: bgColor });
-    page.drawRectangle({ x, y: y - h, width: w, height: h, borderColor: rgb(0, 0, 0), borderWidth: 1 });
-    page.drawText(text, { x: x + 5, y: y - h / 2 - 5, size: 12, font });
-  };
-
-  let x = 50;
-  ["Producto", "Cantidad", "Precio Unitario", "Subtotal"].forEach((h, i) => {
-    drawCell(h, x, y, columnWidths[i], rowHeight, true, rgb(0.8, 0.8, 0.8));
-    x += columnWidths[i];
-  });
-  y -= rowHeight;
-
-  carrito.forEach((item, index) => {
-    x = 50;
-    const bgColor = index % 2 === 0 ? rgb(0.95, 0.95, 0.95) : null;
-    [
-      item.nombre,
-      item.cantidad.toString(),
-      `${moneda.value} ${item.precio_unitario.toFixed(2)}`,
-      `${moneda.value} ${(item.cantidad * item.precio_unitario).toFixed(2)}`,
-    ].forEach((val, i) => {
-      drawCell(val, x, y, columnWidths[i], rowHeight, false, bgColor);
-      x += columnWidths[i];
-    });
-    y -= rowHeight;
-  });
-
-  page.drawRectangle({ x: 50, y: y - rowHeight, width: columnWidths.reduce((a, b) => a + b, 0), height: rowHeight, color: rgb(0.9, 0.9, 0.9) });
-  page.drawText(`Total: ${moneda.value} ${total.toFixed(2)}`, { x: 380, y: y - 15, size: 14, font });
-  y -= rowHeight + 20;
-  page.drawText("¡Gracias por su compra!", { x: 200, y, size: 12, font });
-
-  const blob = new Blob([await pdfDoc.save()], { type: "application/pdf" });
-  window.open(URL.createObjectURL(blob), "_blank");
+      <script>window.onload = () => { window.print(); window.onafterprint = () => window.close(); }<\/script>
+    </body>
+    </html>
+  `);
+  ventana.document.close();
 };
 
 // ─── Finalizar venta ─────────────────────────────────
 const finalizarVenta = async () => {
   if (carrito.value.length === 0) return abrirModal("Error", "El carrito está vacío");
-  if (cobrado.value <= 0) return abrirModal("Error", "Ingrese el monto cobrado");
+  if (cobrado.value <= 0)         return abrirModal("Error", "Ingrese el monto cobrado");
   if (cobrado.value < total.value) return abrirModal("Error", "El monto es insuficiente");
 
   try {
@@ -394,21 +443,30 @@ const finalizarVenta = async () => {
     await registrarPedido({
       usuario_id,
       cliente_id: cliente_id.value,
-      total: Number(total.value),
-      detalles: carrito.value,
+      total:      Number(total.value),
+      detalles:   carrito.value,
     });
 
-    generarFacturaPDF({ cliente: razon_social.value, ci: ci.value, total: total.value, carrito: [...carrito.value] });
+    // Captura la fecha local en el momento exacto de la venta
+    const fechaVenta = formatFechaLocal(new Date());
+
+    imprimirFactura({
+      cliente: razon_social.value,
+      ci:      ci.value,
+      total:   total.value,
+      carrito: [...carrito.value],
+      fechaVenta,
+    });
 
     abrirModal("Éxito", "Venta registrada correctamente");
 
-    carrito.value = [];
-    total.value = 0;
-    ci.value = "";
+    carrito.value      = [];
+    total.value        = 0;
+    ci.value           = "";
     razon_social.value = "";
-    cliente_id.value = null;
-    cobrado.value = 0;
-    cambio.value = 0;
+    cliente_id.value   = null;
+    cobrado.value      = 0;
+    cambio.value       = 0;
   } catch (error) {
     abrirModal("Error", error.response?.data?.error || "Error registrando venta");
   }
