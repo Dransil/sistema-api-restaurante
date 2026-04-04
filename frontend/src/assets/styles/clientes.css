@@ -163,3 +163,23 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* ── Inputs ── */
+.clientes-container input,
+.clientes-container select {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.clientes-container input:focus,
+.clientes-container select:focus {
+  border-color: var(--clientes-button);
+}
+
+.form-box input {
+  max-width: 250px;
+  max-height: 45px;
+}
