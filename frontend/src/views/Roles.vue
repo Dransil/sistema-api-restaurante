@@ -2,7 +2,7 @@
   <div class="roles-container">
     <h2 class="title">Roles</h2>
 <div v-if="loading">Cargando roles...</div>
-    <table class="tabla">
+    <table class="roles-table">
       <thead>
         <tr>
           <th>ID</th>
