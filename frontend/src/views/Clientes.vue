@@ -122,8 +122,8 @@ export default {
     <div class="clientes-card">
    
       <div class="form-box">
-        <input v-model="ci" placeholder="CI" @blur="buscarCliente" />
-        <input v-model="razon_social" placeholder="Razón Social" />
+        <input v-model="ci" class="form-control" placeholder="CI" @blur="buscarCliente" />
+        <input v-model="razon_social" class="form-control" placeholder="Razón Social" />
         <button class="clientes-button" @click="guardarCliente">
           {{ cliente_id ? "Actualizar Cliente" : "Crear Cliente" }}
         </button>
