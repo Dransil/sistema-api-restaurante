@@ -14,7 +14,7 @@
         <button class="btn-cancel" @click="newCategory = ''">Cancelar</button>
       </div>
     </div>
-    <table class="tabla">
+    <table class="categoria-table">
       <thead>
         <tr>
           <th>ID</th>

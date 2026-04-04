@@ -105,49 +105,6 @@ ul li button:hover {
   opacity: 0.9;
 }
 
-.tabla {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  table-layout: fixed;
-}
-
-.tabla th {
-  background: #b7a3f0;
-  color: white;
-  padding: 12px;
-  text-align: center;
-}
-
-.tabla td {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-}
-/* Alineación de columnas */
-.tabla th:nth-child(1),
-.tabla td:nth-child(1) {
-  width: 80px;
-  text-align: center;
-}
-
-.tabla th:nth-child(2),
-.tabla td:nth-child(2) {
-  text-align: left;
-}
-
-.tabla th:nth-child(3),
-.tabla td:nth-child(3) {
-  width: 180px;
-  text-align: center;
-}
-
-.tabla tr:hover {
-  background: #f7f4ff;
-}
-
 
 
 .form-card {
@@ -286,3 +243,9 @@ ul li button:hover {
   margin-bottom: 15px;
   font-size: 16px;
 }
+
+.categoria-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; box-shadow: 0px 6px 18px rgba(0,0,0,0.15); margin-bottom: 20px; }
+.categoria-table th { background: var(--table-header); color: var(--text-light); padding: 12px; font-weight: 600; }
+.categoria-table td { border: 1px solid var(--table-border); padding: 12px; text-align: center; }
+.categoria-table tr:nth-child(even) { background: var(--table-row-alt); }
+.categoria-table tr:hover { background: #ececec; transition: 0.2s; }
