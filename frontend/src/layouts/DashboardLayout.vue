@@ -49,6 +49,7 @@
           class="nav-link text-white d-flex align-items-center gap-3 rounded">
           <i class="fas fa-chart-bar"></i> <span>Reportes</span>
         </router-link>
+          <span class="nav-section-label">Sistema</span>
 
         <router-link v-if="rol === 1" to="/dashboard/configlocal"
           class="nav-link text-white d-flex align-items-center gap-3 rounded">
@@ -56,11 +57,14 @@
         </router-link>
       </nav>
 
-      <button @click="logout" class="btn btn-outline-danger d-flex align-items-center border-0 w-100 mt-auto p-3"
-        :class="isClosed ? 'justify-content-center' : 'justify-content-start gap-3'">
-        <i class="fas fa-sign-out-alt"></i>
-        <span v-if="!isClosed" class="fw-medium">Cerrar sesión</span>
-      </button>
+      <button
+          @click="logout"
+          class="btn-logout btn w-100 d-flex align-items-center"
+          :class="isClosed ? 'justify-content-center' : 'gap-3'"
+        >
+          <i class="fas fa-sign-out-alt"></i>
+          <span v-if="!isClosed">Cerrar sesión</span>
+        </button>
 
     </aside>
 

@@ -1,40 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── Layout base ── */
+.dashboard-layout {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Sidebar ── */
 .sidebar {
   width: 250px;
   min-height: 100vh;
-  transition: width 0.3s ease;
-  background: linear-gradient(180deg, #6a4cff 0%, #b29bf0 100%);
+  background: #1e1535;
+  border-right: 1px solid rgba(196, 132, 252, 0.12);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
   z-index: 1000;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Orbe decorativo en el sidebar */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(123, 95, 201, 0.3), transparent 70%);
+  top: -60px;
+  left: -60px;
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .sidebar.closed {
   width: 70px;
 }
 
-/* Para que los links no se amontonen cuando el sidebar se cierra */
-.sidebar.closed span, 
+.sidebar.closed span,
 .sidebar.closed h2 {
   display: none;
 }
 
-.sidebar a {
-  text-decoration: none;
-  transition: 0.2s;
+/* ── Header del sidebar ── */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(196, 132, 252, 0.1);
+  margin-bottom: 8px;
 }
 
-.sidebar a:hover {
-  background: rgba(255, 255, 255, 0.1);
+.sidebar-brand {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f0eaff;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
-.router-link-active {
-  background: rgba(255, 255, 255, 0.2) !important;
-  font-weight: bold;
+.btn-toggle {
+  background: rgba(196, 132, 252, 0.1) !important;
+  border: 1px solid rgba(196, 132, 252, 0.15) !important;
+  color: #c084fc !important;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s !important;
 }
 
+.btn-toggle:hover {
+  background: rgba(196, 132, 252, 0.2) !important;
+  border-color: rgba(196, 132, 252, 0.3) !important;
+}
 
+/* ── Nav links ── */
+.sidebar .nav-link {
+  color: rgba(196, 132, 252, 0.6) !important;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 400;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  position: relative;
+}
+
+.sidebar .nav-link i {
+  font-size: 0.95rem;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar .nav-link:hover {
+  background: rgba(196, 132, 252, 0.08) !important;
+  color: #e0c8ff !important;
+}
+
+.sidebar .router-link-active {
+  background: rgba(123, 95, 201, 0.25) !important;
+  color: #f0eaff !important;
+  font-weight: 500;
+  border: 1px solid rgba(196, 132, 252, 0.2);
+}
+
+/* Indicador activo */
+.sidebar .router-link-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(180deg, #7b5fc9, #c084fc);
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── Separador de sección ── */
+.nav-section-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(196, 132, 252, 0.3);
+  padding: 8px 14px 4px;
+  margin-top: 8px;
+}
+
+.sidebar.closed .nav-section-label {
+  display: none;
+}
+
+/* ── Botón logout ── */
+.btn-logout {
+  background: transparent !important;
+  border: 1px solid rgba(248, 113, 113, 0.2) !important;
+  color: rgba(248, 113, 113, 0.7) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, border-color 0.2s, color 0.2s !important;
+  white-space: nowrap;
+}
+
+.btn-logout:hover {
+  background: rgba(248, 113, 113, 0.1) !important;
+  border-color: rgba(248, 113, 113, 0.4) !important;
+  color: #f87171 !important;
+}
+
+/* ── Main content ── */
 .main-content {
   flex: 1;
   height: 100vh;
   overflow-y: auto;
-  background-color: #f8f9fa;
+  background: #f4f6f9;
 }
-
