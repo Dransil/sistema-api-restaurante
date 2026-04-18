@@ -1,7 +1,9 @@
 class ApiConstants {
-  static const String baseUrl = 'http://10.0.2.2:3000/api';
-
-  // Endpoints basados en tu estructura SQL
+  // Cambiar IP para tests
+  static const String baseUrl = 'http://192.168.1.248:3000';
+  // Endpoint para testear
+  static const String test = '/test';
+  // Endpoints basados en el backend
   static const String login = '/auth/login';
   static const String productos = '/productos';
   static const String categorias = '/categorias';
