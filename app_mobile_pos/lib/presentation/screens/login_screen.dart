@@ -13,7 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // Controladores para capturar el texto
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final Dio _dio = Dio();
   Future<void> _login() async {
     final dio = Dio();
     try {
@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         print("Login exitoso: ${response.data}");
-        // Aquí navegarías al Home del POS
+        // Navegacion al menú
       }
     } catch (e) {
       print("Error en login: $e");
@@ -39,9 +39,40 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _probarConexion() async {
+    try {
+      final url = '${ApiConstants.baseUrl}${ApiConstants.test}';
+      final response = await _dio.get(url);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Conexión Exitosa: ${response.data}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error de conexión: Verificar IP o Servidor'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _probarConexion,
+        label: const Text('Test IP'),
+        icon: const Icon(Icons.network_check),
+        backgroundColor: Colors.orangeAccent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
