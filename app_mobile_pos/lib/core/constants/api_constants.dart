@@ -1,6 +1,7 @@
 class ApiConstants {
   // Cambiar IP para tests
   static const String baseUrl = 'http://192.168.1.248:3000';
+  //static const String baseUrl = 'http://192.168.1.248:3000';
   // Endpoint para testear
   static const String test = '/test';
   // Endpoints basados en el backend
