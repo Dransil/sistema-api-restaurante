@@ -1,3 +1,4 @@
+import 'package:app_mobile_pos/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../../core/constants/api_constants.dart';
 import 'package:dio/dio.dart';
@@ -30,6 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         print("Login exitoso: ${response.data}");
         // Navegacion al menú
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainLayout()),
+        );
       }
     } catch (e) {
       print("Error en login: $e");
