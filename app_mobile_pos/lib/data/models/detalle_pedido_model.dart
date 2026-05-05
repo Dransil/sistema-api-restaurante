@@ -1,4 +1,4 @@
-class DetallePedido {
+class DetallePedidoModel {
   final int id;
   final int pedidoId;
   final int productoId;
@@ -6,7 +6,7 @@ class DetallePedido {
   final double precioUnitario;
   final double subtotal;
 
-  DetallePedido({
+  DetallePedidoModel({
     required this.id,
     required this.pedidoId,
     required this.productoId,
@@ -15,8 +15,8 @@ class DetallePedido {
     required this.subtotal,
   });
 
-  factory DetallePedido.fromJson(Map<String, dynamic> json) {
-    return DetallePedido(
+  factory DetallePedidoModel.fromJson(Map<String, dynamic> json) {
+    return DetallePedidoModel(
       id: json['id'],
       pedidoId: json['pedido_id'],
       productoId: json['producto_id'],

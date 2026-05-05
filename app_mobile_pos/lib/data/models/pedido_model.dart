@@ -1,4 +1,4 @@
-class Pedido {
+class PedidoModel {
   final int id;
   final DateTime fechaHora;
   final int? usuarioId;
@@ -6,7 +6,7 @@ class Pedido {
   final String estado;
   final int? clienteId;
 
-  Pedido({
+  PedidoModel({
     required this.id,
     required this.fechaHora,
     this.usuarioId,
@@ -15,8 +15,8 @@ class Pedido {
     this.clienteId,
   });
 
-  factory Pedido.fromJson(Map<String, dynamic> json) {
-    return Pedido(
+  factory PedidoModel.fromJson(Map<String, dynamic> json) {
+    return PedidoModel(
       id: json['id'],
       fechaHora: DateTime.parse(json['fecha_hora']),
       usuarioId: json['usuario_id'],
