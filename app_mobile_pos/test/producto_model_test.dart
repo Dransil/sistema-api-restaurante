@@ -8,7 +8,7 @@ void main() {
     final producto = ProductoModel.fromJson(json);
 
     expect(producto.id, 10);
-    expect(producto.precio, 8.5); // Verificamos que se convirtió a double
+    expect(producto.precio, 8.5);
     expect(producto.nombre, "Arroz");
   });
 }
