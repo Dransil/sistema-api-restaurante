@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:app_mobile_pos/screens/clientes_screen.dart';
+import 'package:app_mobile_pos/screens/ajustes_screen.dart';
+import 'package:app_mobile_pos/screens/productos_screen.dart';
+import 'package:app_mobile_pos/screens/ordenes_screen.dart';
 
 // Aqui tienes que importar las pantallas que haras
 class MainLayout extends StatefulWidget {
@@ -14,11 +18,11 @@ class _MainLayoutState extends State<MainLayout> {
 
   // Lista de tus pantallas
   final List<Widget> _screens = [
-    const Center(child: Text('Productos')), // Index 0
-    const Center(child: Text('Órdenes')), // Index 1
+    const ProductosScreen(),
+    const OrdenesScreen(),
     const Center(child: Text('Inicio')), // Index 2 (Principal)
-    const Center(child: Text('Clientes')), // Index 3
-    const Center(child: Text('Ajustes')), // Index 4
+    const ClientesScreen(),
+    const AjustesScreen(),
   ];
 
   @override
