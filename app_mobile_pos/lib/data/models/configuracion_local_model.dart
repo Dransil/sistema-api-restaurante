@@ -34,4 +34,17 @@ class ConfiguracionLocalModel {
       planActual: json['plan_actual'] ?? 'BASICO',
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nombre_restaurante': nombreRestaurante,
+      'nit': nit,
+      'direccion': direccion,
+      'telefono': telefono,
+      'ciudad': ciudad,
+      'moneda': moneda,
+      'logo_url': logoUrl,
+      'plan_actual': planActual,
+    };
+  }
 }
