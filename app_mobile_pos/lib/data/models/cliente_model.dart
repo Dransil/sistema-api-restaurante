@@ -22,4 +22,13 @@ class ClienteModel {
       createdAt: DateTime.parse(json['created_at']),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'razon_social': razonSocial,
+      'ci': ci,
+      'pedidos_realizados': pedidosRealizados,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
 }
