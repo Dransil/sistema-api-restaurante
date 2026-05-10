@@ -7,4 +7,7 @@ class CategoriaModel {
   factory CategoriaModel.fromJson(Map<String, dynamic> json) {
     return CategoriaModel(id: json['id'], nombre: json['nombre']);
   }
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'nombre': nombre};
+  }
 }
