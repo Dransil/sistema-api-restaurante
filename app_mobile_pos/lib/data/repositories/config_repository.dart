@@ -10,7 +10,6 @@ class ConfigRepository {
     try {
       final response = await _apiClient.dio.get(ApiConstants.configLocal);
 
-      // Como tu backend devuelve result.rows (un Array), accedemos al primer elemento
       if (response.statusCode == 200 && (response.data as List).isNotEmpty) {
         return ConfiguracionLocalModel.fromJson(response.data);
       }
