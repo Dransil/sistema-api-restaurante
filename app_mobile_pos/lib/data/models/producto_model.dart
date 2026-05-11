@@ -28,4 +28,16 @@ class ProductoModel {
       activo: json['activo'] ?? true,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nombre': nombre,
+      'precio': precio,
+      'stock': stock,
+      'categoria_id': categoriaId,
+      'imagen_url': imagenUrl,
+      'activo': activo,
+    };
+  }
 }
