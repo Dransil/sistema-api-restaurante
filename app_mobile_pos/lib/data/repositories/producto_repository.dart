@@ -17,6 +17,11 @@ class ProductoRepository {
     return _fetchProductos('${ApiConstants.productos}/activos');
   }
 
+  // GET /productos/activos
+  Future<List<ProductoModel>> obtenerNoActivos() async {
+    return _fetchProductos('${ApiConstants.productos}/noactivos');
+  }
+
   Future<List<ProductoModel>> _fetchProductos(String url) async {
     try {
       final response = await _apiClient.dio.get(url);
@@ -55,6 +60,42 @@ class ProductoRepository {
       return ProductoModel.fromJson(response.data);
     } catch (e) {
       throw Exception('Error al crear producto');
+    }
+  }
+
+  // PUT /productos/:id
+  Future<ProductoModel> actualizarProducto(
+    int id,
+    ProductoModel producto,
+    File? nuevaImagen,
+  ) async {
+    try {
+      // Usamos FormData porque el backend espera un archivo a través de Multer
+      FormData formData = FormData.fromMap({
+        "nombre": producto.nombre,
+        "precio": producto.precio,
+        "stock": producto.stock,
+        "categoria_id": producto.categoriaId,
+        // Si hay una nueva imagen, se adjunta. Si no, el backend mantiene la anterior.
+        if (nuevaImagen != null)
+          "imagen_url": await MultipartFile.fromFile(
+            nuevaImagen.path,
+            filename: nuevaImagen.path.split('/').last,
+          ),
+      });
+
+      final response = await _apiClient.dio.put(
+        '${ApiConstants.productos}/$id',
+        data: formData,
+      );
+
+      if (response.statusCode == 201) {
+        return ProductoModel.fromJson(response.data);
+      } else {
+        throw Exception('Error inesperado al actualizar');
+      }
+    } catch (e) {
+      throw Exception('Error al actualizar el producto: $e');
     }
   }
 
