@@ -25,4 +25,13 @@ class DetallePedidoModel {
       subtotal: double.parse(json['subtotal'].toString()),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'producto_id': productoId,
+      'cantidad': cantidad,
+      'precio_unitario': precioUnitario,
+      'subtotal': cantidad * precioUnitario,
+    };
+  }
 }
