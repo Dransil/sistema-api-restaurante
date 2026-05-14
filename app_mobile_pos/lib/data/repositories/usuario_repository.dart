@@ -1,6 +1,7 @@
 import '../../core/api/dio_client.dart';
 import '../../core/constants/api_constants.dart';
 import '../models/user_model.dart';
+import 'package:dio/dio.dart';
 
 class UsuarioRepository {
   final DioClient _apiClient = DioClient();
