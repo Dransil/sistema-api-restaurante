@@ -5,17 +5,47 @@ import '../models/user_model.dart';
 class UsuarioRepository {
   final DioClient _apiClient = DioClient();
 
-  // LOGIN: Retorna el Token y los datos del Usuario
+  // POST /usuarios/login
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await _apiClient.dio.post(
         ApiConstants.login,
         data: {"username": username, "password": password},
       );
-      // Retorna el mapa con 'token' y 'user' (objeto JSON)
+
+      // Devuelve { "message": "...", "token": "...", "user": {...} }
       return response.data;
-    } catch (e) {
-      throw Exception('Credenciales incorrectas o error de servidor');
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw Exception('Contraseña incorrecta');
+      } else if (e.response?.statusCode == 404) {
+        throw Exception('Usuario no encontrado');
+      } else if (e.response?.statusCode == 403) {
+        throw Exception('Cuenta desactivada por el administrador');
+      }
+      throw Exception('Error en el servidor: ${e.message}');
+    }
+  }
+
+  // POST /usuarios/register
+  Future<UserModel> register({
+    required String username,
+    required String password,
+    required int rolId,
+  }) async {
+    try {
+      final response = await _apiClient.dio.post(
+        '${ApiConstants.usuarios}/register',
+        data: {"username": username, "password": password, "rol_id": rolId},
+      );
+
+      return UserModel.fromJson(response.data);
+    } on DioException catch (e) {
+      // Capturamos el error de passSegura(password)
+      if (e.response?.statusCode == 400) {
+        throw Exception(e.response?.data['error']);
+      }
+      throw Exception('Error al registrar usuario');
     }
   }
 
