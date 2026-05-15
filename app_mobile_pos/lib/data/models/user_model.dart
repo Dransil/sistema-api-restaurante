@@ -39,4 +39,19 @@ class UserModel {
       email: json['email'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'username': username,
+      'rol_id': rolId,
+      'activo': activo,
+      'name': name,
+      'first_name': firstName,
+      'second_name': secondName,
+      // Formateamos la fecha para que PostgreSQL la entienda (YYYY-MM-DD)
+      'fecha_nac': fechaNac?.toIso8601String().split('T'),
+      'celular': celular,
+      'email': email,
+    };
+  }
 }

@@ -1,7 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ApiConstants {
   // Cambiar IP para tests
-  // static const String baseUrl = 'http://192.168.1.248:3000';
-  static const String baseUrl = 'http://192.168.31.130:3000';
+  static String baseUrl = dotenv.get(
+    'BASE_URL',
+    fallback: 'http://192.168.1.1:3000',
+  );
   // Endpoint para testear
   static const String test = '/test';
   // Endpoints basados en el backend
