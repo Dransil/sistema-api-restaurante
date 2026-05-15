@@ -50,6 +50,30 @@ class UsuarioRepository {
     }
   }
 
+  // GET /usuarios/activos (Solo Admin)
+  Future<List<UserModel>> obtenerActivos() async {
+    return _fetchUsuarios('${ApiConstants.usuarios}/activos');
+  }
+
+  // GET /usuarios/noactivos (Solo Admin)
+  Future<List<UserModel>> obtenerNoActivos() async {
+    return _fetchUsuarios('${ApiConstants.usuarios}/noactivos');
+  }
+
+  // Función privada de apoyo para evitar redundancia de datos
+  Future<List<UserModel>> _fetchUsuarios(String url) async {
+    try {
+      final response = await _apiClient.dio.get(url);
+      if (response.statusCode == 200) {
+        final List data = response.data;
+        return data.map((json) => UserModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Error al cargar la lista de usuarios desde el servidor');
+    }
+  }
+
   // Obtener todos los usuarios (GET /usuarios)
   Future<List<UserModel>> obtenerTodos() async {
     try {
