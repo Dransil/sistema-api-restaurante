@@ -9,7 +9,7 @@ class ClientesScreen extends StatefulWidget {
 }
 
 class _ClientesScreenState extends State<ClientesScreen> {
-  bool isCI = true;
+  String search = '';
 
   final List<ClienteModel> clientes = [
     ClienteModel(
@@ -30,54 +30,34 @@ class _ClientesScreenState extends State<ClientesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final clientesFiltrados = clientes.where((cliente) {
+      return cliente.razonSocial.toLowerCase().contains(search) ||
+          cliente.ci.toLowerCase().contains(search);
+    }).toList();
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clientes'),
-        actions: const [
-          Icon(Icons.search),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Clientes')),
+
       body: Column(
         children: [
-          
           Padding(
             padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          isCI ? Colors.blue : Colors.grey[300],
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isCI = true;
-                      });
-                    },
-                    child: const Text('CI'),
-                  ),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Buscar por nombre o CI',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          !isCI ? Colors.blue : Colors.grey[300],
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isCI = false;
-                      });
-                    },
-                    child: const Text('Razón Social'),
-                  ),
-                ),
-              ],
+              ),
+              onChanged: (value) {
+                setState(() {
+                  search = value.toLowerCase();
+                });
+              },
             ),
           ),
 
-      
           Padding(
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
@@ -91,6 +71,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
                   builder: (context) {
                     return AlertDialog(
                       title: const Text('Crear Cliente'),
+
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -103,9 +84,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
                           const SizedBox(height: 10),
 
                           TextField(
-                            decoration: const InputDecoration(
-                              hintText: 'CI',
-                            ),
+                            decoration: const InputDecoration(hintText: 'CI'),
                           ),
                         ],
                       ),
@@ -138,60 +117,62 @@ class _ClientesScreenState extends State<ClientesScreen> {
 
           Expanded(
             child: ListView.builder(
-              itemCount: clientes.length,
+              itemCount: clientesFiltrados.length,
               itemBuilder: (context, index) {
-                final cliente = clientes[index];
+                final cliente = clientesFiltrados[index];
 
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 5,
                   ),
+
                   child: ListTile(
                     title: Text(cliente.razonSocial),
-                    subtitle: Text(
-                      isCI ? cliente.ci : cliente.razonSocial,
-                    ),
+
+                    subtitle: Text('CI: ${cliente.ci}'),
+
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                           ),
+
                           onPressed: () {
                             showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
                                   title: const Text('Editar Cliente'),
+
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       TextField(
-                                        decoration: const InputDecoration(
-                                          hintText: 'Nombre Cliente',
-                                        ),
                                         controller: TextEditingController(
                                           text: cliente.razonSocial,
+                                        ),
+                                        decoration: const InputDecoration(
+                                          hintText: 'Nombre Cliente',
                                         ),
                                       ),
 
                                       const SizedBox(height: 10),
 
                                       TextField(
-                                        decoration: const InputDecoration(
-                                          hintText: 'CI',
-                                        ),
                                         controller: TextEditingController(
                                           text: cliente.ci,
+                                        ),
+                                        decoration: const InputDecoration(
+                                          hintText: 'CI',
                                         ),
                                       ),
                                     ],
                                   ),
+
                                   actions: [
                                     ElevatedButton(
                                       onPressed: () {
@@ -214,12 +195,9 @@ class _ClientesScreenState extends State<ClientesScreen> {
                               },
                             );
                           },
+
                           child: const Text('Editar'),
                         ),
-
-                        const SizedBox(width: 5),
-
-                        const Icon(Icons.more_vert),
                       ],
                     ),
                   ),
