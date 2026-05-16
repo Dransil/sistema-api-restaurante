@@ -1,6 +1,6 @@
-import 'package:app_mobile_pos/presentation/screens/home_screen.dart';
+import 'package:app_mobile_pos/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import '../../core/constants/api_constants.dart';
+import '../core/constants/api_constants.dart';
 import 'package:dio/dio.dart';
 
 class LoginScreen extends StatefulWidget {
