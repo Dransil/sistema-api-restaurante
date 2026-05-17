@@ -3,8 +3,9 @@ import 'package:app_mobile_pos/screens/clientes_screen.dart';
 import 'package:app_mobile_pos/screens/ajustes_screen.dart';
 import 'package:app_mobile_pos/screens/productos_screen.dart';
 import 'package:app_mobile_pos/screens/ordenes_screen.dart';
+import 'package:app_mobile_pos/screens/login_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-// Aqui tienes que importar las pantallas que haras
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 
@@ -13,37 +14,98 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  // Iniciamos en 2 para que "Inicio" sea la pantalla principal
   int _selectedIndex = 2;
 
-  // Lista de tus pantallas
   final List<Widget> _screens = [
     const ProductosScreen(),
     const OrdenesScreen(),
-    const Center(child: Text('Inicio')), // Index 2 (Principal)
+    const Center(child: Text('Inicio')),
     const ClientesScreen(),
     const AjustesScreen(),
   ];
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  // Títulos dinámicos según la pantalla actual
+  final List<String> _titles = [
+    'Inventario de Productos',
+    'Historial de Órdenes',
+    'Punto de Venta (Inicio)',
+    'Gestión de Clientes',
+    'Ajustes del Sistema',
+  ];
+
+  void _logout() async {
+    // 1. Borramos físicamente el token del almacenamiento encriptado
+    await _storage.delete(key: 'jwt_token');
+
+    if (mounted) {
+      // 2. Redirección blindada destruyendo el historial de navegación
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Agregamos el AppBar global para contener el botón de Logout
+      appBar: AppBar(
+        title: Text(
+          _titles[_selectedIndex],
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar Sesión',
+            onPressed: () {
+              // Mostramos un diálogo de confirmación rápido antes de salir
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Cerrar Sesión'),
+                  content: const Text(
+                    '¿Estás seguro de que deseas salir del sistema?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancelar'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Cierra el diálogo
+                        _logout(); // Ejecuta el logout
+                      },
+                      child: const Text(
+                        'Salir',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: _screens[_selectedIndex],
-
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // Obligatorio para más de 3 items
+        type: BottomNavigationBarType.fixed,
         showUnselectedLabels: true,
         showSelectedLabels: true,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
-
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
-
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.inventory),

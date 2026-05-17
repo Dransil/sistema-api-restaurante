@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _probarConexion() async {
     try {
       final url = '${ApiConstants.baseUrl}${ApiConstants.test}';
-      final response = await _dio.get(url).timeout(const Duration(seconds: 4));
+      final response = await _dio.get(url).timeout(const Duration(seconds: 2));
 
       if (mounted) {
         _mostrarMensaje('Conexión Exitosa: ${response.data}', Colors.green);
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
       SnackBar(
         content: Text(mensaje),
         backgroundColor: color,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
