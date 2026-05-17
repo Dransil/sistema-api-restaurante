@@ -33,30 +33,29 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // 1. Llamamos al repositorio que ya sabe cómo usar Dio de forma interna
+      // 1. Llamamos al repositorio que procesa el login
       final resultado = await _usuarioRepository.login(
         _userController.text.trim(),
         _passwordController.text,
       );
 
-      // 2. Extraemos el token devuelto por Node.js
+      // 2. Extraemos el token y la info que tu controlador de Node envía
       final String token = resultado['token'];
 
-      // PARCHE EN MEMORIA: Guardamos el token en una propiedad estática provisional
-      // Agrega 'static String? token;' dentro de tu clase ApiConstants si usas esto
-      ApiConstants.token = token;
+      // 3. Guardamos el token en el almacenamiento seguro
+      await _storage.write(key: 'jwt_token', value: token);
 
       if (mounted) {
         _mostrarMensaje("¡Bienvenido al sistema!", Colors.green);
 
-        // 3. Navegación limpia al menú principal
+        // 4. Navegación limpia al menú principal (Reemplazando el login)
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainLayout()),
         );
       }
     } catch (e) {
-      // Si el backend responde con "Contraseña incorrecta", aquí se captura perfectamente
+      // Captura los mensajes personalizados lanzados por el repositorio (Usuario no encontrado, etc.)
       String mensajeError = e.toString().replaceAll("Exception: ", "");
       _mostrarMensaje(mensajeError, Colors.red);
     } finally {
