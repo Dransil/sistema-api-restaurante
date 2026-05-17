@@ -33,29 +33,30 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // 1. Llamamos al repositorio que procesa el login
+      // 1. Llamamos al repositorio que ya sabe cómo usar Dio de forma interna
       final resultado = await _usuarioRepository.login(
         _userController.text.trim(),
         _passwordController.text,
       );
 
-      // 2. Extraemos el token y la info que tu controlador de Node envía
+      // 2. Extraemos el token devuelto por Node.js
       final String token = resultado['token'];
 
-      // 3. Guardamos el token en el almacenamiento seguro
-      await _storage.write(key: 'jwt_token', value: token);
+      // PARCHE EN MEMORIA: Guardamos el token en una propiedad estática provisional
+      // Agrega 'static String? token;' dentro de tu clase ApiConstants si usas esto
+      ApiConstants.token = token;
 
       if (mounted) {
         _mostrarMensaje("¡Bienvenido al sistema!", Colors.green);
 
-        // 4. Navegación limpia al menú principal (Reemplazando el login)
+        // 3. Navegación limpia al menú principal
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainLayout()),
         );
       }
     } catch (e) {
-      // Captura los mensajes personalizados lanzados por el repositorio (Usuario no encontrado, etc.)
+      // Si el backend responde con "Contraseña incorrecta", aquí se captura perfectamente
       String mensajeError = e.toString().replaceAll("Exception: ", "");
       _mostrarMensaje(mensajeError, Colors.red);
     } finally {
@@ -66,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _probarConexion() async {
     try {
       final url = '${ApiConstants.baseUrl}${ApiConstants.test}';
-      final response = await _dio.get(url).timeout(const Duration(seconds: 4));
+      final response = await _dio.get(url).timeout(const Duration(seconds: 2));
 
       if (mounted) {
         _mostrarMensaje('Conexión Exitosa: ${response.data}', Colors.green);
@@ -86,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       SnackBar(
         content: Text(mensaje),
         backgroundColor: color,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

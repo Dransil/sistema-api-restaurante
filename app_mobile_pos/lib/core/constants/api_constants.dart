@@ -6,6 +6,7 @@ class ApiConstants {
     'BASE_URL',
     fallback: 'http://192.168.1.1:3000',
   );
+  static String? token;
   // Endpoint para testear
   static const String test = '/test';
   // Endpoints basados en el backend
