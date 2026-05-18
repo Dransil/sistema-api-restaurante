@@ -1,5 +1,4 @@
-import 'package:app_mobile_pos/presentation/screens/home_screen.dart';
-import 'package:app_mobile_pos/presentation/screens/login_screen.dart';
+import 'package:app_mobile_pos/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
