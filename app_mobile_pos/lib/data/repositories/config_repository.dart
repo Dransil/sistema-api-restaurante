@@ -11,6 +11,7 @@ class ConfigRepository {
       final response = await _apiClient.dio.get(ApiConstants.configLocal);
 
       if (response.statusCode == 200 && (response.data as List).isNotEmpty) {
+        // Accedemos al primer elemento de result.rows
         return ConfiguracionLocalModel.fromJson(response.data);
       }
       return null;
