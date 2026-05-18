@@ -20,8 +20,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController telefonoController = TextEditingController();
   final TextEditingController ciudadController = TextEditingController();
-  final TextEditingController logoController =
-      TextEditingController(); // Controlador para la URL del logo
+  final TextEditingController logoController = TextEditingController();
 
   @override
   void initState() {
