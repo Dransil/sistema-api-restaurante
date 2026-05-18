@@ -42,7 +42,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
           logoController.text = config.logoUrl ?? '';
           logoUrl = config.logoUrl ?? '';
 
-          // Validamos que la moneda exista en los items del Dropdown
           if (['BOB', 'USD', 'EUR'].contains(config.moneda)) {
             monedaSeleccionada = config.moneda;
           }
@@ -51,9 +50,17 @@ class _AjustesScreenState extends State<AjustesScreen> {
       } else {
         if (mounted) setState(() => _isLoading = false);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // <-- Agregamos stackTrace para ver la línea exacta del fallo
       if (mounted) {
         setState(() => _isLoading = false);
+
+        // El equivalente a tu console.log() de Node.js en Flutter:
+        print('================ CONSOLE.LOG ERROR ================');
+        print('Mensaje del error: $e');
+        print('Ruta del fallo (Stacktrace):\n$stackTrace');
+        print('===================================================');
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error al cargar datos: $e'),
