@@ -9,9 +9,20 @@ class ProductosScreen extends StatefulWidget {
 
 class _ProductosScreenState extends State<ProductosScreen> {
   String filtro = 'Todos';
+  String search = '';
+
+  final productos = [
+    'Producto A',
+    'Producto B',
+    'Producto C',
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final productosFiltrados = productos.where((producto) {
+      return producto.toLowerCase().contains(search);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Productos'),
@@ -21,10 +32,16 @@ class _ProductosScreenState extends State<ProductosScreen> {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
+          
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: ['Todos', 'Activos', 'Inactivos', 'Categoría A']
+                children: [
+                  'Todos',
+                  'Activos',
+                  'Inactivos',
+                  'Categoría A',
+                ]
                     .map(
                       (e) => Padding(
                         padding: const EdgeInsets.only(right: 8),
@@ -100,19 +117,18 @@ class _ProductosScreenState extends State<ProductosScreen> {
 
                                 DropdownButtonFormField<String>(
                                   value: categoria,
-                                  items:
-                                      [
-                                            'Categoría A',
-                                            'Categoría B',
-                                            'Categoría C',
-                                          ]
-                                          .map(
-                                            (e) => DropdownMenuItem(
-                                              value: e,
-                                              child: Text(e),
-                                            ),
-                                          )
-                                          .toList(),
+                                  items: [
+                                    'Categoría A',
+                                    'Categoría B',
+                                    'Categoría C',
+                                  ]
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e),
+                                        ),
+                                      )
+                                      .toList(),
                                   onChanged: (value) {
                                     setModalState(() {
                                       categoria = value!;
@@ -152,9 +168,26 @@ class _ProductosScreenState extends State<ProductosScreen> {
 
             const SizedBox(height: 10),
 
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Buscar producto',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  search = value.toLowerCase();
+                });
+              },
+            ),
+
+            const SizedBox(height: 10),
+
             Expanded(
               child: ListView.builder(
-                itemCount: 3,
+                itemCount: productosFiltrados.length,
                 itemBuilder: (context, index) {
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 5),
@@ -163,12 +196,14 @@ class _ProductosScreenState extends State<ProductosScreen> {
                       leading: Container(
                         width: 50,
                         height: 50,
-                        decoration: BoxDecoration(border: Border.all()),
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                        ),
                         child: const Icon(Icons.image),
                       ),
 
                       title: Text(
-                        'Producto ${String.fromCharCode(65 + index)}',
+                        productosFiltrados[index],
                       ),
 
                       subtitle: Column(
@@ -187,8 +222,8 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                   color: index == 0
                                       ? Colors.red
                                       : index == 1
-                                      ? Colors.amber
-                                      : Colors.green,
+                                          ? Colors.amber
+                                          : Colors.green,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -199,14 +234,14 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                 index == 0
                                     ? 'Sin stock'
                                     : index == 1
-                                    ? 'Poco stock'
-                                    : 'Disponible',
+                                        ? 'Poco stock'
+                                        : 'Disponible',
                                 style: TextStyle(
                                   color: index == 0
                                       ? Colors.red
                                       : index == 1
-                                      ? Colors.orange
-                                      : Colors.green,
+                                          ? Colors.orange
+                                          : Colors.green,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -249,7 +284,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                         const SizedBox(height: 15),
 
                                         Text(
-                                          'Producto ${String.fromCharCode(65 + index)}',
+                                          productosFiltrados[index],
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -302,13 +337,13 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                               TextField(
                                                 controller: TextEditingController(
                                                   text:
-                                                      'Producto ${String.fromCharCode(65 + index)}',
+                                                      productosFiltrados[index],
                                                 ),
                                                 decoration:
                                                     const InputDecoration(
-                                                      hintText:
-                                                          'Nombre producto',
-                                                    ),
+                                                  hintText:
+                                                      'Nombre producto',
+                                                ),
                                               ),
 
                                               const SizedBox(height: 10),
@@ -318,8 +353,8 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                                     TextInputType.number,
                                                 decoration:
                                                     const InputDecoration(
-                                                      hintText: 'Stock',
-                                                    ),
+                                                  hintText: 'Stock',
+                                                ),
                                               ),
 
                                               const SizedBox(height: 10),
@@ -340,20 +375,19 @@ class _ProductosScreenState extends State<ProductosScreen> {
 
                                               DropdownButtonFormField<String>(
                                                 value: categoria,
-                                                items:
-                                                    [
-                                                          'Categoría A',
-                                                          'Categoría B',
-                                                          'Categoría C',
-                                                        ]
-                                                        .map(
-                                                          (e) =>
-                                                              DropdownMenuItem(
-                                                                value: e,
-                                                                child: Text(e),
-                                                              ),
-                                                        )
-                                                        .toList(),
+                                                items: [
+                                                  'Categoría A',
+                                                  'Categoría B',
+                                                  'Categoría C',
+                                                ]
+                                                    .map(
+                                                      (e) =>
+                                                          DropdownMenuItem(
+                                                        value: e,
+                                                        child: Text(e),
+                                                      ),
+                                                    )
+                                                    .toList(),
                                                 onChanged: (value) {
                                                   setModalState(() {
                                                     categoria = value!;
