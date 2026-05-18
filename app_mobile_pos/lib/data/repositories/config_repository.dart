@@ -5,14 +5,19 @@ import '../models/configuracion_local_model.dart';
 class ConfigRepository {
   final DioClient _apiClient = DioClient();
 
-  // Obtener la configuración (GET /configloc)
   Future<ConfiguracionLocalModel?> obtenerConfiguracion() async {
     try {
       final response = await _apiClient.dio.get(ApiConstants.configLocal);
 
-      if (response.statusCode == 200 && (response.data as List).isNotEmpty) {
-        // Accedemos al primer elemento de result.rows
-        return ConfiguracionLocalModel.fromJson(response.data);
+      if (response.statusCode == 200 && response.data is List) {
+        final List<dynamic> lista = response.data;
+
+        if (lista.isNotEmpty) {
+          final Map<String, dynamic> primerRegistro =
+              lista[0] as Map<String, dynamic>;
+
+          return ConfiguracionLocalModel.fromJson(primerRegistro);
+        }
       }
       return null;
     } catch (e) {

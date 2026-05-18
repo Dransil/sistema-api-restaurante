@@ -20,8 +20,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController telefonoController = TextEditingController();
   final TextEditingController ciudadController = TextEditingController();
-  final TextEditingController logoController =
-      TextEditingController(); // Controlador para la URL del logo
+  final TextEditingController logoController = TextEditingController();
 
   @override
   void initState() {
@@ -43,7 +42,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
           logoController.text = config.logoUrl ?? '';
           logoUrl = config.logoUrl ?? '';
 
-          // Validamos que la moneda exista en los items del Dropdown
           if (['BOB', 'USD', 'EUR'].contains(config.moneda)) {
             monedaSeleccionada = config.moneda;
           }
@@ -55,6 +53,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error al cargar datos: $e'),

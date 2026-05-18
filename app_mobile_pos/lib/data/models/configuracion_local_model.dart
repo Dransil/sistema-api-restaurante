@@ -27,11 +27,11 @@ class ConfiguracionLocalModel {
       nombreRestaurante: json['nombre_restaurante'],
       nit: json['nit'],
       direccion: json['direccion'],
-      telefono: json['telefono'],
-      ciudad: json['ciudad'] ?? 'Cochabamba',
-      moneda: json['moneda'] ?? 'Bs',
+      telefono: json['telefono']?.toString(),
+      ciudad: json['ciudad'],
+      moneda: json['moneda'],
       logoUrl: json['logo_url'],
-      planActual: json['plan_actual'] ?? 'BASICO',
+      planActual: json['plan_actual'],
     );
   }
   Map<String, dynamic> toJson() {
