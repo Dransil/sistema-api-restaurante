@@ -50,16 +50,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
       } else {
         if (mounted) setState(() => _isLoading = false);
       }
-    } catch (e, stackTrace) {
-      // <-- Agregamos stackTrace para ver la línea exacta del fallo
+    } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-
-        // El equivalente a tu console.log() de Node.js en Flutter:
-        print('================ CONSOLE.LOG ERROR ================');
-        print('Mensaje del error: $e');
-        print('Ruta del fallo (Stacktrace):\n$stackTrace');
-        print('===================================================');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

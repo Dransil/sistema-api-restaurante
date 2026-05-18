@@ -26,11 +26,11 @@ class _MainLayoutState extends State<MainLayout> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   // Títulos dinámicos según la pantalla actual
   final List<String> _titles = [
-    'Inventario de Productos',
-    'Historial de Órdenes',
-    'Punto de Venta (Inicio)',
-    'Gestión de Clientes',
-    'Ajustes del Sistema',
+    'Inventario de productos',
+    'Historial de órdenes',
+    'Punto de venta (Inicio)',
+    'Gestión de clientes',
+    'Ajustes del sistema',
   ];
 
   void _logout() async {
