@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_mobile_pos/data/models/cliente_model.dart';
+import 'package:app_mobile_pos/data/repositories/cliente_repository.dart';
 
 class ClientesScreen extends StatefulWidget {
   const ClientesScreen({super.key});
@@ -9,37 +10,106 @@ class ClientesScreen extends StatefulWidget {
 }
 
 class _ClientesScreenState extends State<ClientesScreen> {
-  String search = '';
+  final ClienteRepository _clienteRepository = ClienteRepository();
 
-  final List<ClienteModel> clientes = [
-    ClienteModel(
-      id: 1,
-      razonSocial: 'Juan Pérez',
-      ci: '123456',
-      pedidosRealizados: 5,
-      createdAt: DateTime.now(),
-    ),
-    ClienteModel(
-      id: 2,
-      razonSocial: 'Empresa SRL',
-      ci: '7891011',
-      pedidosRealizados: 10,
-      createdAt: DateTime.now(),
-    ),
-  ];
+  List<ClienteModel> clientes = [];
+  String search = '';
+  bool _isLoading = true;
+
+  // Controladores para los formularios de los Diálogos
+  final TextEditingController _nombreCtrl = TextEditingController();
+  final TextEditingController _ciCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarClientes();
+  }
+
+  // Cargar clientes desde Node.js
+  Future<void> _cargarClientes() async {
+    setState(() => _isLoading = true);
+    try {
+      final lista = await _clienteRepository.obtenerClientes();
+      if (mounted) {
+        setState(() {
+          clientes = lista;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _mostrarSnackBar('Error al cargar clientes: $e', Colors.red);
+      }
+    }
+  }
+
+  // Guardar nuevo cliente en PostgreSQL
+  Future<void> _guardarNuevoCliente() async {
+    final nombre = _nombreCtrl.text.trim();
+    final ci = _ciCtrl.text.trim();
+
+    if (nombre.isEmpty || ci.isEmpty) {
+      _mostrarSnackBar('Por favor llena todos los campos', Colors.amber);
+      return;
+    }
+
+    Navigator.pop(context); // Cierra el Modal/Dialog
+    setState(() => _isLoading = true);
+
+    try {
+      // Usamos tu método que retorna el ClienteModel directamente
+      final nuevoCliente = await _clienteRepository.agregarCliente(nombre, ci);
+
+      if (mounted) {
+        _mostrarSnackBar(
+          '¡${nuevoCliente.razonSocial} registrado con éxito!',
+          Colors.green,
+        );
+        _nombreCtrl.clear();
+        _ciCtrl.clear();
+
+        // Recargamos la lista desde el servidor para traer los últimos cambios
+        _cargarClientes();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _mostrarSnackBar('$e', Colors.red);
+      }
+    }
+  }
+
+  void _mostrarSnackBar(String mensaje, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _nombreCtrl.dispose();
+    _ciCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Filtro reactivo en memoria local basado en lo que escribes en la barra de búsqueda
     final clientesFiltrados = clientes.where((cliente) {
       return cliente.razonSocial.toLowerCase().contains(search) ||
           cliente.ci.toLowerCase().contains(search);
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Clientes')),
-
       body: Column(
         children: [
+          // Barra de Búsqueda
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextField(
@@ -58,6 +128,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
             ),
           ),
 
+          // Botón Crear Cliente
           Padding(
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
@@ -66,144 +137,120 @@ class _ClientesScreenState extends State<ClientesScreen> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               onPressed: () {
+                _nombreCtrl.clear();
+                _ciCtrl.clear();
                 showDialog(
                   context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Crear Cliente'),
-
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            decoration: const InputDecoration(
-                              hintText: 'Nombre Cliente',
-                            ),
-                          ),
-
-                          const SizedBox(height: 10),
-
-                          TextField(
-                            decoration: const InputDecoration(hintText: 'CI'),
-                          ),
-                        ],
-                      ),
-
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Guardar'),
-                        ),
-
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancelar'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: const Text('+ Crear Cliente'),
-            ),
-          ),
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: clientesFiltrados.length,
-              itemBuilder: (context, index) {
-                final cliente = clientesFiltrados[index];
-
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-
-                  child: ListTile(
-                    title: Text(cliente.razonSocial),
-
-                    subtitle: Text('CI: ${cliente.ci}'),
-
-                    trailing: Row(
+                  barrierDismissible: false,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Crear Cliente'),
+                    content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                        TextField(
+                          controller: _nombreCtrl,
+                          decoration: const InputDecoration(
+                            hintText: 'Nombre / Razón Social',
                           ),
-
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Editar Cliente'),
-
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      TextField(
-                                        controller: TextEditingController(
-                                          text: cliente.razonSocial,
-                                        ),
-                                        decoration: const InputDecoration(
-                                          hintText: 'Nombre Cliente',
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 10),
-
-                                      TextField(
-                                        controller: TextEditingController(
-                                          text: cliente.ci,
-                                        ),
-                                        decoration: const InputDecoration(
-                                          hintText: 'CI',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  actions: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Guardar'),
-                                    ),
-
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Cancelar'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-
-                          child: const Text('Editar'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: _ciCtrl,
+                          decoration: const InputDecoration(
+                            hintText: 'CI o NIT',
+                          ),
+                          keyboardType: TextInputType.number,
                         ),
                       ],
                     ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: _guardarNuevoCliente,
+                        child: const Text('Guardar'),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancelar'),
+                      ),
+                    ],
                   ),
                 );
               },
+              child: const Text(
+                '+ Crear Cliente',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
+          ),
+
+          // Contenedor dinámico principal
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : clientesFiltrados.isEmpty
+                ? const Center(child: Text('No se encontraron clientes'))
+                : RefreshIndicator(
+                    onRefresh: _cargarClientes,
+                    child: ListView.builder(
+                      itemCount: clientesFiltrados.length,
+                      itemBuilder: (context, index) {
+                        final cliente = clientesFiltrados[index];
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.blueAccent.withOpacity(
+                                0.1,
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                            title: Text(
+                              cliente.razonSocial,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text('CI: ${cliente.ci}'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // TODO: Implementar lógica de edición enviando PUT al backend
+                                  },
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                  label: const Text(
+                                    'Editar',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
