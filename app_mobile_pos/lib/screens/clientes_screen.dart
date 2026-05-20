@@ -11,7 +11,7 @@ class ClientesScreen extends StatefulWidget {
 
 class _ClientesScreenState extends State<ClientesScreen> {
   final ClienteRepository _clienteRepository = ClienteRepository();
-  
+
   List<ClienteModel> clientes = [];
   String search = '';
   bool _isLoading = true;
@@ -55,16 +55,23 @@ class _ClientesScreenState extends State<ClientesScreen> {
       return;
     }
 
-    Navigator.pop(context); 
+    Navigator.pop(context); // Cierra el Modal/Dialog
     setState(() => _isLoading = true);
 
     try {
-      final exito = await _clienteRepository.crearCliente(nombre, ci);
-      if (exito) {
-        _mostrarSnackBar('Cliente registrado con éxito', Colors.green);
+      // Usamos tu método que retorna el ClienteModel directamente
+      final nuevoCliente = await _clienteRepository.agregarCliente(nombre, ci);
+
+      if (mounted) {
+        _mostrarSnackBar(
+          '¡${nuevoCliente.razonSocial} registrado con éxito!',
+          Colors.green,
+        );
         _nombreCtrl.clear();
         _ciCtrl.clear();
-        _cargarClientes(); 
+
+        // Recargamos la lista desde el servidor para traer los últimos cambios
+        _cargarClientes();
       }
     } catch (e) {
       if (mounted) {
@@ -76,7 +83,11 @@ class _ClientesScreenState extends State<ClientesScreen> {
 
   void _mostrarSnackBar(String mensaje, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(mensaje), backgroundColor: color, duration: const Duration(seconds: 2)),
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 
@@ -105,7 +116,9 @@ class _ClientesScreenState extends State<ClientesScreen> {
               decoration: InputDecoration(
                 hintText: 'Buscar por nombre o CI',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               onChanged: (value) {
                 setState(() {
@@ -136,12 +149,16 @@ class _ClientesScreenState extends State<ClientesScreen> {
                       children: [
                         TextField(
                           controller: _nombreCtrl,
-                          decoration: const InputDecoration(hintText: 'Nombre / Razón Social'),
+                          decoration: const InputDecoration(
+                            hintText: 'Nombre / Razón Social',
+                          ),
                         ),
                         const SizedBox(height: 10),
                         TextField(
                           controller: _ciCtrl,
-                          decoration: const InputDecoration(hintText: 'CI o NIT'),
+                          decoration: const InputDecoration(
+                            hintText: 'CI o NIT',
+                          ),
                           keyboardType: TextInputType.number,
                         ),
                       ],
@@ -152,7 +169,9 @@ class _ClientesScreenState extends State<ClientesScreen> {
                         child: const Text('Guardar'),
                       ),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                        ),
                         onPressed: () => Navigator.pop(context),
                         child: const Text('Cancelar'),
                       ),
@@ -160,7 +179,10 @@ class _ClientesScreenState extends State<ClientesScreen> {
                   ),
                 );
               },
-              child: const Text('+ Crear Cliente', style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: const Text(
+                '+ Crear Cliente',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
           ),
 
@@ -169,44 +191,66 @@ class _ClientesScreenState extends State<ClientesScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : clientesFiltrados.isEmpty
-                    ? const Center(child: Text('No se encontraron clientes'))
-                    : RefreshIndicator(
-                        onRefresh: _cargarClientes,
-                        child: ListView.builder(
-                          itemCount: clientesFiltrados.length,
-                          itemBuilder: (context, index) {
-                            final cliente = clientesFiltrados[index];
+                ? const Center(child: Text('No se encontraron clientes'))
+                : RefreshIndicator(
+                    onRefresh: _cargarClientes,
+                    child: ListView.builder(
+                      itemCount: clientesFiltrados.length,
+                      itemBuilder: (context, index) {
+                        final cliente = clientesFiltrados[index];
 
-                            return Card(
-                              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.blueAccent.withOpacity(0.1),
-                                  child: const Icon(Icons.person, color: Colors.blueAccent),
-                                ),
-                                title: Text(cliente.razonSocial, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                subtitle: Text('CI: ${cliente.ci}'),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orange,
-                                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                                      ),
-                                      onPressed: () {
-                                        // TODO: Implementar lógica de edición enviando PUT al backend
-                                      },
-                                      icon: const Icon(Icons.edit, size: 16, color: Colors.white),
-                                      label: const Text('Editar', style: TextStyle(color: Colors.white)),
-                                    ),
-                                  ],
-                                ),
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.blueAccent.withOpacity(
+                                0.1,
                               ),
-                            );
-                          },
-                        ),
-                      ),
+                              child: const Icon(
+                                Icons.person,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                            title: Text(
+                              cliente.razonSocial,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text('CI: ${cliente.ci}'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // TODO: Implementar lógica de edición enviando PUT al backend
+                                  },
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                  label: const Text(
+                                    'Editar',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
