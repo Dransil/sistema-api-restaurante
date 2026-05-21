@@ -101,6 +101,7 @@ class _MainLayoutState extends State<MainLayout> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
+        elevation: 15,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
