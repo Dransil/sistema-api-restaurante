@@ -16,7 +16,7 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 2;
 
-  final List<Widget> _screens = [
+  final List<Widget> _screens = const [
     const ProductosScreen(),
     const OrdenesScreen(),
     const Center(child: Text('Inicio')),
