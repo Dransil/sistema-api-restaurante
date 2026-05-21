@@ -16,7 +16,7 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 2;
 
-  final List<Widget> _screens = [
+  final List<Widget> _screens = const [
     const ProductosScreen(),
     const OrdenesScreen(),
     const Center(child: Text('Inicio')),
@@ -93,7 +93,7 @@ class _MainLayoutState extends State<MainLayout> {
           ),
         ],
       ),
-      body: _screens[_selectedIndex],
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         showUnselectedLabels: true,
@@ -101,6 +101,7 @@ class _MainLayoutState extends State<MainLayout> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
+        elevation: 15,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
