@@ -263,6 +263,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
           ),
 
           // Contenedor dinámico principal
+          // Contenedor dinámico principal
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -307,9 +308,8 @@ class _ClientesScreenState extends State<ClientesScreen> {
                                       horizontal: 12,
                                     ),
                                   ),
-                                  onPressed: () {
-                                    // TODO: Implementar lógica de edición enviando PUT al backend
-                                  },
+                                  // CONECTADO: Llamamos a la función de apertura pasando el modelo completo
+                                  onPressed: () => _abrirModalEdicion(cliente),
                                   icon: const Icon(
                                     Icons.edit,
                                     size: 16,
