@@ -59,7 +59,6 @@ class _ClientesScreenState extends State<ClientesScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Usamos tu método que retorna el ClienteModel directamente
       final nuevoCliente = await _clienteRepository.agregarCliente(nombre, ci);
 
       if (mounted) {
@@ -69,8 +68,6 @@ class _ClientesScreenState extends State<ClientesScreen> {
         );
         _nombreCtrl.clear();
         _ciCtrl.clear();
-
-        // Recargamos la lista desde el servidor para traer los últimos cambios
         _cargarClientes();
       }
     } catch (e) {
@@ -79,6 +76,86 @@ class _ClientesScreenState extends State<ClientesScreen> {
         _mostrarSnackBar('$e', Colors.red);
       }
     }
+  }
+
+  // Enviar los datos editados al backend mediante PUT
+  Future<void> _editarClienteExistente(int id) async {
+    final nombre = _nombreCtrl.text.trim();
+    final ci = _ciCtrl.text.trim();
+
+    if (nombre.isEmpty || ci.isEmpty) {
+      _mostrarSnackBar('Los campos no pueden quedar vacíos', Colors.amber);
+      return;
+    }
+
+    Navigator.pop(context); // Cerramos el cuadro de diálogo
+    setState(() => _isLoading = true);
+
+    try {
+      // Invocamos tu método PUT /clientes/:id
+      final exito = await _clienteRepository.actualizarCliente(id, nombre, ci);
+
+      if (exito && mounted) {
+        _mostrarSnackBar('Cliente actualizado correctamente', Colors.green);
+        _nombreCtrl.clear();
+        _ciCtrl.clear();
+        _cargarClientes();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _mostrarSnackBar('$e', Colors.red);
+      }
+    }
+  }
+
+  // Levanta el modal precargando los datos correspondientes
+  void _abrirModalEdicion(ClienteModel cliente) {
+    // Seteamos los controllers con los valores actuales antes de mostrar el diálogo
+    _nombreCtrl.text = cliente.razonSocial;
+    _ciCtrl.text = cliente.ci;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar Cliente'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _nombreCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Nombre / Razón Social',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _ciCtrl,
+              decoration: const InputDecoration(hintText: 'CI o NIT'),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            // Al presionar guardar, pasamos el ID único de la fila
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+            onPressed: () => _editarClienteExistente(cliente.id),
+            child: const Text('Guardar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              _nombreCtrl.clear();
+              _ciCtrl.clear();
+              Navigator.pop(context);
+            },
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _mostrarSnackBar(String mensaje, Color color) {
@@ -231,9 +308,8 @@ class _ClientesScreenState extends State<ClientesScreen> {
                                       horizontal: 12,
                                     ),
                                   ),
-                                  onPressed: () {
-                                    // TODO: Implementar lógica de edición enviando PUT al backend
-                                  },
+                                  //Llamamos a la función de apertura pasando el modelo completo
+                                  onPressed: () => _abrirModalEdicion(cliente),
                                   icon: const Icon(
                                     Icons.edit,
                                     size: 16,
