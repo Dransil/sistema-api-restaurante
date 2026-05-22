@@ -78,7 +78,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
     }
   }
 
-  // NUEVO MÉTODO: Enviar los datos editados al backend mediante PUT
+  // Enviar los datos editados al backend mediante PUT
   Future<void> _editarClienteExistente(int id) async {
     final nombre = _nombreCtrl.text.trim();
     final ci = _ciCtrl.text.trim();
@@ -99,7 +99,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
         _mostrarSnackBar('Cliente actualizado correctamente', Colors.green);
         _nombreCtrl.clear();
         _ciCtrl.clear();
-        _cargarClientes(); // Traemos la lista fresca desde PostgreSQL
+        _cargarClientes();
       }
     } catch (e) {
       if (mounted) {
@@ -107,6 +107,54 @@ class _ClientesScreenState extends State<ClientesScreen> {
         _mostrarSnackBar('$e', Colors.red);
       }
     }
+  }
+
+  // Levanta el modal precargando los datos correspondientes
+  void _abrirModalEdicion(ClienteModel cliente) {
+    // Seteamos los controllers con los valores actuales antes de mostrar el diálogo
+    _nombreCtrl.text = cliente.razonSocial;
+    _ciCtrl.text = cliente.ci;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar Cliente'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _nombreCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Nombre / Razón Social',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _ciCtrl,
+              decoration: const InputDecoration(hintText: 'CI o NIT'),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            // Al presionar guardar, pasamos el ID único de la fila
+            onPressed: () => _editarClienteExistente(cliente.id),
+            child: const Text('Guardar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+            onPressed: () {
+              _nombreCtrl.clear();
+              _ciCtrl.clear();
+              Navigator.pop(context);
+            },
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _mostrarSnackBar(String mensaje, Color color) {
