@@ -59,7 +59,6 @@ class _ClientesScreenState extends State<ClientesScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Usamos tu método que retorna el ClienteModel directamente
       final nuevoCliente = await _clienteRepository.agregarCliente(nombre, ci);
 
       if (mounted) {
@@ -69,9 +68,38 @@ class _ClientesScreenState extends State<ClientesScreen> {
         );
         _nombreCtrl.clear();
         _ciCtrl.clear();
-
-        // Recargamos la lista desde el servidor para traer los últimos cambios
         _cargarClientes();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _mostrarSnackBar('$e', Colors.red);
+      }
+    }
+  }
+
+  // NUEVO MÉTODO: Enviar los datos editados al backend mediante PUT
+  Future<void> _editarClienteExistente(int id) async {
+    final nombre = _nombreCtrl.text.trim();
+    final ci = _ciCtrl.text.trim();
+
+    if (nombre.isEmpty || ci.isEmpty) {
+      _mostrarSnackBar('Los campos no pueden quedar vacíos', Colors.amber);
+      return;
+    }
+
+    Navigator.pop(context); // Cerramos el cuadro de diálogo
+    setState(() => _isLoading = true);
+
+    try {
+      // Invocamos tu método PUT /clientes/:id
+      final exito = await _clienteRepository.actualizarCliente(id, nombre, ci);
+
+      if (exito && mounted) {
+        _mostrarSnackBar('Cliente actualizado correctamente', Colors.green);
+        _nombreCtrl.clear();
+        _ciCtrl.clear();
+        _cargarClientes(); // Traemos la lista fresca desde PostgreSQL
       }
     } catch (e) {
       if (mounted) {
