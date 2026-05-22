@@ -140,11 +140,12 @@ class _ClientesScreenState extends State<ClientesScreen> {
         actions: [
           ElevatedButton(
             // Al presionar guardar, pasamos el ID único de la fila
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
             onPressed: () => _editarClienteExistente(cliente.id),
             child: const Text('Guardar'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
               _nombreCtrl.clear();
               _ciCtrl.clear();
@@ -263,7 +264,6 @@ class _ClientesScreenState extends State<ClientesScreen> {
           ),
 
           // Contenedor dinámico principal
-          // Contenedor dinámico principal
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -308,7 +308,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
                                       horizontal: 12,
                                     ),
                                   ),
-                                  // CONECTADO: Llamamos a la función de apertura pasando el modelo completo
+                                  //Llamamos a la función de apertura pasando el modelo completo
                                   onPressed: () => _abrirModalEdicion(cliente),
                                   icon: const Icon(
                                     Icons.edit,
