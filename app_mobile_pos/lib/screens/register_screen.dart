@@ -115,14 +115,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             // Dropdown de selección de Rol mapeando los IDs de PostgreSQL
             DropdownButtonFormField<int>(
-              value: _selectedRolId,
-              // REMOVEMOS: enabled: !_isLoading, <-- Esto causaba el error
+              initialValue: _selectedRolId,
               decoration: const InputDecoration(
                 labelText: 'Rol asignado',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.badge),
               ),
-              // SOLUCIÓN: Si está cargando, pasamos null a onChanged para deshabilitarlo
               onChanged: _isLoading
                   ? null
                   : (value) {
