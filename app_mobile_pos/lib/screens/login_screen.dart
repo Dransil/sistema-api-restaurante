@@ -1,4 +1,5 @@
 import 'package:app_mobile_pos/screens/home_screen.dart';
+import 'package:app_mobile_pos/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
@@ -143,6 +144,41 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text("Ingresar", style: TextStyle(fontSize: 16)),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Ingresar", style: TextStyle(fontSize: 16)),
+              ),
+            ),
+            const SizedBox(height: 15), // Pequeño espacio de separación
+            // BOTÓN NUEVO: Navegación al registro
+            TextButton(
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterScreen(),
+                        ),
+                      );
+                    },
+              child: const Text(
+                "¿No tienes cuenta? Registra nuevo personal aquí",
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
