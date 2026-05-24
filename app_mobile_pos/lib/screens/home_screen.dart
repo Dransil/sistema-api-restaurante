@@ -24,6 +24,7 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
+<<<<<<< HEAD
             Text(
               valor,
               style: const TextStyle(
@@ -31,6 +32,24 @@ class HomeScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+=======
+  final List<Widget> _screens = const [
+    const ProductosScreen(),
+    const OrdenesScreen(),
+    const Center(child: Text('Inicio')),
+    const ClientesScreen(),
+    const AjustesScreen(),
+  ];
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  // Títulos dinámicos según la pantalla actual
+  final List<String> _titles = [
+    'Inventario de productos',
+    'Historial de órdenes',
+    'Punto de venta (Inicio)',
+    'Gestión de clientes',
+    'Ajustes del sistema',
+  ];
+>>>>>>> 0d9b4990ded7261c34379b407dd767845f520ee5
 
             const SizedBox(height: 5),
 
@@ -101,6 +120,37 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+<<<<<<< HEAD
+=======
+      body: IndexedStack(index: _selectedIndex, children: _screens),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        elevation: 15,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory),
+            label: 'Productos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: 'Órdenes',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Clientes'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes'),
+        ],
+      ),
+>>>>>>> 0d9b4990ded7261c34379b407dd767845f520ee5
     );
   }
 }

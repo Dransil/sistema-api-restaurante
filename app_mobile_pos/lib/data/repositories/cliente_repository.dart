@@ -18,6 +18,20 @@ class ClienteRepository {
       throw Exception('Error al obtener lista de clientes');
     }
   }
+  // Future<List<ClienteModel>> obtenerClientes() async {
+  //   try {
+  //     final response = await _apiClient.dio.get(ApiConstants.clientes);
+
+  //     if (response.statusCode == 200 && response.data is List) {
+  //       final List<dynamic> lista = response.data;
+  //       // Mapeamos el array JSON directo a una lista de objetos ClienteModel
+  //       return lista.map((json) => ClienteModel.fromJson(json as Map<String, dynamic>)).toList();
+  //     }
+  //     return [];
+  //   } catch (e) {
+  //     throw Exception('Error al obtener el listado de clientes: $e');
+  //   }
+  // }
 
   // Buscar por CI (GET /clientes/:ci)
   Future<ClienteModel?> buscarPorCI(String ci) async {
