@@ -1,4 +1,4 @@
-import 'package:app_mobile_pos/screens/home_screen.dart';
+import 'package:app_mobile_pos/screens/main_layout.dart';
 import 'package:app_mobile_pos/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // 4. Navegación limpia al menú principal (Reemplazando el login)
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MainLayout()),
+          MaterialPageRoute(builder: (context) => MainLayout()),
         );
       }
     } catch (e) {
@@ -146,6 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     : const Text("Ingresar", style: TextStyle(fontSize: 16)),
               ),
             ),
+            const SizedBox(height: 15),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -157,11 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Ingresar", style: TextStyle(fontSize: 16)),
+                    : const Text("Registrar", style: TextStyle(fontSize: 16)),
               ),
             ),
-            const SizedBox(height: 15), // Pequeño espacio de separación
-            // BOTÓN NUEVO: Navegación al registro
             TextButton(
               onPressed: _isLoading
                   ? null

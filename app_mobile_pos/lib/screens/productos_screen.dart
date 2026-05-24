@@ -4,178 +4,219 @@ class ProductosScreen extends StatefulWidget {
   const ProductosScreen({super.key});
 
   @override
-  State<ProductosScreen> createState() => _ProductosScreenState();
+  State<ProductosScreen> createState() =>
+      _ProductosScreenState();
 }
 
-class _ProductosScreenState extends State<ProductosScreen> {
+class _ProductosScreenState
+    extends State<ProductosScreen> {
   String filtro = 'Todos';
   String search = '';
 
-  final productos = [
-    'Producto A',
-    'Producto B',
-    'Producto C',
+  final List<Map<String, dynamic>> productos = [
+    {
+      'nombre': 'Pizza',
+      'stock': 0,
+      'precio': 50,
+      'categoria': 'Comida',
+    },
+    {
+      'nombre': 'Hamburguesa',
+      'stock': 3,
+      'precio': 35,
+      'categoria': 'Comida',
+    },
+    {
+      'nombre': 'Papas',
+      'stock': 10,
+      'precio': 20,
+      'categoria': 'Snacks',
+    },
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    final productosFiltrados = productos.where((producto) {
-      return producto.toLowerCase().contains(search);
+  List<Map<String, dynamic>> get productosFiltrados {
+    return productos.where((producto) {
+      return producto['nombre']
+          .toString()
+          .toLowerCase()
+          .contains(search);
     }).toList();
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Productos'),
-        actions: const [Icon(Icons.search)],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-          
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  'Todos',
-                  'Activos',
-                  'Inactivos',
-                  'Categoría A',
-                ]
-                    .map(
-                      (e) => Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: filtro == e
-                                ? Colors.blue
-                                : Colors.grey[300],
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              filtro = e;
-                            });
-                          },
-                          child: Text(e),
-                        ),
-                      ),
-                    )
-                    .toList(),
+  String obtenerEstadoStock(int stock) {
+    if (stock == 0) {
+      return 'Sin stock';
+    }
+
+    if (stock <= 5) {
+      return 'Poco stock';
+    }
+
+    return 'Disponible';
+  }
+
+  Color obtenerColorStock(int stock) {
+    if (stock == 0) {
+      return Colors.red;
+    }
+
+    if (stock <= 5) {
+      return Colors.orange;
+    }
+
+    return Colors.green;
+  }
+
+  void mostrarDetalleProducto(
+    Map<String, dynamic> producto,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Detalle Producto'),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                ),
+                child: const Icon(
+                  Icons.image,
+                  size: 50,
+                ),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 15),
+
+              Text(
+                producto['nombre'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              Text(
+                'Categoría: ${producto['categoria']}',
+              ),
+
+              Text(
+                'Stock: ${producto['stock']}',
+              ),
+
+              Text(
+                'Precio: Bs ${producto['precio']}',
+              ),
+            ],
+          ),
+
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void mostrarAccionProducto(String accion) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            accion == 'activar'
+                ? 'Activar Producto'
+                : 'Desactivar Producto',
+          ),
+
+          content: Text(
+            accion == 'activar'
+                ? '¿Desea activar este producto?'
+                : '¿Desea desactivar este producto?',
+          ),
+
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Aceptar'),
+            ),
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: Colors.red,
               ),
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    String categoria = 'Categoría A';
-
-                    return AlertDialog(
-                      title: const Text('Agregar Producto'),
-
-                      content: StatefulBuilder(
-                        builder: (context, setModalState) {
-                          return SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextField(
-                                  decoration: const InputDecoration(
-                                    hintText: 'Nombre producto',
-                                  ),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                TextField(
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Stock',
-                                  ),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Imagen',
-                                    suffixIcon: IconButton(
-                                      icon: const Icon(Icons.camera_alt),
-                                      onPressed: () {},
-                                    ),
-                                  ),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                DropdownButtonFormField<String>(
-                                  value: categoria,
-                                  items: [
-                                    'Categoría A',
-                                    'Categoría B',
-                                    'Categoría C',
-                                  ]
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e,
-                                          child: Text(e),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (value) {
-                                    setModalState(() {
-                                      categoria = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Guardar'),
-                        ),
-
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancelar'),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                Navigator.pop(context);
               },
-              child: const Text('+ Agregar Producto'),
+              child: const Text('Cancelar'),
             ),
+          ],
+        );
+      },
+    );
+  }
 
-            const SizedBox(height: 10),
+  Widget estadoStock(int stock) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: obtenerColorStock(stock),
+            shape: BoxShape.circle,
+          ),
+        ),
 
+        const SizedBox(width: 6),
+
+        Text(
+          obtenerEstadoStock(stock),
+          style: TextStyle(
+            color: obtenerColorStock(stock),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Productos'),
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+
+        child: Column(
+          children: [
             TextField(
               decoration: InputDecoration(
                 hintText: 'Buscar producto',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon:
+                    const Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius:
+                      BorderRadius.circular(10),
                 ),
               ),
+
               onChanged: (value) {
                 setState(() {
                   search = value.toLowerCase();
@@ -187,11 +228,17 @@ class _ProductosScreenState extends State<ProductosScreen> {
 
             Expanded(
               child: ListView.builder(
-                itemCount: productosFiltrados.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
+                itemCount:
+                    productosFiltrados.length,
 
+                itemBuilder: (
+                  context,
+                  index,
+                ) {
+                  final producto =
+                      productosFiltrados[index];
+
+                  return Card(
                     child: ListTile(
                       leading: Container(
                         width: 50,
@@ -199,286 +246,82 @@ class _ProductosScreenState extends State<ProductosScreen> {
                         decoration: BoxDecoration(
                           border: Border.all(),
                         ),
-                        child: const Icon(Icons.image),
+                        child: const Icon(
+                          Icons.image,
+                        ),
                       ),
 
                       title: Text(
-                        productosFiltrados[index],
+                        producto['nombre'],
                       ),
 
                       subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment
+                                .start,
+
                         children: [
-                          const Text('Categoría'),
+                          Text(
+                            producto['categoria'],
+                          ),
+
+                          Text(
+                            'Stock: ${producto['stock']}',
+                          ),
 
                           const SizedBox(height: 5),
 
-                          Row(
-                            children: [
-                              Container(
-                                width: 12,
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  color: index == 0
-                                      ? Colors.red
-                                      : index == 1
-                                          ? Colors.amber
-                                          : Colors.green,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-
-                              const SizedBox(width: 6),
-
-                              Text(
-                                index == 0
-                                    ? 'Sin stock'
-                                    : index == 1
-                                        ? 'Poco stock'
-                                        : 'Disponible',
-                                style: TextStyle(
-                                  color: index == 0
-                                      ? Colors.red
-                                      : index == 1
-                                          ? Colors.orange
-                                          : Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          estadoStock(
+                            producto['stock'],
                           ),
                         ],
                       ),
 
                       trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize:
+                            MainAxisSize.min,
+
                         children: [
-                          // 👁 Ver detalle
                           IconButton(
                             icon: const Icon(
                               Icons.visibility,
                               color: Colors.blue,
                             ),
+
                             onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Detalle Producto'),
-
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          width: 100,
-                                          height: 100,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(),
-                                          ),
-                                          child: const Icon(
-                                            Icons.image,
-                                            size: 50,
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 15),
-
-                                        Text(
-                                          productosFiltrados[index],
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 10),
-
-                                        const Text('Categoría: Categoría A'),
-                                        const Text('Stock: 20'),
-                                        const Text('Precio: \$120.00'),
-                                      ],
-                                    ),
-
-                                    actions: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Cerrar'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                              mostrarDetalleProducto(
+                                producto,
                               );
                             },
                           ),
-
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  String categoria = 'Categoría A';
-
-                                  return AlertDialog(
-                                    title: const Text('Editar Producto'),
-
-                                    content: StatefulBuilder(
-                                      builder: (context, setModalState) {
-                                        return SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              TextField(
-                                                controller: TextEditingController(
-                                                  text:
-                                                      productosFiltrados[index],
-                                                ),
-                                                decoration:
-                                                    const InputDecoration(
-                                                  hintText:
-                                                      'Nombre producto',
-                                                ),
-                                              ),
-
-                                              const SizedBox(height: 10),
-
-                                              TextField(
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                decoration:
-                                                    const InputDecoration(
-                                                  hintText: 'Stock',
-                                                ),
-                                              ),
-
-                                              const SizedBox(height: 10),
-
-                                              TextField(
-                                                decoration: InputDecoration(
-                                                  hintText: 'Imagen',
-                                                  suffixIcon: IconButton(
-                                                    icon: const Icon(
-                                                      Icons.camera_alt,
-                                                    ),
-                                                    onPressed: () {},
-                                                  ),
-                                                ),
-                                              ),
-
-                                              const SizedBox(height: 10),
-
-                                              DropdownButtonFormField<String>(
-                                                value: categoria,
-                                                items: [
-                                                  'Categoría A',
-                                                  'Categoría B',
-                                                  'Categoría C',
-                                                ]
-                                                    .map(
-                                                      (e) =>
-                                                          DropdownMenuItem(
-                                                        value: e,
-                                                        child: Text(e),
-                                                      ),
-                                                    )
-                                                    .toList(),
-                                                onChanged: (value) {
-                                                  setModalState(() {
-                                                    categoria = value!;
-                                                  });
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-
-                                    actions: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Guardar'),
-                                      ),
-
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Cancelar'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: const Text('Editar'),
-                          ),
-
-                          const SizedBox(width: 5),
 
                           PopupMenuButton<String>(
-                            onSelected: (value) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      value == 'activar'
-                                          ? 'Activar Producto'
-                                          : 'Desactivar Producto',
-                                    ),
-
-                                    content: Text(
-                                      value == 'activar'
-                                          ? '¿Desea activar este producto?'
-                                          : '¿Desea desactivar este producto?',
-                                    ),
-
-                                    actions: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Aceptar'),
-                                      ),
-
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Cancelar'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                            onSelected: (
+                              value,
+                            ) {
+                              mostrarAccionProducto(
+                                value,
                               );
                             },
 
-                            itemBuilder: (context) => const [
-                              PopupMenuItem(
-                                value: 'activar',
-                                child: Text('Activar'),
-                              ),
+                            itemBuilder:
+                                (context) => const [
+                                  PopupMenuItem(
+                                    value:
+                                        'activar',
+                                    child: Text(
+                                      'Activar',
+                                    ),
+                                  ),
 
-                              PopupMenuItem(
-                                value: 'desactivar',
-                                child: Text('Desactivar'),
-                              ),
-                            ],
+                                  PopupMenuItem(
+                                    value:
+                                        'desactivar',
+                                    child: Text(
+                                      'Desactivar',
+                                    ),
+                                  ),
+                                ],
                           ),
                         ],
                       ),

@@ -1,124 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:app_mobile_pos/screens/clientes_screen.dart';
-import 'package:app_mobile_pos/screens/ajustes_screen.dart';
-import 'package:app_mobile_pos/screens/productos_screen.dart';
-import 'package:app_mobile_pos/screens/ordenes_screen.dart';
-import 'package:app_mobile_pos/screens/login_screen.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
-  @override
-  State<MainLayout> createState() => _MainLayoutState();
-}
+  Widget cardInicio(String titulo, String valor, IconData icono, Color color) {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icono, size: 40, color: color),
 
-class _MainLayoutState extends State<MainLayout> {
-  int _selectedIndex = 2;
+            const SizedBox(height: 10),
 
-  final List<Widget> _screens = const [
-    const ProductosScreen(),
-    const OrdenesScreen(),
-    const Center(child: Text('Inicio')),
-    const ClientesScreen(),
-    const AjustesScreen(),
-  ];
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  // Títulos dinámicos según la pantalla actual
-  final List<String> _titles = [
-    'Inventario de productos',
-    'Historial de órdenes',
-    'Punto de venta (Inicio)',
-    'Gestión de clientes',
-    'Ajustes del sistema',
-  ];
+            Text(
+              valor,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
 
-  void _logout() async {
-    // 1. Borramos físicamente el token del almacenamiento encriptado
-    await _storage.delete(key: 'jwt_token');
+            const SizedBox(height: 5),
 
-    if (mounted) {
-      // 2. Redirección blindada destruyendo el historial de navegación
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false,
-      );
-    }
+            Text(titulo, textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Agregamos el AppBar global para contener el botón de Logout
-      appBar: AppBar(
-        title: Text(
-          _titles[_selectedIndex],
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        backgroundColor: Colors.blueAccent,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Cerrar Sesión',
-            onPressed: () {
-              // Mostramos un diálogo de confirmación rápido antes de salir
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Cerrar Sesión'),
-                  content: const Text(
-                    '¿Estás seguro de que deseas salir del sistema?',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancelar'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Cierra el diálogo
-                        _logout(); // Ejecuta el logout
-                      },
-                      child: const Text(
-                        'Salir',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
+    return Padding(
+      padding: const EdgeInsets.all(15),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Bienvenido al Sistema POS',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 20),
+
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+
+              children: [
+                cardInicio(
+                  'Ventas Hoy',
+                  'Bs 1500',
+                  Icons.attach_money,
+                  Colors.green,
                 ),
-              );
-            },
+
+                cardInicio('Productos', '25', Icons.inventory, Colors.blue),
+
+                cardInicio('Clientes', '10', Icons.people, Colors.orange),
+
+                cardInicio('Órdenes', '18', Icons.receipt_long, Colors.purple),
+              ],
+            ),
           ),
-        ],
-      ),
-      body: IndexedStack(index: _selectedIndex, children: _screens),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: true,
-        showSelectedLabels: true,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blueAccent,
-        unselectedItemColor: Colors.grey,
-        elevation: 15,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inventory),
-            label: 'Productos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
-            label: 'Órdenes',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Clientes'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes'),
         ],
       ),
     );
