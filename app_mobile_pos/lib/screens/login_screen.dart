@@ -146,6 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     : const Text("Ingresar", style: TextStyle(fontSize: 16)),
               ),
             ),
+            const SizedBox(height: 15),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -160,8 +161,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     : const Text("Registrar", style: TextStyle(fontSize: 16)),
               ),
             ),
-            const SizedBox(height: 15), // Pequeño espacio de separación
-            // BOTÓN NUEVO: Navegación al registro
             TextButton(
               onPressed: _isLoading
                   ? null
