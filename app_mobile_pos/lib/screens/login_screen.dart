@@ -1,6 +1,4 @@
-
 import 'package:app_mobile_pos/screens/main_layout.dart';
-import 'package:app_mobile_pos/screens/home_screen.dart';
 import 'package:app_mobile_pos/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -159,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Ingresar", style: TextStyle(fontSize: 16)),
+                    : const Text("Registrar", style: TextStyle(fontSize: 16)),
               ),
             ),
             const SizedBox(height: 15), // Pequeño espacio de separación
