@@ -40,11 +40,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "¡Usuario ${nuevoUsuario.username} registrado con éxito!",
           Colors.green,
         );
-        // Volvemos al Login de forma limpia
         Navigator.pop(context);
       }
     } catch (e) {
-      // Captura los mensajes exactos de passSegura(password) lanzados por el repositorio (ej: statusCode 400)
       String mensajeError = e.toString().replaceAll("Exception: ", "");
       _mostrarMensaje(mensajeError, Colors.red);
     } finally {
@@ -113,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Dropdown de selección de Rol mapeando los IDs de PostgreSQL
+            // Dropdown de selección de Rol
             DropdownButtonFormField<int>(
               initialValue: _selectedRolId,
               decoration: const InputDecoration(
@@ -151,6 +149,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         "Registrar Usuario",
                         style: TextStyle(fontSize: 16),
                       ),
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            // BOTÓN NUEVO: Volver al Login
+            TextButton(
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      Navigator.pop(
+                        context,
+                      ); // Destruye esta pantalla y regresa al Login
+                    },
+              child: const Text(
+                "¿Ya tienes cuenta? Inicia sesión aquí",
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
