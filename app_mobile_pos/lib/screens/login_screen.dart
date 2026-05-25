@@ -17,10 +17,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Instanciamos nuestro repositorio y el almacenamiento seguro
   final UsuarioRepository _usuarioRepository = UsuarioRepository();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  final Dio _dio = Dio(); // Exclusivo para el botón de prueba de red
+  final Dio _dio = Dio();
 
   bool _isLoading = false;
 
@@ -34,29 +33,24 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // 1. Llamamos al repositorio que procesa el login
       final resultado = await _usuarioRepository.login(
         _userController.text.trim(),
         _passwordController.text,
       );
 
-      // 2. Extraemos el token y la info que tu controlador de Node envía
       final String token = resultado['token'];
 
-      // 3. Guardamos el token en el almacenamiento seguro
       await _storage.write(key: 'jwt_token', value: token);
 
       if (mounted) {
         _mostrarMensaje("¡Bienvenido al sistema!", Colors.green);
 
-        // 4. Navegación limpia al menú principal (Reemplazando el login)
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainLayout()),
+          MaterialPageRoute(builder: (context) => const MainLayout()),
         );
       }
     } catch (e) {
-      // Captura los mensajes personalizados lanzados por el repositorio (Usuario no encontrado, etc.)
       String mensajeError = e.toString().replaceAll("Exception: ", "");
       _mostrarMensaje(mensajeError, Colors.red);
     } finally {
@@ -111,6 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
+
+            // Input Usuario
             TextField(
               controller: _userController,
               enabled: !_isLoading,
@@ -121,6 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 20),
+
+            // Input Contraseña
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -132,6 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 30),
+
+            // BOTÓN ÚNICO DE INGRESO
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -146,21 +146,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     : const Text("Ingresar", style: TextStyle(fontSize: 16)),
               ),
             ),
-            const SizedBox(height: 15),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  foregroundColor: Colors.white,
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Registrar", style: TextStyle(fontSize: 16)),
-              ),
-            ),
+
+            const SizedBox(height: 20),
+
+            // TEXTBUTTON PARA IR AL REGISTRO (Este sí abre la pantalla correcta)
             TextButton(
               onPressed: _isLoading
                   ? null
