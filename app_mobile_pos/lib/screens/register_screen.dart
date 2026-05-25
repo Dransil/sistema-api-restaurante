@@ -71,9 +71,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crear Cuenta'),
-        backgroundColor: Colors.blueAccent,
-        foregroundColor: Colors.white,
+        // title: const Text('Crear Cuenta'),
+        // backgroundColor: Colors.blueAccent,
+        // foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
