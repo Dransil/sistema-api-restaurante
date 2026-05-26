@@ -17,7 +17,7 @@ class ProductoRepository {
     return _fetchProductos('${ApiConstants.productos}/activos');
   }
 
-  // GET /productos/activos
+  // GET /productos/noactivos
   Future<List<ProductoModel>> obtenerNoActivos() async {
     return _fetchProductos('${ApiConstants.productos}/noactivos');
   }
