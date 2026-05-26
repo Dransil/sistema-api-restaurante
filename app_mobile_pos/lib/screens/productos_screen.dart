@@ -18,7 +18,6 @@ class _ProductosScreenState extends State<ProductosScreen> {
   List<ProductoModel> productos = [];
   List<CategoriaModel> categorias = [];
 
-  // Diccionario en memoria para traducir ID -> Nombre de Categoría
   Map<int, String> mapaCategorias = {};
 
   int? idCategoriaSeleccionada;
@@ -62,7 +61,6 @@ class _ProductosScreenState extends State<ProductosScreen> {
     }
   }
 
-  // Refrescar solo productos cuando uses el "Pull to refresh"
   Future<void> _recargarProductos() async {
     try {
       final lista = await _productoRepository.obtenerTodos();
@@ -154,7 +152,6 @@ class _ProductosScreenState extends State<ProductosScreen> {
   }
 
   void mostrarDetalleProducto(ProductoModel producto) {
-    // Obtenemos el nombre real usando el mapa en memoria
     final nombreCategoria =
         mapaCategorias[producto.categoriaId] ?? 'Sin categoría';
 
