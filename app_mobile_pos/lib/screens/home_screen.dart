@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Widget cardInicio(
-    String titulo,
-    String valor,
-    IconData icono,
-    Color color,
-  ) {
+  Widget cardInicio(String titulo, String valor, IconData icono, Color color) {
     return Card(
       elevation: 4,
       child: Padding(
@@ -16,28 +11,18 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icono,
-              size: 40,
-              color: color,
-            ),
+            Icon(icono, size: 40, color: color),
 
             const SizedBox(height: 10),
 
             Text(
               valor,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 5),
 
-            Text(
-              titulo,
-              textAlign: TextAlign.center,
-            ),
+            Text(titulo, textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -54,10 +39,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           const Text(
             'Bienvenido al Sistema POS',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -76,26 +58,11 @@ class HomeScreen extends StatelessWidget {
                   Colors.green,
                 ),
 
-                cardInicio(
-                  'Productos',
-                  '25',
-                  Icons.inventory,
-                  Colors.blue,
-                ),
+                cardInicio('Productos', '25', Icons.inventory, Colors.blue),
 
-                cardInicio(
-                  'Clientes',
-                  '10',
-                  Icons.people,
-                  Colors.orange,
-                ),
+                cardInicio('Clientes', '10', Icons.people, Colors.orange),
 
-                cardInicio(
-                  'Órdenes',
-                  '18',
-                  Icons.receipt_long,
-                  Colors.purple,
-                ),
+                cardInicio('Órdenes', '18', Icons.receipt_long, Colors.purple),
               ],
             ),
           ),
