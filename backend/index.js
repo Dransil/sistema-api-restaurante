@@ -14,7 +14,7 @@ const configlocalRoutes = require('./routes/configlocalRoutes');
 const reporteRoutes = require('./routes/reporteRoutes');
 // Express y puerto
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middleware CORS
 app.use(cors()); 
