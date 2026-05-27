@@ -15,11 +15,13 @@ class ProductoUiHelper {
       prodRepo.obtenerTodos(),
     ]);
 
-    final cats = respuestas as List<CategoriaModel>;
+    final listaCategorias = respuestas[0] as List<CategoriaModel>;
+    final listaProductos = respuestas[1] as List<ProductoModel>;
+
     return {
-      'categorias': cats,
-      'productos': respuestas as List<ProductoModel>,
-      'mapa': {for (var cat in cats) cat.id: cat.nombre},
+      'categorias': listaCategorias,
+      'productos': listaProductos,
+      'mapa': {for (var cat in listaCategorias) cat.id: cat.nombre},
     };
   }
 
