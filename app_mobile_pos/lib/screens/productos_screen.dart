@@ -39,7 +39,6 @@ class _ProductosScreenState extends State<ProductosScreen> {
         _productoRepository.obtenerTodos(),
       ]);
 
-      // ✅ Accedes por índice, no casteas la lista entera
       final listaCategorias = respuestas[0] as List<CategoriaModel>;
       final listaProductos = respuestas[1] as List<ProductoModel>;
 
