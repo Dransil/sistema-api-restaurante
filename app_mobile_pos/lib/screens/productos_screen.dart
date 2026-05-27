@@ -3,6 +3,7 @@ import 'package:app_mobile_pos/data/models/producto_model.dart';
 import 'package:app_mobile_pos/data/models/categoria_model.dart';
 import 'package:app_mobile_pos/data/repositories/producto_repository.dart';
 import 'package:app_mobile_pos/data/repositories/categoria_repository.dart';
+import 'package:app_mobile_pos/logic/helpers/producto_ui_helper.dart';
 
 class ProductosScreen extends StatefulWidget {
   const ProductosScreen({super.key});
@@ -17,7 +18,6 @@ class _ProductosScreenState extends State<ProductosScreen> {
 
   List<ProductoModel> productos = [];
   List<CategoriaModel> categorias = [];
-
   Map<int, String> mapaCategorias = {};
 
   int? idCategoriaSeleccionada;
@@ -27,221 +27,74 @@ class _ProductosScreenState extends State<ProductosScreen> {
   @override
   void initState() {
     super.initState();
-    _inicializarDatos();
+    _cargarDatosIniciales();
   }
 
-  // Cargamos categorías y productos en paralelo para optimizar el tiempo
-  Future<void> _inicializarDatos() async {
+  // Lógica de carga delegada
+  Future<void> _cargarDatosIniciales() async {
     setState(() => _isLoading = true);
     try {
-      final respuestas = await Future.wait([
-        _categoriaRepository.obtenerCategorias(),
-        _productoRepository.obtenerTodos(),
-      ]);
-
-      final listaCategorias = respuestas[0] as List<CategoriaModel>;
-      final listaProductos = respuestas[1] as List<ProductoModel>;
-
+      final datos = await ProductoUiHelper.inicializarTodo(
+        _productoRepository,
+        _categoriaRepository,
+      );
       if (mounted) {
         setState(() {
-          categorias = listaCategorias;
-          productos = listaProductos;
-          mapaCategorias = {
-            for (var cat in listaCategorias) cat.id: cat.nombre,
-          };
+          categorias = datos['categorias'];
+          productos = datos['productos'];
+          mapaCategorias = datos['mapa'];
           _isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        _mostrarSnackBar('Error al inicializar datos: $e', Colors.red);
+        ProductoUiHelper.notificar(context, 'Error: $e', Colors.red);
       }
     }
   }
 
-  Future<void> _recargarProductos() async {
+  Future<void> _refrescarInventario() async {
     try {
       final lista = await _productoRepository.obtenerTodos();
-      if (mounted) {
-        setState(() {
-          productos = lista;
-        });
-      }
+      if (mounted) setState(() => productos = lista);
     } catch (e) {
-      _mostrarSnackBar('Error al actualizar inventario: $e', Colors.red);
+      ProductoUiHelper.notificar(
+        context,
+        'Error al actualizar: $e',
+        Colors.red,
+      );
     }
   }
 
-  Future<void> _alternarEstadoProducto(int id, bool estadoActual) async {
-    final nuevoEstado = !estadoActual;
+  Future<void> _procesarCambioEstado(int id, bool estado) async {
     Navigator.pop(context);
     setState(() => _isLoading = true);
-
     try {
-      final exito = await _productoRepository.cambiarEstado(id, nuevoEstado);
+      final exito = await _productoRepository.cambiarEstado(id, !estado);
       if (exito && mounted) {
-        _mostrarSnackBar(
-          nuevoEstado ? 'Producto activado' : 'Producto desactivado',
+        ProductoUiHelper.notificar(
+          context,
+          !estado ? 'Producto activado' : 'Producto desactivado',
           Colors.green,
         );
-        _recargarProductos();
+        _refrescarInventario();
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        _mostrarSnackBar('$e', Colors.red);
+        ProductoUiHelper.notificar(context, '$e', Colors.red);
       }
     }
   }
 
-  String obtenerEstadoStock(int stock) {
-    if (stock == 0) return 'Sin stock';
-    if (stock <= 5) return 'Poco stock';
-    return 'Disponible';
-  }
-
-  Color obtenerColorStock(int stock) {
-    if (stock == 0) return Colors.red;
-    if (stock <= 5) return Colors.orange;
-    return Colors.green;
-  }
-
-  void _mostrarSnackBar(String mensaje, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(mensaje),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  void mostrarAccionProducto(ProductoModel producto, String accion) {
-    if ((accion == 'activar' && producto.activo) ||
-        (accion == 'desactivar' && !producto.activo)) {
-      _mostrarSnackBar(
-        'El producto ya se encuentra en ese estado',
-        Colors.amber,
-      );
-      return;
-    }
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          accion == 'activar' ? 'Activar Producto' : 'Desactivar Producto',
-        ),
-        content: Text('¿Desea cambiar el estado de "${producto.nombre}"?'),
-        actions: [
-          ElevatedButton(
-            onPressed: () =>
-                _alternarEstadoProducto(producto.id, producto.activo),
-            child: const Text('Aceptar'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void mostrarDetalleProducto(ProductoModel producto) {
-    final nombreCategoria =
-        mapaCategorias[producto.categoriaId] ?? 'Sin categoría';
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Detalle Producto'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child:
-                  producto.imagenUrl != null && producto.imagenUrl!.isNotEmpty
-                  ? Image.network(
-                      producto.imagenUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.broken_image, size: 50),
-                    )
-                  : const Icon(Icons.image, size: 50, color: Colors.grey),
-            ),
-            const SizedBox(height: 15),
-            Text(
-              producto.nombre,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Categoría: $nombreCategoria',
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            Text('Stock: ${producto.stock} unidades'),
-            Text(
-              'Precio: ${producto.precio} BOB',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget estadoStock(int stock) {
-    return Row(
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: obtenerColorStock(stock),
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          obtenerEstadoStock(stock),
-          style: TextStyle(
-            color: obtenerColorStock(stock),
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    // FILTRADO DOUBLE: Filtra primero por categoría seleccionada y luego por texto del buscador
-    final productosFiltrados = productos.where((producto) {
-      final cumpleCategoria =
-          idCategoriaSeleccionada == null ||
-          producto.categoriaId == idCategoriaSeleccionada;
-      final cumpleBusqueda = producto.nombre.toLowerCase().contains(search);
-      return cumpleCategoria && cumpleBusqueda;
-    }).toList();
+    final productosFiltrados = ProductoUiHelper.filtrar(
+      productos,
+      idCategoriaSeleccionada,
+      search,
+    );
 
     return Scaffold(
       body: _isLoading
@@ -264,126 +117,75 @@ class _ProductosScreenState extends State<ProductosScreen> {
                   ),
                 ),
 
-                // 2. NUEVA BARRA DE CATEGORÍAS HORIZONTAL
-                // 2. BARRA DE CATEGORÍAS HORIZONTAL CON DETECTOR DE CARGA
+                // 2. Barra Horizonal de Categorías
                 SizedBox(
                   height: 40,
-                  child: _isLoading && categorias.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          child: LinearProgressIndicator(
-                            color: Colors.blueAccent,
-                          ), // <-- Barra de carga para categorías
-                        )
-                      : ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          itemCount: categorias.length + 1, // +1 para "Todos"
-                          itemBuilder: (context, index) {
-                            final esPrimero = index == 0;
-                            final catId = esPrimero
-                                ? null
-                                : categorias[index - 1].id;
-                            final catNombre = esPrimero
-                                ? 'Todos'
-                                : categorias[index - 1].nombre;
-                            final esSeleccionado =
-                                idCategoriaSeleccionada == catId;
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    itemCount: categorias.length + 1,
+                    itemBuilder: (context, index) {
+                      final esPrimero = index == 0;
+                      final catId = esPrimero ? null : categorias[index - 1].id;
+                      final catNombre = esPrimero
+                          ? 'Todos'
+                          : categorias[index - 1].nombre;
+                      final esSel = idCategoriaSeleccionada == catId;
 
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: ChoiceChip(
-                                label: Text(catNombre),
-                                selected: esSeleccionado,
-                                selectedColor: Colors.blueAccent,
-                                labelStyle: TextStyle(
-                                  color: esSeleccionado
-                                      ? Colors.white
-                                      : Colors.black87,
-                                  fontWeight: esSeleccionado
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                                backgroundColor: Colors.grey.shade200,
-                                onSelected: (_) {
-                                  setState(() {
-                                    idCategoriaSeleccionada = catId;
-                                  });
-                                },
-                              ),
-                            );
-                          },
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(catNombre),
+                          selected: esSel,
+                          selectedColor: Colors.blueAccent,
+                          labelStyle: TextStyle(
+                            color: esSel ? Colors.white : Colors.black87,
+                            fontWeight: esSel
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                          backgroundColor: Colors.grey.shade200,
+                          onSelected: (_) =>
+                              setState(() => idCategoriaSeleccionada = catId),
                         ),
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(height: 10),
 
-                // 3. Lista de Productos
+                // 3. Listado de productos
                 Expanded(
                   child: productosFiltrados.isEmpty
                       ? const Center(
                           child: Text('No hay productos en esta categoría'),
                         )
                       : RefreshIndicator(
-                          onRefresh: _recargarProductos,
+                          onRefresh: _refrescarInventario,
                           child: ListView.builder(
                             itemCount: productosFiltrados.length,
                             itemBuilder: (context, index) {
-                              final producto = productosFiltrados[index];
-                              // Traducimos el ID de la fila a su nombre real
-                              final nombreCategoria =
-                                  mapaCategorias[producto.categoriaId] ??
+                              final prod = productosFiltrados[index];
+                              final nomCat =
+                                  mapaCategorias[prod.categoriaId] ??
                                   'Sin categoría';
 
                               return Card(
-                                color: producto.activo
+                                color: prod.activo
                                     ? null
                                     : Colors.grey.shade100,
                                 child: ListTile(
-                                  leading: Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: Colors.grey.shade300,
-                                      ),
-                                    ),
-                                    child:
-                                        producto.imagenUrl != null &&
-                                            producto.imagenUrl!.isNotEmpty
-                                        ? ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              5,
-                                            ),
-                                            child: Image.network(
-                                              producto.imagenUrl!,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (
-                                                    context,
-                                                    error,
-                                                    stackTrace,
-                                                  ) => const Icon(
-                                                    Icons.broken_image,
-                                                  ),
-                                            ),
-                                          )
-                                        : const Icon(
-                                            Icons.fastfood,
-                                            color: Colors.grey,
-                                          ),
+                                  leading: ProductoUiHelper.construirMiniatura(
+                                    prod.imagenUrl,
                                   ),
                                   title: Text(
-                                    producto.nombre,
+                                    prod.nombre,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: producto.activo
+                                      color: prod.activo
                                           ? Colors.black87
                                           : Colors.grey,
-                                      decoration: producto.activo
+                                      decoration: prod.activo
                                           ? null
                                           : TextDecoration.lineThrough,
                                     ),
@@ -393,15 +195,17 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Categoría: $nombreCategoria',
+                                        'Categoría: $nomCat',
                                         style: const TextStyle(
                                           color: Colors.blueGrey,
                                         ),
-                                      ), // <-- ¡MUESTRA NOMBRE EN VEZ DE ID!
-                                      Text('Precio: ${producto.precio} BOB'),
-                                      Text('Stock: ${producto.stock}'),
+                                      ),
+                                      Text('Precio: ${prod.precio} BOB'),
+                                      Text('Stock: ${prod.stock}'),
                                       const SizedBox(height: 4),
-                                      estadoStock(producto.stock),
+                                      ProductoUiHelper.dibujarIndicadorStock(
+                                        prod.stock,
+                                      ), // Widget extraído
                                     ],
                                   ),
                                   trailing: Row(
@@ -413,20 +217,29 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                           color: Colors.blue,
                                         ),
                                         onPressed: () =>
-                                            mostrarDetalleProducto(producto),
+                                            ProductoUiHelper.verModalDetalle(
+                                              context,
+                                              prod,
+                                              nomCat,
+                                            ),
                                       ),
                                       PopupMenuButton<String>(
-                                        onSelected: (value) =>
-                                            mostrarAccionProducto(
-                                              producto,
-                                              value,
+                                        onSelected: (accion) =>
+                                            ProductoUiHelper.verModalAccion(
+                                              context,
+                                              prod,
+                                              accion,
+                                              () => _procesarCambioEstado(
+                                                prod.id,
+                                                prod.activo,
+                                              ),
                                             ),
-                                        itemBuilder: (context) => [
-                                          const PopupMenuItem(
+                                        itemBuilder: (context) => const [
+                                          PopupMenuItem(
                                             value: 'activar',
                                             child: Text('Activar'),
                                           ),
-                                          const PopupMenuItem(
+                                          PopupMenuItem(
                                             value: 'desactivar',
                                             child: Text('Desactivar'),
                                           ),
