@@ -114,6 +114,11 @@ class ProductoUiHelper {
     ProductoModel p,
     String catNombre,
   ) {
+    // Construimos la URL completa una sola vez
+    final String? urlCompleta = (p.imagenUrl != null && p.imagenUrl!.isNotEmpty)
+        ? '${ApiConstants.baseUrl}${p.imagenUrl}'
+        : null;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -128,9 +133,9 @@ class ProductoUiHelper {
                 border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: p.imagenUrl != null && p.imagenUrl!.isNotEmpty
+              child: urlCompleta != null
                   ? Image.network(
-                      p.imagenUrl!,
+                      urlCompleta,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) =>
                           const Icon(Icons.broken_image, size: 50),
