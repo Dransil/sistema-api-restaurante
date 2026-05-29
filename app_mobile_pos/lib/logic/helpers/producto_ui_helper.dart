@@ -1,3 +1,4 @@
+import 'package:app_mobile_pos/core/constants/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:app_mobile_pos/data/models/producto_model.dart';
 import 'package:app_mobile_pos/data/models/categoria_model.dart';
@@ -73,6 +74,9 @@ class ProductoUiHelper {
 
   // Construye el avatar o miniatura de la imagen
   static Widget construirMiniatura(String? url) {
+    final String? urlCompleta = (url != null && url.isNotEmpty)
+        ? '${ApiConstants.baseUrl}$url'
+        : null;
     return Container(
       width: 50,
       height: 50,
@@ -80,11 +84,11 @@ class ProductoUiHelper {
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.grey.shade300),
       ),
-      child: url != null && url.isNotEmpty
+      child: urlCompleta != null
           ? ClipRRect(
               borderRadius: BorderRadius.circular(5),
               child: Image.network(
-                url,
+                urlCompleta,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
               ),
@@ -110,6 +114,11 @@ class ProductoUiHelper {
     ProductoModel p,
     String catNombre,
   ) {
+    // Construimos la URL completa una sola vez
+    final String? urlCompleta = (p.imagenUrl != null && p.imagenUrl!.isNotEmpty)
+        ? '${ApiConstants.baseUrl}${p.imagenUrl}'
+        : null;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -124,9 +133,9 @@ class ProductoUiHelper {
                 border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: p.imagenUrl != null && p.imagenUrl!.isNotEmpty
+              child: urlCompleta != null
                   ? Image.network(
-                      p.imagenUrl!,
+                      urlCompleta,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) =>
                           const Icon(Icons.broken_image, size: 50),
