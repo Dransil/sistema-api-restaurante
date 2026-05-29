@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:app_mobile_pos/screens/clientes_screen.dart';
-import 'package:app_mobile_pos/screens/ajustes_screen.dart';
-import 'package:app_mobile_pos/screens/productos_screen.dart';
-import 'package:app_mobile_pos/screens/ordenes_screen.dart';
-import 'package:app_mobile_pos/screens/login_screen.dart';
+import 'package:app_mobile_pos/presentation/screens/clientes_screen.dart';
+import 'package:app_mobile_pos/presentation/screens/ajustes_screen.dart';
+import 'package:app_mobile_pos/presentation/screens/productos_screen.dart';
+import 'package:app_mobile_pos/presentation/screens/ordenes_screen.dart';
+import 'package:app_mobile_pos/presentation/screens/login_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:app_mobile_pos/screens/home_screen.dart';
+import 'package:app_mobile_pos/presentation/screens/home_screen.dart';
+
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/repositories/config_repository.dart';
+import '../../../data/repositories/config_repository.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
