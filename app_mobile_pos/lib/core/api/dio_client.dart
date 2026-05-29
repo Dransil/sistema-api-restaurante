@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:developer' as developer;
 import '../constants/api_constants.dart';
 
 class DioClient {
@@ -23,11 +24,14 @@ class DioClient {
             if (token != null) {
               options.headers['Authorization'] = 'Bearer $token';
             }
-          } catch (e) {
-            print("Error al leer el token en el interceptor: $e");
+          } catch (e, stackTrace) {
+            developer.log(
+              'Error al leer el token en el interceptor',
+              name: 'api.interceptor',
+              error: e,
+              stackTrace: stackTrace,
+            );
           }
-
-          // 3. Continuamos con la petición de manera normal
           return handler.next(options);
         },
       ),
