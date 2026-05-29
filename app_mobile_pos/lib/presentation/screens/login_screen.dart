@@ -1,10 +1,10 @@
-import 'package:app_mobile_pos/screens/main_layout.dart';
-import 'package:app_mobile_pos/screens/register_screen.dart';
+import 'package:app_mobile_pos/presentation/screens/main_layout.dart';
+import 'package:app_mobile_pos/presentation/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
-import '../core/constants/api_constants.dart';
-import '../../data/repositories/usuario_repository.dart';
+import '../../core/constants/api_constants.dart';
+import '../../../data/repositories/usuario_repository.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
