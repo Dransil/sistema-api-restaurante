@@ -88,7 +88,7 @@ class ProductoUiHelper {
           ? Image.network(
               urlCompleta,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
+              errorBuilder: (_, _, _) =>
                   const Icon(Icons.broken_image, color: Colors.grey),
             )
           : const Icon(Icons.fastfood, color: Colors.grey),
@@ -143,7 +143,7 @@ class ProductoUiHelper {
                     ? Image.network(
                         urlCompleta,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
+                        errorBuilder: (_, _, _) =>
                             const Icon(Icons.broken_image, size: 50),
                       )
                     : const Icon(Icons.image, size: 50, color: Colors.grey),
