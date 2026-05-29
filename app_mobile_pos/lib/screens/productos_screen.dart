@@ -30,14 +30,15 @@ class _ProductosScreenState extends State<ProductosScreen> {
     _cargarDatosIniciales();
   }
 
-  // Lógica de carga delegada
   Future<void> _cargarDatosIniciales() async {
     setState(() => _isLoading = true);
+
     try {
       final datos = await ProductoUiHelper.inicializarTodo(
         _productoRepository,
         _categoriaRepository,
       );
+
       if (mounted) {
         setState(() {
           categorias = datos['categorias'];
@@ -49,6 +50,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
+
         ProductoUiHelper.notificar(context, 'Error: $e', Colors.red);
       }
     }
@@ -57,7 +59,12 @@ class _ProductosScreenState extends State<ProductosScreen> {
   Future<void> _refrescarInventario() async {
     try {
       final lista = await _productoRepository.obtenerTodos();
-      if (mounted) setState(() => productos = lista);
+
+      if (mounted) {
+        setState(() {
+          productos = lista;
+        });
+      }
     } catch (e) {
       ProductoUiHelper.notificar(
         context,
@@ -69,20 +76,29 @@ class _ProductosScreenState extends State<ProductosScreen> {
 
   Future<void> _procesarCambioEstado(int id, bool estado) async {
     Navigator.pop(context);
+
     setState(() => _isLoading = true);
+
     try {
       final exito = await _productoRepository.cambiarEstado(id, !estado);
+
       if (exito && mounted) {
         ProductoUiHelper.notificar(
           context,
           !estado ? 'Producto activado' : 'Producto desactivado',
           Colors.green,
         );
-        _refrescarInventario();
+
+        await _refrescarInventario();
+
+        setState(() {
+          _isLoading = false;
+        });
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
+
         ProductoUiHelper.notificar(context, '$e', Colors.red);
       }
     }
@@ -97,163 +113,357 @@ class _ProductosScreenState extends State<ProductosScreen> {
     );
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F6FA),
+
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Productos',
+          style: TextStyle(
+            color: Color(0xFF1E293B),
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+      ),
+
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // 1. Buscador
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Buscar producto...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onChanged: (value) =>
-                        setState(() => search = value.toLowerCase()),
-                  ),
-                ),
-
-                // 2. Barra Horizonal de Categorías
-                SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    itemCount: categorias.length + 1,
-                    itemBuilder: (context, index) {
-                      final esPrimero = index == 0;
-                      final catId = esPrimero ? null : categorias[index - 1].id;
-                      final catNombre = esPrimero
-                          ? 'Todos'
-                          : categorias[index - 1].nombre;
-                      final esSel = idCategoriaSeleccionada == catId;
-
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(catNombre),
-                          selected: esSel,
-                          selectedColor: Colors.blueAccent,
-                          labelStyle: TextStyle(
-                            color: esSel ? Colors.white : Colors.black87,
-                            fontWeight: esSel
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                          backgroundColor: Colors.grey.shade200,
-                          onSelected: (_) =>
-                              setState(() => idCategoriaSeleccionada = catId),
+          : Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // BUSCADOR
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
-                      );
-                    },
+                      ],
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Buscar producto...',
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.deepPurple,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 18,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          search = value.toLowerCase();
+                        });
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
 
-                // 3. Listado de productos
-                Expanded(
-                  child: productosFiltrados.isEmpty
-                      ? const Center(
-                          child: Text('No hay productos en esta categoría'),
-                        )
-                      : RefreshIndicator(
-                          onRefresh: _refrescarInventario,
-                          child: ListView.builder(
-                            itemCount: productosFiltrados.length,
-                            itemBuilder: (context, index) {
-                              final prod = productosFiltrados[index];
-                              final nomCat =
-                                  mapaCategorias[prod.categoriaId] ??
-                                  'Sin categoría';
+                  const SizedBox(height: 18),
 
-                              return Card(
-                                color: prod.activo
-                                    ? null
-                                    : Colors.grey.shade100,
-                                child: ListTile(
-                                  leading: ProductoUiHelper.construirMiniatura(
-                                    prod.imagenUrl,
-                                  ),
-                                  title: Text(
-                                    prod.nombre,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: prod.activo
-                                          ? Colors.black87
-                                          : Colors.grey,
-                                      decoration: prod.activo
-                                          ? null
-                                          : TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Categoría: $nomCat',
-                                        style: const TextStyle(
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                      Text('Precio: ${prod.precio} BOB'),
-                                      Text('Stock: ${prod.stock}'),
-                                      const SizedBox(height: 4),
-                                      ProductoUiHelper.dibujarIndicadorStock(
-                                        prod.stock,
-                                      ), // Widget extraído
-                                    ],
-                                  ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.visibility,
-                                          color: Colors.blue,
-                                        ),
-                                        onPressed: () =>
-                                            ProductoUiHelper.verModalDetalle(
-                                              context,
-                                              prod,
-                                              nomCat,
-                                            ),
-                                      ),
-                                      PopupMenuButton<String>(
-                                        onSelected: (accion) =>
-                                            ProductoUiHelper.verModalAccion(
-                                              context,
-                                              prod,
-                                              accion,
-                                              () => _procesarCambioEstado(
-                                                prod.id,
-                                                prod.activo,
-                                              ),
-                                            ),
-                                        itemBuilder: (context) => const [
-                                          PopupMenuItem(
-                                            value: 'activar',
-                                            child: Text('Activar'),
-                                          ),
-                                          PopupMenuItem(
-                                            value: 'desactivar',
-                                            child: Text('Desactivar'),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
+                  // CATEGORÍAS
+                  SizedBox(
+                    height: 45,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categorias.length + 1,
+                      itemBuilder: (context, index) {
+                        final esPrimero = index == 0;
+
+                        final catId = esPrimero
+                            ? null
+                            : categorias[index - 1].id;
+
+                        final catNombre = esPrimero
+                            ? 'Todos'
+                            : categorias[index - 1].nombre;
+
+                        final esSeleccionado = idCategoriaSeleccionada == catId;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: ChoiceChip(
+                            label: Text(catNombre),
+
+                            selected: esSeleccionado,
+
+                            selectedColor: const Color(0xFF6C4AB6),
+
+                            backgroundColor: Colors.white,
+
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+
+                            labelStyle: TextStyle(
+                              color: esSeleccionado
+                                  ? Colors.white
+                                  : Colors.black87,
+                              fontWeight: FontWeight.w600,
+                            ),
+
+                            onSelected: (_) {
+                              setState(() {
+                                idCategoriaSeleccionada = catId;
+                              });
                             },
                           ),
-                        ),
-                ),
-              ],
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  // LISTADO PRODUCTOS
+                  Expanded(
+                    child: productosFiltrados.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No hay productos disponibles',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          )
+                        : RefreshIndicator(
+                            onRefresh: _refrescarInventario,
+                            child: ListView.builder(
+                              itemCount: productosFiltrados.length,
+
+                              itemBuilder: (context, index) {
+                                final prod = productosFiltrados[index];
+
+                                final nomCat =
+                                    mapaCategorias[prod.categoriaId] ??
+                                    'Sin categoría';
+
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(14),
+
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+
+                                      children: [
+                                        // IMAGEN
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+
+                                          child: SizedBox(
+                                            width: 80,
+                                            height: 80,
+
+                                            child:
+                                                ProductoUiHelper.construirMiniatura(
+                                                  prod.imagenUrl,
+                                                ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 14),
+
+                                        // DATOS
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+
+                                            children: [
+                                              Text(
+                                                prod.nombre,
+
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: prod.activo
+                                                      ? Colors.black87
+                                                      : Colors.grey,
+                                                  decoration: prod.activo
+                                                      ? null
+                                                      : TextDecoration
+                                                            .lineThrough,
+                                                ),
+                                              ),
+
+                                              const SizedBox(height: 8),
+
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4,
+                                                    ),
+
+                                                decoration: BoxDecoration(
+                                                  color: Colors.deepPurple
+                                                      .withOpacity(0.1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+
+                                                child: Text(
+                                                  nomCat,
+
+                                                  style: const TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              const SizedBox(height: 10),
+
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.attach_money,
+                                                    size: 18,
+                                                    color: Colors.green,
+                                                  ),
+
+                                                  const SizedBox(width: 4),
+
+                                                  Text(
+                                                    '${prod.precio} BOB',
+
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green,
+                                                    ),
+                                                  ),
+
+                                                  const SizedBox(width: 18),
+
+                                                  const Icon(
+                                                    Icons.inventory_2,
+                                                    size: 18,
+                                                    color: Colors.orange,
+                                                  ),
+
+                                                  const SizedBox(width: 4),
+
+                                                  Text('Stock: ${prod.stock}'),
+                                                ],
+                                              ),
+
+                                              const SizedBox(height: 12),
+
+                                              ProductoUiHelper.dibujarIndicadorStock(
+                                                prod.stock,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        // BOTONES
+                                        Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue.withOpacity(
+                                                  0.1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+
+                                              child: IconButton(
+                                                icon: const Icon(
+                                                  Icons.visibility,
+                                                  color: Colors.blue,
+                                                ),
+
+                                                onPressed: () {
+                                                  ProductoUiHelper.verModalDetalle(
+                                                    context,
+                                                    prod,
+                                                    nomCat,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+
+                                            const SizedBox(height: 8),
+
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.deepPurple
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+
+                                              child: PopupMenuButton<String>(
+                                                icon: const Icon(
+                                                  Icons.more_vert,
+                                                  color: Colors.deepPurple,
+                                                ),
+
+                                                onSelected: (accion) {
+                                                  ProductoUiHelper.verModalAccion(
+                                                    context,
+                                                    prod,
+                                                    accion,
+                                                    () => _procesarCambioEstado(
+                                                      prod.id,
+                                                      prod.activo,
+                                                    ),
+                                                  );
+                                                },
+
+                                                itemBuilder: (context) =>
+                                                    const [
+                                                      PopupMenuItem(
+                                                        value: 'activar',
+                                                        child: Text('Activar'),
+                                                      ),
+
+                                                      PopupMenuItem(
+                                                        value: 'desactivar',
+                                                        child: Text(
+                                                          'Desactivar',
+                                                        ),
+                                                      ),
+                                                    ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                  ),
+                ],
+              ),
             ),
     );
   }

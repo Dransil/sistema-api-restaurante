@@ -16,7 +16,6 @@ class _ClientesScreenState extends State<ClientesScreen> {
   String search = '';
   bool _isLoading = true;
 
-  // Controladores para los formularios de los Diálogos
   final TextEditingController _nombreCtrl = TextEditingController();
   final TextEditingController _ciCtrl = TextEditingController();
 
@@ -26,11 +25,12 @@ class _ClientesScreenState extends State<ClientesScreen> {
     _cargarClientes();
   }
 
-  // Cargar clientes desde Node.js
   Future<void> _cargarClientes() async {
     setState(() => _isLoading = true);
+
     try {
       final lista = await _clienteRepository.obtenerClientes();
+
       if (mounted) {
         setState(() {
           clientes = lista;
@@ -45,113 +45,125 @@ class _ClientesScreenState extends State<ClientesScreen> {
     }
   }
 
-  // Guardar nuevo cliente en PostgreSQL
   Future<void> _guardarNuevoCliente() async {
     final nombre = _nombreCtrl.text.trim();
     final ci = _ciCtrl.text.trim();
 
     if (nombre.isEmpty || ci.isEmpty) {
-      _mostrarSnackBar('Por favor llena todos los campos', Colors.amber);
+      _mostrarSnackBar('Por favor llena todos los campos', Colors.orange);
       return;
     }
 
-    Navigator.pop(context); // Cierra el Modal/Dialog
-    setState(() => _isLoading = true);
+    Navigator.pop(context);
 
     try {
-      final nuevoCliente = await _clienteRepository.agregarCliente(nombre, ci);
+      await _clienteRepository.agregarCliente(nombre, ci);
 
-      if (mounted) {
-        _mostrarSnackBar(
-          '¡${nuevoCliente.razonSocial} registrado con éxito!',
-          Colors.green,
-        );
-        _nombreCtrl.clear();
-        _ciCtrl.clear();
-        _cargarClientes();
-      }
+      _mostrarSnackBar('Cliente registrado correctamente', Colors.green);
+
+      _nombreCtrl.clear();
+      _ciCtrl.clear();
+
+      _cargarClientes();
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _mostrarSnackBar('$e', Colors.red);
-      }
+      _mostrarSnackBar('$e', Colors.red);
     }
   }
 
-  // Enviar los datos editados al backend mediante PUT
   Future<void> _editarClienteExistente(int id) async {
     final nombre = _nombreCtrl.text.trim();
     final ci = _ciCtrl.text.trim();
 
     if (nombre.isEmpty || ci.isEmpty) {
-      _mostrarSnackBar('Los campos no pueden quedar vacíos', Colors.amber);
+      _mostrarSnackBar('Los campos no pueden quedar vacíos', Colors.orange);
       return;
     }
 
-    Navigator.pop(context); // Cerramos el cuadro de diálogo
-    setState(() => _isLoading = true);
+    Navigator.pop(context);
 
     try {
-      // Invocamos tu método PUT /clientes/:id
-      final exito = await _clienteRepository.actualizarCliente(id, nombre, ci);
+      await _clienteRepository.actualizarCliente(id, nombre, ci);
 
-      if (exito && mounted) {
-        _mostrarSnackBar('Cliente actualizado correctamente', Colors.green);
-        _nombreCtrl.clear();
-        _ciCtrl.clear();
-        _cargarClientes();
-      }
+      _mostrarSnackBar('Cliente actualizado correctamente', Colors.green);
+
+      _nombreCtrl.clear();
+      _ciCtrl.clear();
+
+      _cargarClientes();
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _mostrarSnackBar('$e', Colors.red);
-      }
+      _mostrarSnackBar('$e', Colors.red);
     }
   }
 
-  // Levanta el modal precargando los datos correspondientes
-  void _abrirModalEdicion(ClienteModel cliente) {
-    // Seteamos los controllers con los valores actuales antes de mostrar el diálogo
-    _nombreCtrl.text = cliente.razonSocial;
-    _ciCtrl.text = cliente.ci;
+  void _abrirModalCliente({ClienteModel? cliente}) {
+    if (cliente != null) {
+      _nombreCtrl.text = cliente.razonSocial;
+      _ciCtrl.text = cliente.ci;
+    } else {
+      _nombreCtrl.clear();
+      _ciCtrl.clear();
+    }
 
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Editar Cliente'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: Text(
+          cliente == null ? 'Crear Cliente' : 'Editar Cliente',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: _nombreCtrl,
-              decoration: const InputDecoration(
-                hintText: 'Nombre / Razón Social',
+              controller: _ciCtrl,
+              decoration: InputDecoration(
+                hintText: 'CI o NIT',
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             TextField(
-              controller: _ciCtrl,
-              decoration: const InputDecoration(hintText: 'CI o NIT'),
-              keyboardType: TextInputType.number,
+              controller: _nombreCtrl,
+              decoration: InputDecoration(
+                hintText: 'Razón Social',
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
             ),
           ],
         ),
         actions: [
           ElevatedButton(
-            // Al presionar guardar, pasamos el ID único de la fila
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            onPressed: () => _editarClienteExistente(cliente.id),
-            child: const Text('Guardar'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey.shade300,
+              foregroundColor: Colors.black,
+            ),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C5CE7),
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
-              _nombreCtrl.clear();
-              _ciCtrl.clear();
-              Navigator.pop(context);
+              if (cliente == null) {
+                _guardarNuevoCliente();
+              } else {
+                _editarClienteExistente(cliente.id);
+              }
             },
-            child: const Text('Cancelar'),
+            child: Text(cliente == null ? 'Crear' : 'Guardar'),
           ),
         ],
       ),
@@ -159,13 +171,9 @@ class _ClientesScreenState extends State<ClientesScreen> {
   }
 
   void _mostrarSnackBar(String mensaje, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(mensaje),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje), backgroundColor: color));
   }
 
   @override
@@ -177,158 +185,131 @@ class _ClientesScreenState extends State<ClientesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Filtro reactivo en memoria local basado en lo que escribes en la barra de búsqueda
     final clientesFiltrados = clientes.where((cliente) {
-      return cliente.razonSocial.toLowerCase().contains(search) ||
-          cliente.ci.toLowerCase().contains(search);
+      return cliente.razonSocial.toLowerCase().contains(search.toLowerCase()) ||
+          cliente.ci.toLowerCase().contains(search.toLowerCase());
     }).toList();
 
     return Scaffold(
-      body: Column(
-        children: [
-          // Barra de Búsqueda
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Buscar por nombre o CI',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  search = value.toLowerCase();
-                });
-              },
-            ),
-          ),
-
-          // Botón Crear Cliente
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              onPressed: () {
-                _nombreCtrl.clear();
-                _ciCtrl.clear();
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Crear Cliente'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          controller: _nombreCtrl,
-                          decoration: const InputDecoration(
-                            hintText: 'Nombre / Razón Social',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _ciCtrl,
-                          decoration: const InputDecoration(
-                            hintText: 'CI o NIT',
-                          ),
-                          keyboardType: TextInputType.number,
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: _guardarNuevoCliente,
-                        child: const Text('Guardar'),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancelar'),
-                      ),
-                    ],
+      backgroundColor: const Color(0xFFF3F0FA),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color(0xFF24124D),
+        title: const Text(
+          'Clientes',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF6C5CE7),
+        onPressed: () => _abrirModalCliente(),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Buscador
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
                   ),
-                );
-              },
-              child: const Text(
-                '+ Crear Cliente',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                ],
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Buscar por nombre o CI',
+                  prefixIcon: const Icon(Icons.search),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    search = value;
+                  });
+                },
               ),
             ),
-          ),
 
-          // Contenedor dinámico principal
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : clientesFiltrados.isEmpty
-                ? const Center(child: Text('No se encontraron clientes'))
-                : RefreshIndicator(
-                    onRefresh: _cargarClientes,
-                    child: ListView.builder(
+            const SizedBox(height: 20),
+
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : clientesFiltrados.isEmpty
+                  ? const Center(child: Text('No se encontraron clientes'))
+                  : ListView.builder(
                       itemCount: clientesFiltrados.length,
                       itemBuilder: (context, index) {
                         final cliente = clientesFiltrados[index];
 
-                        return Card(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 10,
+                            ),
                             leading: CircleAvatar(
-                              backgroundColor: Colors.blueAccent.withOpacity(
-                                0.1,
-                              ),
+                              radius: 26,
+                              backgroundColor: const Color(
+                                0xFF6C5CE7,
+                              ).withOpacity(0.15),
                               child: const Icon(
                                 Icons.person,
-                                color: Colors.blueAccent,
+                                color: Color(0xFF6C5CE7),
                               ),
                             ),
                             title: Text(
                               cliente.razonSocial,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
-                            subtitle: Text('CI: ${cliente.ci}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                  ),
-                                  //Llamamos a la función de apertura pasando el modelo completo
-                                  onPressed: () => _abrirModalEdicion(cliente),
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    size: 16,
-                                    color: Colors.white,
-                                  ),
-                                  label: const Text(
-                                    'Editar',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                'CI: ${cliente.ci}',
+                                style: TextStyle(color: Colors.grey.shade700),
+                              ),
+                            ),
+                            trailing: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF2D4059),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              ],
+                              ),
+                              onPressed: () =>
+                                  _abrirModalCliente(cliente: cliente),
+                              icon: const Icon(Icons.edit, size: 18),
+                              label: const Text('Editar'),
                             ),
                           ),
                         );
                       },
                     ),
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

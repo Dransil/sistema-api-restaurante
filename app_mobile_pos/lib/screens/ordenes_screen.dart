@@ -55,6 +55,9 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             title: const Text('Sin stock'),
             content: const Text('No hay producto disponible.'),
             actions: [
@@ -80,8 +83,13 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(
-              title: Text(producto['nombre']),
-
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              title: Text(
+                producto['nombre'],
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -89,17 +97,25 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      border: Border.all(),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.deepPurple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(Icons.image, size: 60),
+                    child: const Icon(
+                      Icons.fastfood,
+                      size: 60,
+                      color: Colors.deepPurple,
+                    ),
                   ),
 
                   const SizedBox(height: 15),
 
                   Text(
                     'Precio: Bs ${producto['precio']}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                      fontSize: 18,
+                    ),
                   ),
 
                   const SizedBox(height: 10),
@@ -119,12 +135,19 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                             });
                           }
                         },
-                        icon: const Icon(Icons.remove_circle),
+                        icon: const Icon(
+                          Icons.remove_circle,
+                          color: Colors.red,
+                          size: 32,
+                        ),
                       ),
 
                       Text(
                         cantidad.toString(),
-                        style: const TextStyle(fontSize: 20),
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
 
                       IconButton(
@@ -135,17 +158,23 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                             });
                           }
                         },
-                        icon: const Icon(Icons.add_circle),
+                        icon: const Icon(
+                          Icons.add_circle,
+                          color: Colors.green,
+                          size: 32,
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
-
               actions: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   onPressed: () {
                     setState(() {
@@ -160,15 +189,26 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
 
                     Navigator.pop(context);
                   },
-                  child: const Text('Agregar'),
+                  child: const Text(
+                    'Agregar',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
 
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Cancelar'),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -183,8 +223,13 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Carrito'),
-
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: const Text(
+            'Carrito',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           content: SizedBox(
             width: double.maxFinite,
             child: carrito.isEmpty
@@ -196,18 +241,28 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                       final item = carrito[index];
 
                       return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.deepPurple.withOpacity(0.1),
+                          child: const Icon(
+                            Icons.fastfood,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
                         title: Text(item['nombre']),
                         subtitle: Text(
                           '${item['cantidad']} x Bs ${item['precio']}',
                         ),
                         trailing: Text(
                           'Bs ${item['cantidad'] * item['precio']}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
                         ),
                       );
                     },
                   ),
           ),
-
           actions: [
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -217,7 +272,8 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                   'Total: Bs ${total.toStringAsFixed(2)}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 18,
+                    color: Colors.deepPurple,
                   ),
                 ),
 
@@ -237,12 +293,13 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                               title: const Text('Pago realizado'),
-
                               content: Text(
                                 'Se realizó el pago de Bs ${total.toStringAsFixed(2)} correctamente.',
                               ),
-
                               actions: [
                                 ElevatedButton(
                                   onPressed: () {
@@ -259,7 +316,10 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                           },
                         );
                       },
-                      child: const Text('Pagar'),
+                      child: const Text(
+                        'Pagar',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
 
                     const SizedBox(width: 10),
@@ -283,61 +343,96 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pedidos'),
-        actions: [
-          IconButton(
-            onPressed: abrirCarrito,
-            icon: Stack(
-              children: [
-                const Icon(Icons.shopping_cart),
+      backgroundColor: const Color(0xFFF5F6FA),
 
-                if (cantidadTotalCarrito > 0)
-                  Positioned(
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        cantidadTotalCarrito.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Pedidos',
+          style: TextStyle(
+            color: Color(0xFF1E293B),
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              onPressed: abrirCarrito,
+              icon: Stack(
+                children: [
+                  const Icon(
+                    Icons.shopping_cart,
+                    color: Colors.deepPurple,
+                    size: 28,
+                  ),
+
+                  if (cantidadTotalCarrito > 0)
+                    Positioned(
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          cantidadTotalCarrito.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
       ),
 
       body: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(14),
         child: Column(
           children: [
-            TextField(
-              onChanged: (value) {
-                setState(() {
-                  busqueda = value;
-                });
-              },
-
-              decoration: InputDecoration(
-                hintText: 'Buscar productos...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+            // BUSCADOR
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    busqueda = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Buscar productos...',
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Colors.deepPurple,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 18),
                 ),
               ),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 18),
 
+            // GRID PRODUCTOS
             Expanded(
               child: productosFiltrados.isEmpty
                   ? const Center(child: Text('No se encontraron productos'))
@@ -347,12 +442,15 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 0.78,
                           ),
 
                       itemBuilder: (context, index) {
                         final producto = productosFiltrados[index];
+
+                        final bool sinStock = producto['stock'] == 0;
 
                         return GestureDetector(
                           onTap: () {
@@ -360,42 +458,111 @@ class _OrdenesScreenState extends State<OrdenesScreen> {
                           },
 
                           child: Container(
+                            padding: const EdgeInsets.all(12),
+
                             decoration: BoxDecoration(
-                              border: Border.all(),
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.grey[200],
+                              color: Colors.white,
+
+                              borderRadius: BorderRadius.circular(20),
+
+                              border: Border.all(
+                                color: sinStock
+                                    ? Colors.red.shade100
+                                    : Colors.deepPurple.shade100,
+                                width: 1.2,
+                              ),
+
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
                             ),
 
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
+
                               children: [
-                                const Icon(Icons.fastfood, size: 50),
+                                Container(
+                                  padding: const EdgeInsets.all(14),
+
+                                  decoration: BoxDecoration(
+                                    color: sinStock
+                                        ? Colors.red.withOpacity(0.1)
+                                        : Colors.deepPurple.withOpacity(0.1),
+
+                                    shape: BoxShape.circle,
+                                  ),
+
+                                  child: Icon(
+                                    Icons.fastfood,
+                                    size: 50,
+                                    color: sinStock
+                                        ? Colors.red
+                                        : Colors.deepPurple,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 14),
+
+                                Text(
+                                  producto['nombre'],
+
+                                  textAlign: TextAlign.center,
+
+                                  maxLines: 2,
+
+                                  overflow: TextOverflow.ellipsis,
+
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Color(0xFF1E293B),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                Text(
+                                  'Bs ${producto['precio']}',
+
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
 
                                 const SizedBox(height: 10),
 
-                                Text(
-                                  '${producto['nombre']} (${producto['stock']})',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
 
-                                const SizedBox(height: 5),
+                                  decoration: BoxDecoration(
+                                    color: sinStock
+                                        ? Colors.red.withOpacity(0.1)
+                                        : Colors.green.withOpacity(0.1),
 
-                                Text('Bs ${producto['precio']}'),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
 
-                                const SizedBox(height: 5),
+                                  child: Text(
+                                    sinStock
+                                        ? 'Sin stock'
+                                        : 'Stock: ${producto['stock']}',
 
-                                Text(
-                                  producto['stock'] == 0
-                                      ? 'Sin stock'
-                                      : 'Disponible',
-                                  style: TextStyle(
-                                    color: producto['stock'] == 0
-                                        ? Colors.red
-                                        : Colors.green,
-                                    fontWeight: FontWeight.bold,
+                                    style: TextStyle(
+                                      color: sinStock
+                                          ? Colors.red
+                                          : Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               ],
