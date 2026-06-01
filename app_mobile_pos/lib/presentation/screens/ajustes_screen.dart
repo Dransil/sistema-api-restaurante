@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../data/models/configuracion_local_model.dart';
 import '../../../data/repositories/config_repository.dart';
 import '../../../logic/helpers/config_ui_helper.dart';
 
@@ -70,33 +69,21 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   // NUEVO MÉTODO: Recolecta inputs y conecta con el POST del repositorio
   Future<void> _procesarGuardado() async {
-    final nombre = nombreController.text.trim();
-    final ciudad = ciudadController.text.trim();
+    // 1. Le pedimos al helper que valide y arme el modelo por nosotros
+    final nuevaConfig = ConfigUiHelper.crearModeloValidado(
+      context: context,
+      id: configId,
+      nombre: nombreController.text.trim(),
+      telefono: telefonoController.text.trim(),
+      ciudad: ciudadController.text.trim(),
+      moneda: monedaSeleccionada,
+      logo: logoController.text.trim(),
+    );
 
-    if (nombre.isEmpty || ciudad.isEmpty) {
-      ConfigUiHelper.notificar(
-        context,
-        'Establecimiento y Ciudad son obligatorios',
-        Colors.orange,
-      );
-      return;
-    }
+    // Si retornó null significa que la validación falló (el helper ya mandó el aviso)
+    if (nuevaConfig == null) return;
 
     setState(() => _isLoading = true);
-
-    // Creamos la instancia del modelo con los datos de los inputs
-    final nuevaConfig = ConfiguracionLocalModel(
-      id: configId ?? 0,
-      nombreRestaurante: nombre,
-      telefono: telefonoController.text.trim().isEmpty
-          ? null
-          : telefonoController.text.trim(),
-      ciudad: ciudad,
-      moneda: monedaSeleccionada,
-      logoUrl: logoController.text.trim().isEmpty
-          ? null
-          : logoController.text.trim(),
-    );
 
     try {
       final exito = await _configRepository.guardarConfiguracion(nuevaConfig);
@@ -107,7 +94,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
           'Configuración actualizada con éxito',
           Colors.green,
         );
-        await _cargarDatos(); // Volvemos a traer los datos limpios de la BD
+        await _cargarDatos();
       } else {
         if (mounted) {
           setState(() => _isLoading = false);
