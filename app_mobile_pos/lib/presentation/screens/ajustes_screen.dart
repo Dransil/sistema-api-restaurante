@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../data/models/configuracion_local_model.dart';
 import '../../../data/repositories/config_repository.dart';
 import '../../../logic/helpers/config_ui_helper.dart';
 
@@ -67,6 +68,69 @@ class _AjustesScreenState extends State<AjustesScreen> {
     }
   }
 
+  // NUEVO MÉTODO: Recolecta inputs y conecta con el POST del repositorio
+  Future<void> _procesarGuardado() async {
+    final nombre = nombreController.text.trim();
+    final ciudad = ciudadController.text.trim();
+
+    if (nombre.isEmpty || ciudad.isEmpty) {
+      ConfigUiHelper.notificar(
+        context,
+        'Establecimiento y Ciudad son obligatorios',
+        Colors.orange,
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    // Creamos la instancia del modelo con los datos de los inputs
+    final nuevaConfig = ConfiguracionLocalModel(
+      id: configId ?? 0, // Si es nuevo backend suele ignorar el 0 o autogenerar
+      nombreRestaurante: nombre,
+      telefono: telefonoController.text.trim().isEmpty
+          ? null
+          : telefonoController.text.trim(),
+      ciudad: ciudad,
+      moneda: monedaSeleccionada,
+      logoUrl: logoController.text.trim().isEmpty
+          ? null
+          : logoController.text.trim(),
+    );
+
+    try {
+      final exito = await _configRepository.guardarConfiguracion(nuevaConfig);
+
+      if (exito && mounted) {
+        ConfigUiHelper.notificar(
+          context,
+          'Configuración actualizada con éxito',
+          Colors.green,
+        );
+        await _cargarDatos(); // Volvemos a traer los datos limpios de la BD
+      } else {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ConfigUiHelper.notificar(
+            context,
+            'El servidor no pudo procesar el guardado',
+            Colors.amber,
+          );
+        }
+      }
+    } catch (e, stackTrace) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ConfigUiHelper.notificar(context, 'Error al guardar: $e', Colors.red);
+      }
+      ConfigUiHelper.registrarLog(
+        'Fallo la escritura en POST /configloc',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
   @override
   void dispose() {
     nombreController.dispose();
@@ -117,7 +181,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-  // WIDGET EXTRAÍDO: Encabezado con Degradado
   Widget _construirEncabezado() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -160,7 +223,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-  // WIDGET EXTRAÍDO: Card con Inputs del Negocio
   Widget _construirFormulario() {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -169,9 +231,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(
-              alpha: 0.05,
-            ), // CORREGIDO: con precisión flotante
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -235,7 +295,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-  // WIDGET EXTRAÍDO: Cuadro de Vista Previa de Imagen
   Widget _construirPreviewLogo() {
     return Container(
       height: 180,
@@ -245,9 +304,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(
-              alpha: 0.05,
-            ), // CORREGIDO: precisión estable
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
           ),
         ],
@@ -275,22 +332,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-  // WIDGET EXTRAÍDO: Botones Guardar y Restablecer
   Widget _construirBotonesAccion() {
     return Row(
       children: [
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () {
-              ConfigUiHelper.registrarLog(
-                'Petición de guardado para la configuración ID: $configId',
-              );
-              ConfigUiHelper.notificar(
-                context,
-                'Cambios guardados con éxito',
-                Colors.green,
-              );
-            },
+            onPressed:
+                _procesarGuardado, // <-- AHORA LLAMA A LA PETICIÓN HTTP REAL
             icon: const Icon(Icons.save),
             label: const Text('Guardar'),
             style: ElevatedButton.styleFrom(
