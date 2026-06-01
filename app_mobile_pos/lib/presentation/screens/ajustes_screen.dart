@@ -86,7 +86,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
     // Creamos la instancia del modelo con los datos de los inputs
     final nuevaConfig = ConfiguracionLocalModel(
-      id: configId ?? 0, // Si es nuevo backend suele ignorar el 0 o autogenerar
+      id: configId ?? 0,
       nombreRestaurante: nombre,
       telefono: telefonoController.text.trim().isEmpty
           ? null
