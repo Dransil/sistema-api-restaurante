@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'package:app_mobile_pos/data/models/configuracion_local_model.dart';
 import 'package:flutter/material.dart';
 
 class ConfigUiHelper {
@@ -43,6 +44,35 @@ class ConfigUiHelper {
         borderSide: BorderSide.none,
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 18),
+    );
+  }
+
+  /// Lógica de validación y armado de modelo extraída de la UI
+  static ConfiguracionLocalModel? crearModeloValidado({
+    required BuildContext context,
+    required int? id,
+    required String nombre,
+    required String telefono,
+    required String ciudad,
+    required String moneda,
+    required String logo,
+  }) {
+    if (nombre.isEmpty || ciudad.isEmpty) {
+      notificar(
+        context,
+        'Establecimiento y Ciudad son obligatorios',
+        Colors.orange,
+      );
+      return null;
+    }
+
+    return ConfiguracionLocalModel(
+      id: id ?? 0,
+      nombreRestaurante: nombre,
+      telefono: telefono.isEmpty ? null : telefono,
+      ciudad: ciudad,
+      moneda: moneda,
+      logoUrl: logo.isEmpty ? null : logo,
     );
   }
 }

@@ -18,7 +18,7 @@ class ConfiguracionLocalModel {
     required this.ciudad,
     required this.moneda,
     this.logoUrl,
-    required this.planActual,
+    this.planActual = 'Gratuito',
   });
 
   factory ConfiguracionLocalModel.fromJson(Map<String, dynamic> json) {
