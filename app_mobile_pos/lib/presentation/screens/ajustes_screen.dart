@@ -78,6 +78,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       ciudad: ciudadController.text.trim(),
       moneda: monedaSeleccionada,
       logo: logoController.text.trim(),
+      plan: 'Gratuito',
     );
 
     // Si retornó null significa que la validación falló (el helper ya mandó el aviso)
