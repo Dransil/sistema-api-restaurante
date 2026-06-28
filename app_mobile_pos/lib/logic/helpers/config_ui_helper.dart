@@ -56,6 +56,7 @@ class ConfigUiHelper {
     required String ciudad,
     required String moneda,
     required String logo,
+    required String plan,
   }) {
     if (nombre.isEmpty || ciudad.isEmpty) {
       notificar(
@@ -73,6 +74,7 @@ class ConfigUiHelper {
       ciudad: ciudad,
       moneda: moneda,
       logoUrl: logo.isEmpty ? null : logo,
+      planActual: plan,
     );
   }
 }
